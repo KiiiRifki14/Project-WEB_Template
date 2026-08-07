@@ -69,7 +69,6 @@ async function loadData() {
                 fetch(`${CONFIG.DATA_URL}?sheet=dokumenPublikasi`)
             ]);
 
-            // Cek status HTTP respon
             if (!resIdentitas.ok || !resMakro.ok || !resJobs.ok || !resDocs.ok) {
                 throw new Error("Gagal mengambil satu atau lebih tab data dari Google Sheets API.");
             }
@@ -122,7 +121,6 @@ async function loadData() {
             }));
 
         } else {
-            // Fetch dari data.json lokal biasa
             console.log("📂 Mengambil data dari file JSON lokal...");
             const response = await fetch(CONFIG.DATA_URL);
             if (!response.ok) {
@@ -166,7 +164,6 @@ function renderIdentitas(identitas) {
     
     const alamat = identitas.alamatKantor || identitas.alamatKanttor || "-";
     const email = identitas.email || "-";
-    const telepon = identitas.telepon || identitas.telpon || "-";
 
     const tagVillage = document.getElementById("header-village-tag");
     const heroVillage = document.getElementById("hero-village-name");
@@ -184,12 +181,10 @@ function renderIdentitas(identitas) {
     const footerDesc = document.getElementById("footer-village-desc");
     const footerAddress = document.getElementById("footer-address");
     const footerEmail = document.getElementById("footer-email");
-    const footerPhone = document.getElementById("footer-phone");
 
     if (footerDesc) footerDesc.textContent = `Portal data statistik terpadu Desa ${namaDesa}, ${kecamatan}. Program Desa Cinta Statistik BPS Kabupaten Subang.`;
     if (footerAddress) footerAddress.textContent = alamat;
     if (footerEmail) footerEmail.textContent = email;
-    if (footerPhone) footerPhone.textContent = telepon;
 }
 
 /**
@@ -200,7 +195,6 @@ function renderStatCards(makro) {
     const elLuas = document.getElementById("stat-luas");
     const elKepadatan = document.getElementById("stat-kepadatan");
     const elRtRw = document.getElementById("stat-rtrw");
-    const elKkText = document.getElementById("stat-kk-text");
 
     if (elPenduduk) elPenduduk.textContent = formatRibuan(makro.totalPenduduk);
     if (elLuas) elLuas.textContent = formatDesimal(makro.luasWilayah);
@@ -208,10 +202,7 @@ function renderStatCards(makro) {
     if (elRtRw) {
         const rt = makro.jumlahRt !== null ? makro.jumlahRt : "-";
         const rw = makro.jumlahRw !== null ? makro.jumlahRw : "-";
-        elRtRw.textContent = `${rt} / ${rw}`;
-    }
-    if (elKkText) {
-        elKkText.textContent = makro.jumlahKk ? `${formatRibuan(makro.jumlahKk)} KK` : "Data KK Belum Terisi";
+        elRtRw.textContent = `${rt}/${rw}`;
     }
 }
 
@@ -232,7 +223,7 @@ function renderPotensiFilterBar(listPotensi) {
 
         return `
             <button onclick="filterPotensi('${cat}')" 
-                    class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-[11px] sm:text-xs border transition-all duration-200 flex-shrink-0 ${btnClass}">
+                    class="px-3 py-1 rounded-xl text-xs border transition-all duration-200 flex-shrink-0 ${btnClass}">
                 ${cat}
             </button>
         `;
@@ -255,7 +246,7 @@ window.filterPotensi = function(category) {
 };
 
 /**
- * 3B. Render Dynamic Mobile Carousel & Bento Grid Desktop untuk Potensi Desa
+ * 3B. Render Potensi Cards (Lebih Bersih & Fully Responsive Tanpa Overflow Horizontal)
  */
 function renderPotensiDesa(listPotensi) {
     const container = document.getElementById("potensi-grid");
@@ -263,9 +254,9 @@ function renderPotensiDesa(listPotensi) {
 
     if (!listPotensi || listPotensi.length === 0) {
         container.innerHTML = `
-            <div class="col-span-full py-8 text-center text-slate-400">
+            <div class="col-span-full py-10 text-center text-slate-400 w-full">
                 <i class="fa-solid fa-gem text-2xl mb-1 text-slate-300"></i>
-                <p class="text-[11px]">Belum ada potensi desa dalam kategori ini.</p>
+                <p class="text-xs">Belum ada potensi desa dalam kategori ini.</p>
             </div>
         `;
         return;
@@ -278,9 +269,9 @@ function renderPotensiDesa(listPotensi) {
         const isFeatured = (activePotensiCategory === "Semua" && index === 0);
 
         if (isFeatured) {
-            // 🌟 ITEM 0: SPOTLIGHT FEATURED CARD (Kompak di HP & Lebar di Laptop)
+            // 🌟 FEATURED SPOTLIGHT CARD (2 Kolom di Laptop, 1 Kolom di HP)
             return `
-                <div class="w-64 sm:w-auto flex-shrink-0 snap-center group relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-card-hover border border-slate-200/90 h-56 sm:h-96 md:h-[380px] flex flex-col justify-end p-4 sm:p-8 bg-slate-950 text-white lg:col-span-2 transition-all duration-300">
+                <div class="group relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-card-hover border border-slate-200/90 min-h-[250px] sm:h-96 md:h-[380px] flex flex-col justify-end p-5 sm:p-8 bg-slate-950 text-white lg:col-span-2 transition-all duration-300 w-full">
                     <img src="${fotoUrl}" 
                          alt="${item.judulPotensi}" 
                          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-75"
@@ -288,28 +279,28 @@ function renderPotensiDesa(listPotensi) {
                     
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>
 
-                    <div class="relative z-10 space-y-1.5 sm:space-y-3">
-                        <div class="flex items-center gap-1.5">
-                            <span class="px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-xs font-extrabold bg-amber-400 text-slate-950 shadow-xs">
-                                ⭐ UNGGULAN
+                    <div class="relative z-10 space-y-2 sm:space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-extrabold bg-amber-400 text-slate-950 shadow-xs">
+                                ⭐ POTENSI UNGGULAN
                             </span>
-                            <span class="px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-xs font-bold bg-white/20 backdrop-blur-md text-white border border-white/20">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-white/20 backdrop-blur-md text-white border border-white/20">
                                 ${item.kategori}
                             </span>
                         </div>
-                        <h4 class="text-sm sm:text-2xl font-extrabold text-white leading-tight group-hover:text-blue-300 transition-colors line-clamp-1">
+                        <h4 class="text-base sm:text-2xl font-extrabold text-white leading-tight group-hover:text-blue-300 transition-colors">
                             ${item.judulPotensi}
                         </h4>
-                        <p class="text-[11px] sm:text-sm text-slate-300 line-clamp-2 leading-relaxed">
+                        <p class="text-xs sm:text-sm text-slate-300 line-clamp-2 leading-relaxed">
                             ${item.deskripsi || '-'}
                         </p>
                     </div>
                 </div>
             `;
         } else {
-            // 🖼️ ITEM LAIN: SWIPEABLE CAROUSEL CARD DI HP (h-56) & IMMERSIVE CARD DI DESKTOP (h-80)
+            // 🖼️ REGULAR IMMERSIVE CARD
             return `
-                <div class="w-64 sm:w-auto flex-shrink-0 snap-center group relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-card-hover border border-slate-200/90 h-56 sm:h-80 flex flex-col justify-end p-4 sm:p-5 bg-slate-950 text-white transition-all duration-300">
+                <div class="group relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-card-hover border border-slate-200/90 min-h-[220px] sm:h-80 flex flex-col justify-end p-4 sm:p-5 bg-slate-950 text-white transition-all duration-300 w-full">
                     <img src="${fotoUrl}" 
                          alt="${item.judulPotensi}" 
                          class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80"
@@ -317,7 +308,7 @@ function renderPotensiDesa(listPotensi) {
                     
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent"></div>
 
-                    <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-white/90 backdrop-blur-md text-slate-900 shadow-xs">
+                    <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-extrabold bg-white/90 backdrop-blur-md text-slate-900 shadow-xs">
                         ${item.kategori}
                     </span>
 
@@ -325,12 +316,12 @@ function renderPotensiDesa(listPotensi) {
                         <h4 class="text-xs sm:text-base font-extrabold text-white group-hover:text-blue-300 transition-colors line-clamp-1">
                             ${item.judulPotensi}
                         </h4>
-                        <p class="text-[10px] sm:text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                        <p class="text-[11px] sm:text-xs text-slate-300 line-clamp-2 leading-relaxed">
                             ${item.deskripsi || '-'}
                         </p>
-                        <div class="pt-1.5 flex items-center justify-between text-[10px] sm:text-xs font-semibold text-blue-300 border-t border-white/10">
+                        <div class="pt-1.5 flex items-center justify-between text-xs font-semibold text-blue-300 border-t border-white/10">
                             <span>Eksplorasi</span>
-                            <i class="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
                         </div>
                     </div>
                 </div>
@@ -366,7 +357,7 @@ function renderJobChart(listPekerjaan) {
             const ctx = chart.ctx;
             ctx.restore();
             
-            const fontSize = (height / 170).toFixed(2);
+            const fontSize = (height / 160).toFixed(2);
             ctx.font = `bold ${fontSize}em "Plus Jakarta Sans", sans-serif`;
             ctx.textBaseline = "middle";
             ctx.fillStyle = "#0f172a";
@@ -427,19 +418,19 @@ function renderJobChart(listPekerjaan) {
                 : (totalPekerja > 0 ? ((item.jumlah / totalPekerja) * 100).toFixed(1) : 0);
 
             return `
-                <div class="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50/80 border border-slate-200/70 hover:bg-white hover:shadow-xs transition-all duration-200">
-                    <div class="flex items-center justify-between gap-2 mb-1">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: ${color}"></span>
-                            <span class="text-[11px] sm:text-xs font-bold text-slate-800">${item.kategori}</span>
+                <div class="p-3 sm:p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/70 hover:bg-white hover:shadow-xs transition-all w-full box-border">
+                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${color}"></span>
+                            <span class="text-xs font-bold text-slate-800 truncate">${item.kategori}</span>
                         </div>
-                        <div class="text-right">
-                            <span class="text-[11px] sm:text-xs font-extrabold text-slate-900">${formatRibuan(item.jumlah)} <span class="text-[9px] sm:text-[10px] font-normal text-slate-500">jiwa</span></span>
-                            <span class="ml-1 text-[10px] font-semibold text-slate-500 bg-white px-1 py-0.5 rounded border border-slate-200">${pct}%</span>
+                        <div class="text-right flex-shrink-0">
+                            <span class="text-xs font-extrabold text-slate-900">${formatRibuan(item.jumlah)} <span class="text-[10px] font-normal text-slate-500">jiwa</span></span>
+                            <span class="ml-1 text-[11px] font-semibold text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200">${pct}%</span>
                         </div>
                     </div>
 
-                    <div class="w-full h-1.5 rounded-full bg-slate-200/80 overflow-hidden">
+                    <div class="w-full h-2 rounded-full bg-slate-200/80 overflow-hidden">
                         <div class="h-full rounded-full transition-all duration-500" 
                              style="width: ${pct}%; background-color: ${color}"></div>
                     </div>
@@ -458,9 +449,9 @@ function renderDokumenPublikasi(listDokumen) {
 
     if (!listDokumen || listDokumen.length === 0) {
         const emptyStateHTML = `
-            <div class="py-8 text-center text-slate-400 col-span-full w-full">
-                <i class="fa-solid fa-folder-open text-2xl mb-1 text-slate-300"></i>
-                <p class="text-[11px]">Tidak ada dokumen publikasi yang cocok dengan pencarian.</p>
+            <div class="py-10 text-center text-slate-400 col-span-full w-full">
+                <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-300"></i>
+                <p class="text-xs">Tidak ada dokumen publikasi yang cocok dengan pencarian.</p>
             </div>
         `;
         if (tbody) tbody.innerHTML = `<tr><td colspan="5">${emptyStateHTML}</td></tr>`;
@@ -517,36 +508,33 @@ function renderDokumenPublikasi(listDokumen) {
             const badgeStyle = getCategoryBadgeStyle(doc.kategori);
 
             return `
-                <div class="p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
-                    <div class="flex items-start justify-between gap-2">
+                <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5 w-full box-border">
+                    <div class="flex items-start justify-between gap-3">
                         <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
-                                <i class="fa-solid fa-file-pdf text-xs"></i>
+                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-file-pdf text-sm"></i>
                             </div>
-                            <span class="px-2 py-0.5 rounded text-[9px] font-bold border ${badgeStyle}">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badgeStyle}">
                                 ${doc.kategori}
                             </span>
                         </div>
-                        <span class="text-[9px] text-slate-400 font-mono bg-slate-100 px-1.5 py-0.5 rounded">
+                        <span class="text-[10px] text-slate-400 font-mono bg-slate-100 px-2 py-0.5 rounded">
                             ${doc.tahun}
                         </span>
                     </div>
 
                     <div>
                         <h4 class="text-xs font-bold text-slate-900 leading-snug">${doc.judul}</h4>
-                        <p class="text-[10px] text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">${doc.deskripsi || '-'}</p>
+                        <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">${doc.deskripsi || '-'}</p>
                     </div>
 
-                    <div class="flex items-center justify-between pt-1.5 border-t border-slate-100">
-                        <span class="text-[9px] text-slate-400 font-mono">
-                            <i class="fa-solid fa-hard-drive mr-1"></i>${doc.ukuran || '-'}
-                        </span>
+                    <div class="pt-2 border-t border-slate-100">
                         <a href="${doc.urlDrive || '#'}" 
                            target="_blank" 
                            rel="noopener noreferrer" 
-                           class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold text-bps-blue bg-blue-50 hover:bg-bps-blue hover:text-white border border-blue-200 transition-all">
-                            <span>Buka</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i>
+                           class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-bps-blue bg-blue-50 hover:bg-bps-blue hover:text-white border border-blue-200 transition-all">
+                            <span>Buka Dokumen</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                         </a>
                     </div>
                 </div>
