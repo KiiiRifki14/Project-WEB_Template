@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micro-Portal Desa Cantik | BPS Kabupaten Subang</title>
+    <meta name="description" content="Portal Publikasi Data Statistik Terpadu dan Potensi Desa - Program Desa Cantik BPS Kabupaten Subang">
+    
+    <!-- 1. Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- 2. FontAwesome 6 CDN (Ikon Modern) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- 3. Tailwind CSS CDN + Konfigurasi Palette Kustom -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        bps: {
+                            blue: '#005baa',
+                            dark: '#0a192f',
+                            navy: '#0f2b48',
+                            light: '#f0f6ff',
+                            amber: '#f59e0b',
+                            emerald: '#10b981'
+                        }
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(0, 91, 170, 0.08)',
+                        'card-hover': '0 20px 40px -15px rgba(0, 91, 170, 0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 4. Chart.js CDN (Visualisasi Grafik) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Modern Glassmorphism & Micro-Interactions */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        .hero-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-bps-blue selection:text-white">
+
+    <!-- ==========================================
+         TOP NAVBAR / HEADER LOGO (RESPONSIVE MOBILE & DESKTOP)
+         ========================================== -->
+    <header class="sticky top-0 z-50 glass-header border-b border-slate-200/80 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3">
+            
+            <!-- Branding Left: Official Subang & BPS Crests -->
+            <div class="flex items-center gap-2.5 sm:gap-3.5">
+                <!-- SVG/Image Subang & BPS Logo Badge -->
+                <div class="flex items-center gap-2 bg-slate-100/80 p-1.5 rounded-xl border border-slate-200/60">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Lambang_Kabupaten_Subang.png" 
+                         alt="Kabupaten Subang" 
+                         class="h-7 sm:h-9 w-auto object-contain"
+                         onerror="this.style.display='none'; document.getElementById('fallback-subang').style.display='inline-flex'">
+                    <span id="fallback-subang" class="hidden h-7 w-7 rounded-lg bg-emerald-600 text-white font-bold text-[10px] items-center justify-center">SBG</span>
+
+                    <span class="h-5 w-[1px] bg-slate-300"></span>
+
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg" 
+                         alt="BPS Indonesia" 
+                         class="h-6 sm:h-8 w-auto object-contain"
+                         onerror="this.style.display='none'; document.getElementById('fallback-bps').style.display='inline-flex'">
+                    <span id="fallback-bps" class="hidden h-6 px-1.5 rounded bg-bps-blue text-white font-bold text-[10px] items-center justify-center">BPS</span>
+                </div>
+
+                <div class="hidden md:block leading-tight">
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-xs font-extrabold text-bps-navy tracking-wide uppercase">DESA CANTIK</h1>
+                        <span class="px-1.5 py-0.2 text-[9px] font-bold rounded bg-blue-100 text-bps-blue">BPS SUBANG</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-medium">Desa Cinta Statistik</p>
+                </div>
+            </div>
+
+            <!-- Header Center/Right: Village Tag & Navigation Button -->
+            <div class="flex items-center gap-2">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-50 text-bps-blue border border-blue-200/80 shadow-2xs">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span id="header-village-tag" class="truncate max-w-[130px] sm:max-w-none">Desa Sadawarna</span>
+                </div>
+
+                <a href="#dokumen-section" 
+                   class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 text-xs font-bold text-white bg-bps-blue hover:bg-blue-700 active:scale-95 rounded-xl shadow-sm transition-all duration-200">
+                    <i class="fa-solid fa-file-arrow-down text-xs"></i>
+                    <span class="hidden sm:inline">Dokumen</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         HERO SECTION (RESPONSIVE GRADIENT & TYPOGRAPHY)
+         ========================================== -->
+    <section class="relative bg-gradient-to-br from-bps-dark via-bps-navy to-slate-900 text-white overflow-hidden pt-8 pb-16 sm:pt-12 sm:pb-20 md:py-20">
+        <!-- Overlay Geometric Background -->
+        <div class="absolute inset-0 opacity-20 hero-pattern pointer-events-none"></div>
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-3xl">
+                <!-- Program Tagline Pill -->
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-white/10 backdrop-blur-md text-blue-200 text-xs font-semibold mb-4 border border-white/15 shadow-sm">
+                    <i class="fa-solid fa-award text-amber-400"></i>
+                    <span>Portal Resmi Desa Cinta Statistik (Desa Cantik)</span>
+                </div>
+
+                <!-- Main Hero Heading -->
+                <h2 id="hero-title" class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-snug sm:leading-tight mb-4">
+                    Publikasi Data Statistik <br class="hidden sm:block">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-teal-200 to-emerald-300" id="hero-village-name">
+                        Desa Sadawarna
+                    </span>
+                </h2>
+
+                <!-- Subtitle / Description -->
+                <p id="hero-description" class="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed mb-6 font-normal max-w-2xl">
+                    Pusat publikasi data makro, indikator sosial ekonomi, dan dokumen resmi desa terpadu untuk transparansi serta perencanaan pembangunan berbasis data.
+                </p>
+                
+                <!-- Quick Info Badges Bar -->
+                <div class="flex flex-wrap items-center gap-3 sm:gap-6 text-xs text-slate-300 border-t border-white/10 pt-4">
+                    <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                        <i class="fa-solid fa-location-dot text-rose-400"></i>
+                        <span id="hero-district">Kecamatan Cibogo, Kab. Subang</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                        <i class="fa-solid fa-barcode text-blue-400"></i>
+                        <span>Kode Wilayah: <strong id="hero-code" class="text-white font-mono">3213030005</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         MAIN CONTENT AREA
+         ========================================== -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-10 md:-mt-12 relative z-20 space-y-8 sm:space-y-12 mb-16">
+
+        <!-- ==========================================
+             1. STAT CARDS (RINGKASAN DATA MAKRO)
+             ========================================== -->
+        <section id="stat-cards-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
+            
+            <!-- Card 1: Total Penduduk -->
+            <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-glass hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Penduduk</span>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-bps-blue text-white flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-users text-base"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span id="stat-penduduk" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">-</span>
+                    <span class="text-xs font-semibold text-slate-500">Jiwa</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                    <span>Data Sensus Terupdate</span>
+                </div>
+            </div>
+
+            <!-- Card 2: Luas Wilayah -->
+            <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-glass hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Luas Wilayah</span>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-map-location-dot text-base"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span id="stat-luas" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">-</span>
+                    <span class="text-xs font-semibold text-slate-500">km²</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-area text-emerald-500"></i>
+                    <span>Cakupan Area Desa</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Kepadatan Penduduk -->
+            <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-glass hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Kepadatan</span>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center shadow-md shadow-amber-500/20 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-people-arrows text-base"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span id="stat-kepadatan" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">-</span>
+                    <span class="text-xs font-semibold text-slate-500">jiwa/km²</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1.5">
+                    <i class="fa-solid fa-scale-balanced text-amber-500"></i>
+                    <span>Rasio Distribusi Penduduk</span>
+                </div>
+            </div>
+
+            <!-- Card 4: RT / RW & KK -->
+            <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-glass hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Wilayah RT / RW</span>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-md shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-building-flag text-base"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span id="stat-rtrw" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">-</span>
+                    <span class="text-xs font-semibold text-slate-500">RT / RW</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1.5">
+                    <i class="fa-solid fa-house-user text-indigo-500"></i>
+                    <span id="stat-kk-text">1.680 Kepala Keluarga</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ==========================================
+             2. CHART & VISUALISASI DEMOGRAFI (MODERN PROGRESS BREAKDOWN)
+             ========================================== -->
+        <section class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-slate-100">
+                <div>
+                    <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-bps-blue"></i>
+                        <span>Distribusi Mata Pencaharian Penduduk</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Struktur persentase dan jumlah tenaga kerja menurut sektor pekerjaan utama</p>
+                </div>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-50 text-bps-blue text-xs font-semibold self-start sm:self-auto">
+                    <i class="fa-solid fa-briefcase"></i> Data Demografi
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Donut Chart Canvas (Center Text Enhanced) -->
+                <div class="lg:col-span-5 flex flex-col items-center justify-center relative min-h-[240px] sm:min-h-[280px]">
+                    <div class="w-full max-w-[240px] sm:max-w-[260px] relative">
+                        <canvas id="jobChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Modern Progress Bar Legend Breakdown -->
+                <div class="lg:col-span-7">
+                    <div id="job-legend-list" class="space-y-3.5">
+                        <!-- Skeletal Loading Placeholder -->
+                        <div class="animate-pulse space-y-3">
+                            <div class="h-10 bg-slate-100 rounded-xl"></div>
+                            <div class="h-10 bg-slate-100 rounded-xl"></div>
+                            <div class="h-10 bg-slate-100 rounded-xl"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             3. TABEL & CARD PUBLIKASI DOKUMEN (DUAL MOBILE CARD & DESKTOP TABLE)
+             ========================================== -->
+        <section id="dokumen-section" class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80">
+            <!-- Section Header & Live Search Bar -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-100">
+                <div>
+                    <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open text-bps-blue"></i>
+                        <span>Publikasi & Dokumen Statistik Desa</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Unduh publikasi KCDA, Monografi Desa, Peraturan Desa, dan laporan statistik.</p>
+                </div>
+
+                <!-- Interactive Search Input -->
+                <div class="relative w-full md:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" 
+                           id="document-search" 
+                           placeholder="Cari dokumen..." 
+                           class="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-bps-blue/30 focus:border-bps-blue transition-all">
+                </div>
+            </div>
+
+            <!-- A. MOBILE CARD VIEW (Tampil Khusus di Layar Ponsel - < sm breakpoint) -->
+            <div id="document-mobile-cards" class="grid grid-cols-1 gap-3.5 sm:hidden">
+                <!-- Baris Card Mobile dirender via app.js -->
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 animate-pulse space-y-2">
+                    <div class="h-4 bg-slate-200 rounded w-3/4"></div>
+                    <div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                </div>
+            </div>
+
+            <!-- B. DESKTOP TABLE VIEW (Tampil di Layar Tablet & Laptop - >= sm breakpoint) -->
+            <div class="hidden sm:block overflow-x-auto rounded-2xl border border-slate-200">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                            <th scope="col" class="py-3.5 px-6">Nama Dokumen & Deskripsi</th>
+                            <th scope="col" class="py-3.5 px-4">Kategori</th>
+                            <th scope="col" class="py-3.5 px-4 text-center">Tahun</th>
+                            <th scope="col" class="py-3.5 px-4 text-center">Ukuran</th>
+                            <th scope="col" class="py-3.5 px-6 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="document-table-body" class="divide-y divide-slate-100 text-sm">
+                        <!-- Baris Tabel Desktop dirender via app.js -->
+                        <tr>
+                            <td colspan="5" class="py-10 text-center text-slate-400">
+                                <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-bps-blue"></i>
+                                <p class="text-xs">Memuat daftar dokumen...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==========================================
+         FOOTER (RESPONSIVE & CLEAN)
+         ========================================== -->
+    <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-slate-800">
+                
+                <!-- Col 1: About Program -->
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-bps-blue text-white font-extrabold text-xs">BPS</span>
+                        <span class="font-bold text-white text-sm">Desa Cantik Subang</span>
+                    </div>
+                    <p id="footer-village-desc" class="text-slate-400 leading-relaxed text-[11px]">
+                        Program Pembinaan Desa Cinta Statistik (Desa Cantik) oleh BPS Kabupaten Subang untuk meningkatkan kapabilitas pengelolaan dan pemanfaatan data statistik di tingkat desa.
+                    </p>
+                </div>
+
+                <!-- Col 2: Alamat Sekretariat -->
+                <div class="space-y-2">
+                    <h4 class="font-semibold text-white text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-building text-blue-400"></i> Sekretariat Desa
+                    </h4>
+                    <p id="footer-address" class="text-slate-400 text-[11px]">Jl. Raya Sadawarna No. 01, Kec. Cibogo, Kab. Subang</p>
+                    <p class="text-slate-400 text-[11px]">Email: <span id="footer-email" class="text-slate-300">pemdes.sadawarna@subang.go.id</span></p>
+                    <p class="text-slate-400 text-[11px]">Telp: <span id="footer-phone" class="text-slate-300">(0260) 412345</span></p>
+                </div>
+
+                <!-- Col 3: Kolaborasi & Lisensi -->
+                <div class="space-y-2">
+                    <h4 class="font-semibold text-white text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-handshake text-emerald-400"></i> Inisiator & Mitra
+                    </h4>
+                    <p class="text-slate-400 text-[11px]">Inisiasi: <strong class="text-slate-200">BPS Kabupaten Subang</strong></p>
+                    <p class="text-slate-400 text-[11px]">Kolaborasi: <strong class="text-slate-200">Tim PKL / Pembinaan Desa Cantik</strong> x Pemdes Sadawarna</p>
+                    <div class="pt-2">
+                        <span class="px-2.5 py-1 rounded bg-slate-800 text-slate-300 text-[10px] font-mono border border-slate-700">
+                            Zero-Maintenance Template v1.2
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <p class="text-slate-500 text-[11px]">
+                    &copy; 2026 Badan Pusat Statistik Kabupaten Subang. Hak Cipta Dilindungi.
+                </p>
+                <div class="flex items-center gap-4 text-slate-400 text-[11px]">
+                    <a href="https://subangkab.bps.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-globe"></i> BPS Subang
+                    </a>
+                    <a href="https://subang.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-landmark"></i> Pemkab Subang
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==========================================
+         JAVASCRIPT LOGIC (APP.JS)
+         ========================================== -->
+    <script src="./app.js"></script>
+</body>
+</html>

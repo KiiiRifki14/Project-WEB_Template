@@ -1,0 +1,67 @@
+{
+  "identitas": {
+    "namaDesa": "Sadawarna",
+    "kecamatan": "Cibogo",
+    "kabupaten": "Kabupaten Subang",
+    "provinsi": "Jawa Barat",
+    "kodeDesa": "3213030005",
+    "deskripsi": "Desa Sadawarna merupakan salah satu desa di Kecamatan Cibogo, Kabupaten Subang yang kaya akan potensi pertanian, peternakan, serta kawasan Bendungan Sadawarna.",
+    "alamatKantor": "Jl. Raya Sadawarna No. 01, Kec. Cibogo, Kab. Subang 41285",
+    "email": "pemdes.sadawarna@subang.go.id",
+    "telepon": "(0260) 412345"
+  },
+  "statistikMakro": {
+    "totalPenduduk": 5420,
+    "luasWilayah": 14.85,
+    "kepadatanPenduduk": 365,
+    "jumlahRt": 24,
+    "jumlahRw": 6,
+    "jumlahKk": 1680
+  },
+  "mataPencaharian": [
+    { "kategori": "Petani & Pekebun", "jumlah": 1850, "persentase": 34.1 },
+    { "kategori": "Buruh Tani", "jumlah": 1120, "persentase": 20.7 },
+    { "kategori": "Karyawan Swasta", "jumlah": 980, "persentase": 18.1 },
+    { "kategori": "Wirausaha & Pedagang", "jumlah": 750, "persentase": 13.8 },
+    { "kategori": "PNS / TNI / Polri", "jumlah": 220, "persentase": 4.1 },
+    { "kategori": "Sektor Lainnya", "jumlah": 500, "persentase": 9.2 }
+  ],
+  "dokumenPublikasi": [
+    {
+      "id": 1,
+      "judul": "Kecamatan Cibogo Dalam Angka 2024",
+      "kategori": "Publikasi BPS",
+      "tahun": 2024,
+      "ukuran": "4.2 MB",
+      "deskripsi": "Buku rujukan statistik tahunan resmi yang memuat data komprehensif Kecamatan Cibogo.",
+      "urlDrive": "https://drive.google.com/file/d/sample-kcda-2024/view"
+    },
+    {
+      "id": 2,
+      "judul": "Monografi Desa Sadawarna Tahun 2024",
+      "kategori": "Profil Desa",
+      "tahun": 2024,
+      "ukuran": "2.8 MB",
+      "deskripsi": "Himpunan data potensi desa, kondisi geografi, demografi, dan sarana prasarana desa.",
+      "urlDrive": "https://drive.google.com/file/d/sample-monografi-2024/view"
+    },
+    {
+      "id": 3,
+      "judul": "Perdes No. 03/2023 - Transparansi Anggaran Desa",
+      "kategori": "Peraturan Desa",
+      "tahun": 2023,
+      "ukuran": "1.5 MB",
+      "deskripsi": "Peraturan Desa Sadawarna tentang keterbukaan informasi publik dan APBDes.",
+      "urlDrive": "https://drive.google.com/file/d/sample-perdes-03-2023/view"
+    },
+    {
+      "id": 4,
+      "judul": "Laporan Ringkas Statistik Sosial Ekonomi 2024",
+      "kategori": "Laporan Khusus",
+      "tahun": 2024,
+      "ukuran": "3.1 MB",
+      "deskripsi": "Ringkasan indikator kesejahteraan sosial ekonomi dan tingkat pendidikan masyarakat desa.",
+      "urlDrive": "https://drive.google.com/file/d/sample-sosek-2024/view"
+    }
+  ]
+}
