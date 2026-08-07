@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Micro-Portal Desa Cantik | BPS Kabupaten Subang</title>
-    <meta name="description" content="Portal Publikasi Data Statistik Terpadu dan Potensi Desa - Program Desa Cantik BPS Kabupaten Subang">
+    <meta name="description" content="Portal Publikasi Data Statistik Terpadu, Dokumen Resmi, dan Potensi Desa - Program Desa Cantik BPS Kabupaten Subang">
     
-    <!-- 1. Google Fonts: Plus Jakarta Sans & Inter -->
+    <!-- 1. Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -89,14 +89,13 @@
 <body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-bps-blue selection:text-white">
 
     <!-- ==========================================
-         TOP NAVBAR / HEADER LOGO (RESPONSIVE MOBILE & DESKTOP)
+         TOP NAVBAR / HEADER LOGO (RESPONSIVE)
          ========================================== -->
     <header class="sticky top-0 z-50 glass-header border-b border-slate-200/80 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3">
             
             <!-- Branding Left: Official Subang & BPS Crests -->
             <div class="flex items-center gap-2.5 sm:gap-3.5">
-                <!-- SVG/Image Subang & BPS Logo Badge -->
                 <div class="flex items-center gap-2 bg-slate-100/80 p-1.5 rounded-xl border border-slate-200/60">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Lambang_Kabupaten_Subang.png" 
                          alt="Kabupaten Subang" 
@@ -122,7 +121,7 @@
                 </div>
             </div>
 
-            <!-- Header Center/Right: Village Tag & Navigation Button -->
+            <!-- Header Center/Right: Village Tag & Quick Links -->
             <div class="flex items-center gap-2">
                 <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-50 text-bps-blue border border-blue-200/80 shadow-2xs">
                     <span class="relative flex h-2 w-2">
@@ -131,6 +130,12 @@
                     </span>
                     <span id="header-village-tag" class="truncate max-w-[130px] sm:max-w-none">Desa Sadawarna</span>
                 </div>
+
+                <a href="#potensi-section" 
+                   class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-700 hover:text-bps-blue bg-slate-100 hover:bg-blue-50 rounded-xl transition-all">
+                    <i class="fa-solid fa-gem text-amber-500"></i>
+                    <span>Potensi</span>
+                </a>
 
                 <a href="#dokumen-section" 
                    class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 text-xs font-bold text-white bg-bps-blue hover:bg-blue-700 active:scale-95 rounded-xl shadow-sm transition-all duration-200">
@@ -142,36 +147,31 @@
     </header>
 
     <!-- ==========================================
-         HERO SECTION (RESPONSIVE GRADIENT & TYPOGRAPHY)
+         HERO SECTION
          ========================================== -->
     <section class="relative bg-gradient-to-br from-bps-dark via-bps-navy to-slate-900 text-white overflow-hidden pt-8 pb-16 sm:pt-12 sm:pb-20 md:py-20">
-        <!-- Overlay Geometric Background -->
         <div class="absolute inset-0 opacity-20 hero-pattern pointer-events-none"></div>
         <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="max-w-3xl">
-                <!-- Program Tagline Pill -->
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-white/10 backdrop-blur-md text-blue-200 text-xs font-semibold mb-4 border border-white/15 shadow-sm">
                     <i class="fa-solid fa-award text-amber-400"></i>
                     <span>Portal Resmi Desa Cinta Statistik (Desa Cantik)</span>
                 </div>
 
-                <!-- Main Hero Heading -->
                 <h2 id="hero-title" class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-snug sm:leading-tight mb-4">
-                    Publikasi Data Statistik <br class="hidden sm:block">
+                    Publikasi Data & Potensi <br class="hidden sm:block">
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-teal-200 to-emerald-300" id="hero-village-name">
                         Desa Sadawarna
                     </span>
                 </h2>
 
-                <!-- Subtitle / Description -->
                 <p id="hero-description" class="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed mb-6 font-normal max-w-2xl">
-                    Pusat publikasi data makro, indikator sosial ekonomi, dan dokumen resmi desa terpadu untuk transparansi serta perencanaan pembangunan berbasis data.
+                    Pusat publikasi data makro, indikator sosial ekonomi, galeri potensi keunggulan desa, dan dokumen resmi terpadu untuk transparansi serta pembangunan berkelanjutan.
                 </p>
                 
-                <!-- Quick Info Badges Bar -->
                 <div class="flex flex-wrap items-center gap-3 sm:gap-6 text-xs text-slate-300 border-t border-white/10 pt-4">
                     <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
                         <i class="fa-solid fa-location-dot text-rose-400"></i>
@@ -271,7 +271,33 @@
         </section>
 
         <!-- ==========================================
-             2. CHART & VISUALISASI DEMOGRAFI (MODERN PROGRESS BREAKDOWN)
+             2. GALERI POTENSI & KEUNGGULAN DESA (MODUL BARU)
+             ========================================== -->
+        <section id="potensi-section" class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-slate-100">
+                <div>
+                    <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-gem text-amber-500"></i>
+                        <span>Galeri Potensi & Keunggulan Desa</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Pameran komoditas pertanian, destinasi wisata, dan produk UMKM unggulan lokal</p>
+                </div>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs font-semibold self-start sm:self-auto border border-amber-200/60">
+                    <i class="fa-solid fa-store"></i> Produk & Wisata
+                </div>
+            </div>
+
+            <!-- Grid Card Potensi Desa -->
+            <div id="potensi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                <!-- Skeleton Placeholder Card -->
+                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 animate-pulse h-72"></div>
+                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 animate-pulse h-72 hidden sm:block"></div>
+                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 animate-pulse h-72 hidden lg:block"></div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             3. CHART & VISUALISASI DEMOGRAFI
              ========================================== -->
         <section class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-slate-100">
@@ -288,19 +314,17 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <!-- Donut Chart Canvas (Center Text Enhanced) -->
+                <!-- Donut Chart Canvas -->
                 <div class="lg:col-span-5 flex flex-col items-center justify-center relative min-h-[240px] sm:min-h-[280px]">
                     <div class="w-full max-w-[240px] sm:max-w-[260px] relative">
                         <canvas id="jobChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Modern Progress Bar Legend Breakdown -->
+                <!-- Progress Bar Legend Breakdown -->
                 <div class="lg:col-span-7">
                     <div id="job-legend-list" class="space-y-3.5">
-                        <!-- Skeletal Loading Placeholder -->
                         <div class="animate-pulse space-y-3">
-                            <div class="h-10 bg-slate-100 rounded-xl"></div>
                             <div class="h-10 bg-slate-100 rounded-xl"></div>
                             <div class="h-10 bg-slate-100 rounded-xl"></div>
                         </div>
@@ -310,10 +334,9 @@
         </section>
 
         <!-- ==========================================
-             3. TABEL & CARD PUBLIKASI DOKUMEN (DUAL MOBILE CARD & DESKTOP TABLE)
+             4. TABEL & CARD PUBLIKASI DOKUMEN
              ========================================== -->
         <section id="dokumen-section" class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80">
-            <!-- Section Header & Live Search Bar -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-100">
                 <div>
                     <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
@@ -333,16 +356,14 @@
                 </div>
             </div>
 
-            <!-- A. MOBILE CARD VIEW (Tampil Khusus di Layar Ponsel - < sm breakpoint) -->
+            <!-- Mobile Card View (< sm breakpoint) -->
             <div id="document-mobile-cards" class="grid grid-cols-1 gap-3.5 sm:hidden">
-                <!-- Baris Card Mobile dirender via app.js -->
                 <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 animate-pulse space-y-2">
                     <div class="h-4 bg-slate-200 rounded w-3/4"></div>
-                    <div class="h-3 bg-slate-200 rounded w-1/2"></div>
                 </div>
             </div>
 
-            <!-- B. DESKTOP TABLE VIEW (Tampil di Layar Tablet & Laptop - >= sm breakpoint) -->
+            <!-- Desktop Table View (>= sm breakpoint) -->
             <div class="hidden sm:block overflow-x-auto rounded-2xl border border-slate-200">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -355,7 +376,6 @@
                         </tr>
                     </thead>
                     <tbody id="document-table-body" class="divide-y divide-slate-100 text-sm">
-                        <!-- Baris Tabel Desktop dirender via app.js -->
                         <tr>
                             <td colspan="5" class="py-10 text-center text-slate-400">
                                 <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-bps-blue"></i>
@@ -370,7 +390,7 @@
     </main>
 
     <!-- ==========================================
-         FOOTER (RESPONSIVE & CLEAN)
+         FOOTER
          ========================================== -->
     <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 py-10 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -406,7 +426,7 @@
                     <p class="text-slate-400 text-[11px]">Kolaborasi: <strong class="text-slate-200">Tim PKL / Pembinaan Desa Cantik</strong> x Pemdes Sadawarna</p>
                     <div class="pt-2">
                         <span class="px-2.5 py-1 rounded bg-slate-800 text-slate-300 text-[10px] font-mono border border-slate-700">
-                            Zero-Maintenance Template v1.2
+                            Zero-Maintenance Template v1.3
                         </span>
                     </div>
                 </div>

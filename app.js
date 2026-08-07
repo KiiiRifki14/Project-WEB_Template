@@ -58,10 +58,11 @@ async function loadData() {
         if (CONFIG.DATA_URL.includes("sheetdb.io")) {
             console.log("📡 Mengambil data dinamis dari Google Sheets via SheetDB API...");
             
-            // Melakukan fetch paralel untuk 4 sheet/tab berbeda di Google Sheets
-            const [resIdentitas, resMakro, resJobs, resDocs] = await Promise.all([
+            // Melakukan fetch paralel untuk 5 sheet/tab berbeda di Google Sheets
+            const [resIdentitas, resMakro, resPotensi, resJobs, resDocs] = await Promise.all([
                 fetch(`${CONFIG.DATA_URL}`), // default tab (identitas)
                 fetch(`${CONFIG.DATA_URL}?sheet=statistikMakro`),
+                fetch(`${CONFIG.DATA_URL}?sheet=potensiDesa`),
                 fetch(`${CONFIG.DATA_URL}?sheet=mataPencaharian`),
                 fetch(`${CONFIG.DATA_URL}?sheet=dokumenPublikasi`)
             ]);
@@ -73,6 +74,7 @@ async function loadData() {
 
             const identitasArr = await resIdentitas.json();
             const makroArr = await resMakro.json();
+            const potensiArr = resPotensi.ok ? await resPotensi.json() : [];
             const jobsArr = await resJobs.json();
             const docsArr = await resDocs.json();
 
@@ -90,12 +92,23 @@ async function loadData() {
                 data.statistikMakro.jumlahKk = Number(data.statistikMakro.jumlahKk) || null;
             }
 
+            // Tab Potensi Desa
+            data.potensiDesa = Array.isArray(potensiArr) ? potensiArr.map(item => ({
+                id: Number(item.id) || 0,
+                judulPotensi: item.judulPotensi || "-",
+                kategori: item.kategori || "Potensi",
+                deskripsi: item.deskripsi || "-",
+                urlFoto: item.urlFoto || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+            })) : [];
+
+            // Tab Mata Pencaharian
             data.mataPencaharian = jobsArr.map(item => ({
                 kategori: item.kategori,
                 jumlah: Number(item.jumlah) || 0,
                 persentase: Number(item.persentase) || null
             }));
 
+            // Tab Dokumen Publikasi
             data.dokumenPublikasi = docsArr.map(item => ({
                 id: Number(item.id) || 0,
                 judul: item.judul || "-",
@@ -121,6 +134,7 @@ async function loadData() {
         // Render seluruh komponen
         if (data.identitas) renderIdentitas(data.identitas);
         if (data.statistikMakro) renderStatCards(data.statistikMakro);
+        if (data.potensiDesa) renderPotensiDesa(data.potensiDesa);
         if (data.mataPencaharian) renderJobChart(data.mataPencaharian);
         
         if (data.dokumenPublikasi) {
@@ -138,12 +152,10 @@ async function loadData() {
  * 1. Render Identitas Desa pada Header, Hero, dan Footer
  */
 function renderIdentitas(identitas) {
-    // Penanganan fallback nilai jika string kosong ("") dari Google Sheets
     const namaDesa = identitas.namaDesa || CONFIG.NAMA_DESA;
     const kecamatan = identitas.kecamatan || CONFIG.KECAMATAN;
     const kabupaten = identitas.kabupaten || CONFIG.KABUPATEN;
     
-    // Penanganan fallback typo kolom yang sering diinput operator
     const alamat = identitas.alamatKantor || identitas.alamatKanttor || "-";
     const email = identitas.email || "-";
     const telepon = identitas.telepon || identitas.telpon || "-";
@@ -196,7 +208,68 @@ function renderStatCards(makro) {
 }
 
 /**
- * 3. Render Visualisasi Grafik Chart.js & Progress Bar Breakdown
+ * 3. Render Galeri Potensi & Keunggulan Desa (Modul Kartu Visual Foto)
+ */
+function renderPotensiDesa(listPotensi) {
+    const container = document.getElementById("potensi-grid");
+    if (!container) return;
+
+    if (!listPotensi || listPotensi.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-full py-10 text-center text-slate-400">
+                <i class="fa-solid fa-gem text-3xl mb-2 text-slate-300"></i>
+                <p class="text-xs">Belum ada data potensi desa yang dimasukkan.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = listPotensi.map(item => {
+        const badgeStyle = getPotensiBadgeStyle(item.kategori);
+        const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
+        const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
+
+        return `
+            <div class="group bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 flex flex-col">
+                <!-- Foto Sampul dengan Hover Zoom & Badge Kategori -->
+                <div class="relative h-48 sm:h-52 w-full overflow-hidden bg-slate-100">
+                    <img src="${fotoUrl}" 
+                         alt="${item.judulPotensi}" 
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                         onerror="this.src='${placeholderImg}'">
+                    
+                    <!-- Overlay Gradient Gradient Shadow -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-60"></div>
+
+                    <!-- Badge Kategori -->
+                    <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-extrabold tracking-wide uppercase shadow-md ${badgeStyle}">
+                        ${item.kategori}
+                    </span>
+                </div>
+
+                <!-- Detail Deskripsi Kartu -->
+                <div class="p-5 flex flex-col justify-between flex-1 bg-white">
+                    <div>
+                        <h4 class="text-base font-extrabold text-slate-900 group-hover:text-bps-blue transition-colors line-clamp-1 mb-1.5">
+                            ${item.judulPotensi}
+                        </h4>
+                        <p class="text-xs text-slate-500 leading-relaxed line-clamp-3">
+                            ${item.deskripsi || '-'}
+                        </p>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-bps-blue">
+                        <span>Potensi Unggulan</span>
+                        <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * 4. Render Visualisasi Grafik Chart.js & Progress Bar Breakdown
  */
 function renderJobChart(listPekerjaan) {
     const ctx = document.getElementById("jobChart");
@@ -204,19 +277,16 @@ function renderJobChart(listPekerjaan) {
 
     if (!ctx || !listPekerjaan || listPekerjaan.length === 0) return;
 
-    // Hitung Total Penduduk Bekerja
     const totalPekerja = listPekerjaan.reduce((acc, curr) => acc + (curr.jumlah || 0), 0);
 
     const labels = listPekerjaan.map(item => item.kategori);
     const dataValues = listPekerjaan.map(item => item.jumlah);
     const backgroundColors = CONFIG.CHART_COLORS.slice(0, listPekerjaan.length);
 
-    // Destroy instance lama jika reload
     if (jobChartInstance) {
         jobChartInstance.destroy();
     }
 
-    // Custom Plugin Center Text di Donut Chart
     const centerTextPlugin = {
         id: 'centerText',
         beforeDraw: function(chart) {
@@ -246,7 +316,6 @@ function renderJobChart(listPekerjaan) {
         }
     };
 
-    // Inisialisasi Chart.js
     jobChartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -264,9 +333,7 @@ function renderJobChart(listPekerjaan) {
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
@@ -281,7 +348,6 @@ function renderJobChart(listPekerjaan) {
         }
     });
 
-    // Render Breakdown Legend dengan Progress Bar Modern
     if (legendContainer) {
         legendContainer.innerHTML = listPekerjaan.map((item, index) => {
             const color = backgroundColors[index % backgroundColors.length];
@@ -302,7 +368,6 @@ function renderJobChart(listPekerjaan) {
                         </div>
                     </div>
 
-                    <!-- Visual Progress Bar -->
                     <div class="w-full h-2 rounded-full bg-slate-200/80 overflow-hidden">
                         <div class="h-full rounded-full transition-all duration-500" 
                              style="width: ${pct}%; background-color: ${color}"></div>
@@ -314,7 +379,7 @@ function renderJobChart(listPekerjaan) {
 }
 
 /**
- * 4. Render Dokumen Publikasi Desa (Dual Mobile Card & Desktop Table)
+ * 5. Render Dokumen Publikasi Desa (Dual Mobile Card & Desktop Table)
  */
 function renderDokumenPublikasi(listDokumen) {
     const tbody = document.getElementById("document-table-body");
@@ -332,7 +397,6 @@ function renderDokumenPublikasi(listDokumen) {
         return;
     }
 
-    // A. Render Desktop Table View (>= sm breakpoint)
     if (tbody) {
         tbody.innerHTML = listDokumen.map((doc) => {
             const badgeStyle = getCategoryBadgeStyle(doc.kategori);
@@ -377,7 +441,6 @@ function renderDokumenPublikasi(listDokumen) {
         }).join('');
     }
 
-    // B. Render Mobile Card View (< sm breakpoint)
     if (mobileContainer) {
         mobileContainer.innerHTML = listDokumen.map((doc) => {
             const badgeStyle = getCategoryBadgeStyle(doc.kategori);
@@ -447,7 +510,20 @@ function setupSearchListener() {
 }
 
 /**
- * Helper Warna Badge Kategori
+ * Helper Warna Badge Kategori Potensi Desa
+ */
+function getPotensiBadgeStyle(kategori) {
+    if (!kategori) return "bg-white/90 text-slate-800 border-white/50";
+    const kat = kategori.toLowerCase();
+    if (kat.includes("wisata")) return "bg-emerald-500/90 text-white backdrop-blur-md";
+    if (kat.includes("pertanian") || kat.includes("perkebunan")) return "bg-amber-500/90 text-white backdrop-blur-md";
+    if (kat.includes("umkm") || kat.includes("ekonomi")) return "bg-indigo-600/90 text-white backdrop-blur-md";
+    if (kat.includes("seni") || kat.includes("budaya")) return "bg-rose-500/90 text-white backdrop-blur-md";
+    return "bg-slate-800/90 text-white backdrop-blur-md";
+}
+
+/**
+ * Helper Warna Badge Kategori Dokumen
  */
 function getCategoryBadgeStyle(kategori) {
     if (!kategori) return "bg-slate-50 text-slate-700 border-slate-200";
@@ -486,7 +562,7 @@ function tampilkanErrorUI(message) {
             <i class="fa-solid fa-circle-exclamation text-lg text-rose-500"></i>
             <div>
                 <strong>Gagal Memuat Data dari Google Sheets:</strong> ${message}. 
-                <span class="block text-[11px] text-rose-500 mt-1">Pastikan spreadsheet publik (Anyone with link can view) dan nama tab (identitas, statistikMakro, mataPencaharian, dokumenPublikasi) sudah benar.</span>
+                <span class="block text-[11px] text-rose-500 mt-1">Pastikan spreadsheet publik (Anyone with link can view) dan nama tab (identitas, statistikMakro, potensiDesa, mataPencaharian, dokumenPublikasi) sudah benar.</span>
             </div>
         `;
         container.prepend(errorDiv);
