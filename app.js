@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * SPA View Switcher: Beranda Utama vs Halaman Khusus Dokumen Publikasi
+ * SPA View Switcher: Membedakan Tema & Konten Banner Antara Beranda Utama & Halaman Dokumen
  */
 function switchView(viewName) {
     const viewHome = document.getElementById("view-home");
@@ -64,17 +64,54 @@ function switchView(viewName) {
     const tabHome = document.getElementById("nav-tab-home");
     const tabDokumen = document.getElementById("nav-tab-dokumen");
 
+    const heroBadgeTag = document.getElementById("hero-badge-tag");
+    const heroBadgeSub = document.getElementById("hero-badge-sub");
+    const heroTitle = document.getElementById("hero-title");
+    const heroDesc = document.getElementById("hero-description");
+
+    const mobileBtnHome = document.getElementById("mobile-btn-home");
+    const mobileBtnDokumen = document.getElementById("mobile-btn-dokumen");
+    const menuBadge = document.getElementById("menu-view-badge");
+
+    const currentVillage = document.getElementById("hero-village-name")?.textContent || "Desa Sadawarna";
+
     if (!viewHome || !viewDokumen) return;
 
     if (viewName === "dokumen") {
         viewHome.classList.add("hidden");
         viewDokumen.classList.remove("hidden");
 
+        // Desktop Nav Styling
         if (tabHome) {
             tabHome.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
         }
         if (tabDokumen) {
-            tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-bps-blue bg-blue-50 font-bold border border-blue-200 transition-all flex items-center gap-1.5";
+            tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-indigo-600 bg-indigo-50 font-bold border border-indigo-200 transition-all flex items-center gap-1.5 shadow-xs";
+        }
+
+        // Mobile Drawer Button Styling
+        if (mobileBtnHome) {
+            mobileBtnHome.className = "w-full flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold transition-all text-left";
+        }
+        if (mobileBtnDokumen) {
+            mobileBtnDokumen.className = "w-full flex items-center justify-between p-3 rounded-2xl bg-indigo-600 text-white shadow-md font-bold transition-all text-left";
+        }
+        if (menuBadge) {
+            menuBadge.textContent = "Mode Dokumen";
+            menuBadge.className = "px-2 py-0.5 rounded bg-indigo-900/80 text-indigo-300 border border-indigo-700 text-[10px]";
+        }
+
+        // Banner Dynamic Update khusus Halaman Dokumen
+        if (heroBadgeTag) {
+            heroBadgeTag.textContent = "REPOSITORI DOKUMEN";
+            heroBadgeTag.className = "px-2 py-0.5 rounded-full bg-indigo-500 text-white font-extrabold text-[10px]";
+        }
+        if (heroBadgeSub) heroBadgeSub.textContent = "Publikasi BPS, Monografi & Perdes";
+        if (heroTitle) {
+            heroTitle.innerHTML = `Pusat Dokumen & Publikasi <br class="hidden sm:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-indigo-200 to-blue-300">${currentVillage}</span>`;
+        }
+        if (heroDesc) {
+            heroDesc.textContent = "Repositori digital resmi untuk mengunduh publikasi Kecamatan Dalam Angka (KCDA), Monografi Desa, Peraturan Desa (Perdes), dan laporan statistik.";
         }
 
         window.location.hash = "dokumen";
@@ -84,11 +121,37 @@ function switchView(viewName) {
         viewDokumen.classList.add("hidden");
         viewHome.classList.remove("hidden");
 
+        // Desktop Nav Styling
         if (tabHome) {
-            tabHome.className = "px-3.5 py-1.5 rounded-xl text-bps-blue bg-blue-50 font-bold border border-blue-200 transition-all flex items-center gap-1.5";
+            tabHome.className = "px-3.5 py-1.5 rounded-xl text-bps-blue bg-blue-50 font-bold border border-blue-200 transition-all flex items-center gap-1.5 shadow-xs";
         }
         if (tabDokumen) {
             tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
+        }
+
+        // Mobile Drawer Button Styling
+        if (mobileBtnHome) {
+            mobileBtnHome.className = "w-full flex items-center justify-between p-3 rounded-2xl bg-bps-blue text-white shadow-md font-bold transition-all text-left";
+        }
+        if (mobileBtnDokumen) {
+            mobileBtnDokumen.className = "w-full flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold transition-all text-left";
+        }
+        if (menuBadge) {
+            menuBadge.textContent = "Beranda Utama";
+            menuBadge.className = "px-2 py-0.5 rounded bg-blue-900/80 text-blue-300 border border-blue-700 text-[10px]";
+        }
+
+        // Banner Dynamic Update khusus Beranda Utama
+        if (heroBadgeTag) {
+            heroBadgeTag.textContent = "MICRO-PORTAL";
+            heroBadgeTag.className = "px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[10px]";
+        }
+        if (heroBadgeSub) heroBadgeSub.textContent = "Desa Cinta Statistik BPS Subang";
+        if (heroTitle) {
+            heroTitle.innerHTML = `Publikasi Data & Potensi <br class="hidden sm:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-teal-200 to-emerald-300">${currentVillage}</span>`;
+        }
+        if (heroDesc) {
+            heroDesc.textContent = "Pusat publikasi terpadu data statistik makro, indikator demografi, galeri potensi keunggulan wilayah, dan dokumen resmi desa.";
         }
 
         window.location.hash = "home";
@@ -97,7 +160,7 @@ function switchView(viewName) {
 }
 
 /**
- * Toggle Mobile Hamburger Menu
+ * Toggle Mobile Hamburger Menu dengan Animasi
  */
 function toggleMobileMenu() {
     const menu = document.getElementById("mobile-menu");
@@ -120,7 +183,7 @@ function toggleMobileMenu() {
 }
 
 /**
- * Memuat Data secara Asynchronous (Mendukung File Lokal & API SheetDB Multi-Tab)
+ * Memuat Data secara Asynchronous
  */
 async function loadData() {
     try {
@@ -235,7 +298,9 @@ function renderIdentitas(identitas) {
 
     if (tagVillage) tagVillage.textContent = `Desa ${namaDesa}`;
     if (heroVillage) heroVillage.textContent = `Desa ${namaDesa}`;
-    if (heroDesc && identitas.deskripsi) heroDesc.textContent = identitas.deskripsi;
+    if (heroDesc && identitas.deskripsi && window.location.hash !== "#dokumen") {
+        heroDesc.textContent = identitas.deskripsi;
+    }
     if (heroDistrict) heroDistrict.textContent = `${kecamatan}, ${kabupaten}`;
     if (heroCode) heroCode.textContent = identitas.kodeDesa || "-";
 
@@ -570,7 +635,6 @@ function renderJobChart(listPekerjaan) {
 function filterDokumenKategori(category) {
     activeDocCategory = category;
 
-    // Update active tab buttons style
     const filterBtns = document.querySelectorAll(".doc-filter-btn");
     filterBtns.forEach(btn => {
         if (btn.textContent.trim() === category || (category === "Semua" && btn.textContent.trim().includes("Semua"))) {

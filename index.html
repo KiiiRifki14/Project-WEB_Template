@@ -58,7 +58,7 @@
         }
 
         .glass-header {
-            background: rgba(255, 255, 255, 0.96);
+            background: rgba(255, 255, 255, 0.97);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
         }
@@ -81,21 +81,37 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        /* Smooth Slide Down Animation for Mobile Menu */
+        @keyframes slideDownMenu {
+            from {
+                opacity: 0;
+                transform: translateY(-12px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .animate-menu-slide {
+            animation: slideDownMenu 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-bps-blue selection:text-white overflow-x-hidden w-full max-w-full">
 
     <!-- ==========================================
-         TOP NAVBAR WITH SPA PAGE SWITCHER
+         TOP NAVBAR (SIMPLE & LEGA DI HP)
          ========================================== -->
     <header class="sticky top-0 z-40 glass-header border-b border-slate-200/80 shadow-2xs w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-2">
             
-            <!-- Branding Left -->
-            <div class="flex items-center gap-2 sm:gap-3 cursor-pointer" onclick="switchView('home')">
+            <!-- Branding Left: Logo & Nama Singkat -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="switchView('home')">
                 <div class="flex items-center gap-1.5 bg-slate-100/90 px-2 py-1 rounded-xl border border-slate-200/70 shadow-2xs">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Lambang_Kabupaten_Subang.png" 
-                         alt="Kabupaten Subang" 
+                         alt="Subang" 
                          class="h-6 sm:h-8 w-auto object-contain"
                          onerror="this.style.display='none'; document.getElementById('fallback-subang').style.display='inline-flex'">
                     <span id="fallback-subang" class="hidden h-6 w-6 rounded bg-emerald-600 text-white font-bold text-[9px] items-center justify-center">SBG</span>
@@ -103,7 +119,7 @@
                     <span class="h-4 w-[1px] bg-slate-300"></span>
 
                     <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg" 
-                         alt="BPS Indonesia" 
+                         alt="BPS" 
                          class="h-5 sm:h-7 w-auto object-contain"
                          onerror="this.style.display='none'; document.getElementById('fallback-bps').style.display='inline-flex'">
                     <span id="fallback-bps" class="hidden h-5 px-1 rounded bg-bps-blue text-white font-bold text-[9px] items-center justify-center">BPS</span>
@@ -112,13 +128,13 @@
                 <div class="leading-tight">
                     <div class="flex items-center gap-1.5">
                         <h1 class="text-xs sm:text-sm font-extrabold text-bps-navy tracking-wide uppercase">DESA CANTIK</h1>
-                        <span class="px-1.5 py-0.2 text-[9px] font-bold rounded bg-blue-100 text-bps-blue">SUBANG</span>
+                        <span class="px-1.5 py-0.2 text-[9px] font-bold rounded bg-blue-100 text-bps-blue hidden sm:inline-block">SUBANG</span>
                     </div>
                     <p class="text-[10px] text-slate-500 font-medium hidden sm:block">Desa Cinta Statistik</p>
                 </div>
             </div>
 
-            <!-- Desktop Nav Links (SPA View Switcher) -->
+            <!-- Desktop Nav Links -->
             <nav class="hidden md:flex items-center gap-1 text-xs font-semibold">
                 <button onclick="switchView('home')" 
                         id="nav-tab-home" 
@@ -135,71 +151,108 @@
                 </button>
             </nav>
 
-            <!-- Right Badge & Mobile Hamburger Button -->
+            <!-- Right Area: Status Badge (Desktop Only) & Hamburger Toggle (Mobile) -->
             <div class="flex items-center gap-2">
-                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-bps-blue border border-blue-200">
+                <!-- Status Badge (Disembunyikan di HP agar Header Lega) -->
+                <div class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-bps-blue border border-blue-200">
                     <span class="relative flex h-2 w-2">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
-                    <span id="header-village-tag" class="truncate max-w-[95px] sm:max-w-none">Sadawarna</span>
+                    <span id="header-village-tag">Sadawarna</span>
                 </div>
 
+                <!-- Tombol Hamburger Garis 3 Khusus Mobile -->
                 <button id="mobile-menu-btn" 
                         onclick="toggleMobileMenu()" 
-                        class="md:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none border border-slate-200/80 transition-all">
-                    <i class="fa-solid fa-bars text-base" id="menu-icon"></i>
+                        class="md:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:bg-slate-200 focus:outline-none border border-slate-200/80 transition-all">
+                    <i class="fa-solid fa-bars text-lg text-slate-800" id="menu-icon"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Mobile Menu Dropdown Slide-Down -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white/98 backdrop-blur-md px-4 py-3 shadow-lg space-y-2 text-xs font-medium text-slate-700">
-            <button onclick="switchView('home'); toggleMobileMenu();" class="w-full flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 hover:text-bps-blue transition-colors text-left font-semibold">
-                <i class="fa-solid fa-house text-bps-blue w-5"></i>
-                <span>Beranda Utama</span>
+        <!-- Premium Mobile Menu Drawer Slide-Down (Beranimasi) -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-900/98 backdrop-blur-xl px-4 py-4 shadow-2xl space-y-2 text-white animate-menu-slide">
+            
+            <div class="pb-2 border-b border-slate-800 flex items-center justify-between text-[11px] text-slate-400 font-semibold uppercase tracking-wider">
+                <span>Pilihan Menu Portal</span>
+                <span id="menu-view-badge" class="px-2 py-0.5 rounded bg-blue-900/80 text-blue-300 border border-blue-700 text-[10px]">Beranda Utama</span>
+            </div>
+
+            <button onclick="switchView('home'); toggleMobileMenu();" 
+                    id="mobile-btn-home"
+                    class="w-full flex items-center justify-between p-3 rounded-2xl bg-bps-blue text-white shadow-md font-bold transition-all text-left">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
+                        <i class="fa-solid fa-house text-sm"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-extrabold">Beranda Utama</div>
+                        <div class="text-[10px] text-blue-200 font-normal">Data Makro, Potensi & Demografi</div>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs"></i>
             </button>
-            <button onclick="switchView('dokumen'); toggleMobileMenu();" class="w-full flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 hover:text-bps-blue transition-colors text-left font-semibold">
-                <i class="fa-solid fa-folder-open text-indigo-500 w-5"></i>
-                <span>Halaman Dokumen Publikasi</span>
+
+            <button onclick="switchView('dokumen'); toggleMobileMenu();" 
+                    id="mobile-btn-dokumen"
+                    class="w-full flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold transition-all text-left">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                        <i class="fa-solid fa-folder-open text-sm"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-extrabold">Pusat Dokumen Publikasi</div>
+                        <div class="text-[10px] text-slate-400 font-normal">Unduh KCDA, Monografi & Perdes</div>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
             </button>
-            <a href="#potensi-section" onclick="if(document.getElementById('view-home').classList.contains('hidden')) switchView('home'); toggleMobileMenu();" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 hover:text-bps-blue transition-colors">
-                <i class="fa-solid fa-gem text-amber-500 w-5"></i>
-                <span>Potensi & Keunggulan Desa</span>
-            </a>
-            <a href="#footer-section" onclick="toggleMobileMenu()" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 hover:text-bps-blue transition-colors">
-                <i class="fa-solid fa-building text-slate-500 w-5"></i>
-                <span>Sekretariat & Kontak Desa</span>
-            </a>
+
+            <div class="pt-2 space-y-1">
+                <a href="#potensi-section" onclick="if(document.getElementById('view-home').classList.contains('hidden')) switchView('home'); toggleMobileMenu();" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors text-xs">
+                    <i class="fa-solid fa-gem text-amber-400 w-5"></i>
+                    <span>Potensi & Keunggulan Wilayah</span>
+                </a>
+                <a href="#footer-section" onclick="toggleMobileMenu()" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition-colors text-xs">
+                    <i class="fa-solid fa-building text-blue-400 w-5"></i>
+                    <span>Sekretariat & Kontak Desa</span>
+                </a>
+            </div>
         </div>
     </header>
 
     <!-- ==========================================
-         HERO / BANNER SECTION
+         HERO BANNER (JARAK PADAT & TULISAN RAPI DI HP)
          ========================================== -->
-    <section class="relative bg-gradient-to-br from-bps-dark via-bps-navy to-slate-950 text-white overflow-hidden py-8 sm:py-14 md:py-16 w-full">
+    <section id="hero-banner-section" class="relative bg-gradient-to-br from-bps-dark via-bps-navy to-slate-950 text-white overflow-hidden pt-8 pb-14 sm:pt-14 sm:pb-20 w-full transition-all duration-300">
+        <!-- Visual Ambient Glow Effects -->
         <div class="absolute inset-0 opacity-20 hero-pattern pointer-events-none"></div>
         <div class="absolute -top-32 -right-32 w-80 h-80 sm:w-96 sm:h-96 bg-blue-500/25 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-32 -left-32 w-80 h-80 sm:w-96 sm:h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="max-w-3xl">
+                <!-- Pill Badge Showcase -->
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-blue-200 text-xs font-semibold mb-3 border border-white/20 shadow-sm">
-                    <span class="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[10px]">MICRO-PORTAL</span>
-                    <span>Desa Cinta Statistik BPS Subang</span>
+                    <span id="hero-badge-tag" class="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[10px]">MICRO-PORTAL</span>
+                    <span id="hero-badge-sub">Desa Cinta Statistik BPS Subang</span>
                 </div>
 
-                <h2 id="hero-title" class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-3">
+                <!-- Main Title -->
+                <h2 id="hero-title" class="text-xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-2.5">
                     Publikasi Data & Potensi <br class="hidden sm:block">
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-teal-200 to-emerald-300" id="hero-village-name">
                         Desa Sadawarna
                     </span>
                 </h2>
 
-                <p id="hero-description" class="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed mb-4 font-normal max-w-2xl">
+                <!-- Subtitle Description (Ukuran Teks Dikecilkan dan Dirapikan Khusus HP) -->
+                <p id="hero-description" class="text-slate-300 text-[11px] sm:text-sm md:text-base leading-relaxed mb-4 font-normal max-w-2xl">
                     Pusat publikasi terpadu data statistik makro, indikator demografi, galeri potensi keunggulan wilayah, dan dokumen resmi desa.
                 </p>
                 
+                <!-- Tag Pills -->
                 <div class="flex flex-wrap items-center gap-2 text-xs text-slate-300 border-t border-white/10 pt-3">
                     <div class="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1 rounded-xl border border-white/10">
                         <i class="fa-solid fa-location-dot text-rose-400"></i>
@@ -215,12 +268,12 @@
     </section>
 
     <!-- ==========================================
-         MAIN CONTENT (SPA 2-VIEW SYSTEM)
+         MAIN CONTENT AREA
          ========================================== -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-10 relative z-20 mb-12 w-full box-border">
 
         <!-- ==========================================
-             VIEW 1: BERANDA UTAMA (DATA MAKRO, POTENSI, DEMOGRAFI)
+             VIEW 1: BERANDA UTAMA
              ========================================== -->
         <div id="view-home" class="space-y-6 sm:space-y-12">
             
@@ -371,7 +424,7 @@
         </div>
 
         <!-- ==========================================
-             VIEW 2: HALAMAN KHUSUS DOKUMEN PUBLIKASI (HALAMAN BARU)
+             VIEW 2: HALAMAN KHUSUS DOKUMEN PUBLIKASI
              ========================================== -->
         <div id="view-dokumen" class="hidden space-y-6">
             
@@ -392,7 +445,7 @@
                     <button onclick="switchView('home')" 
                             class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all self-start md:self-auto">
                         <i class="fa-solid fa-arrow-left text-xs"></i>
-                        <span>Kembali ke Beranda</span>
+                        <span>Kembali ke Beranda Utama</span>
                     </button>
                 </div>
 
@@ -454,7 +507,7 @@
     </div>
 
     <!-- ==========================================
-         FOOTER RINGKAS (COMPACT FOOTER)
+         FOOTER RINGKAS
          ========================================== -->
     <footer id="footer-section" class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 py-6 w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -484,7 +537,7 @@
                     <p class="text-slate-400 text-[11px]">BPS Kabupaten Subang x Pemdes Sadawarna</p>
                     <div class="pt-0.5">
                         <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] font-mono border border-slate-700">
-                            Zero-Maintenance Template v2.5
+                            Zero-Maintenance Template v3.0
                         </span>
                     </div>
                 </div>
