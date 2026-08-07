@@ -50,6 +50,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
+ * Toggle Mobile Hamburger Menu
+ */
+function toggleMobileMenu() {
+    const menu = document.getElementById("mobile-menu");
+    const icon = document.getElementById("menu-icon");
+    if (!menu) return;
+
+    if (menu.classList.contains("hidden")) {
+        menu.classList.remove("hidden");
+        if (icon) {
+            icon.classList.remove("fa-bars");
+            icon.classList.add("fa-xmark");
+        }
+    } else {
+        menu.classList.add("hidden");
+        if (icon) {
+            icon.classList.remove("fa-xmark");
+            icon.classList.add("fa-bars");
+        }
+    }
+}
+
+/**
  * Memuat Data secara Asynchronous (Mendukung File Lokal & API SheetDB Multi-Tab)
  */
 async function loadData() {
@@ -94,8 +117,8 @@ async function loadData() {
             }
 
             // Tab Potensi Desa
-            data.potensiDesa = Array.isArray(potensiArr) ? potensiArr.map(item => ({
-                id: parseAngkaIndo(item.id) || 0,
+            data.potensiDesa = Array.isArray(potensiArr) ? potensiArr.map((item, index) => ({
+                id: parseAngkaIndo(item.id) || (index + 1),
                 judulPotensi: item.judulPotensi || "-",
                 kategori: item.kategori || "Potensi",
                 deskripsi: item.deskripsi || "-",
@@ -246,7 +269,7 @@ window.filterPotensi = function(category) {
 };
 
 /**
- * 3B. Render Potensi Cards (Lebih Bersih & Fully Responsive Tanpa Overflow Horizontal)
+ * 3B. Render Potensi Cards dengan Dukungan Modal Popup onClick
  */
 function renderPotensiDesa(listPotensi) {
     const container = document.getElementById("potensi-grid");
@@ -269,9 +292,10 @@ function renderPotensiDesa(listPotensi) {
         const isFeatured = (activePotensiCategory === "Semua" && index === 0);
 
         if (isFeatured) {
-            // 🌟 FEATURED SPOTLIGHT CARD (2 Kolom di Laptop, 1 Kolom di HP)
+            // 🌟 FEATURED SPOTLIGHT CARD (onClick Open Modal)
             return `
-                <div class="group relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-card-hover border border-slate-200/90 min-h-[250px] sm:h-96 md:h-[380px] flex flex-col justify-end p-5 sm:p-8 bg-slate-950 text-white lg:col-span-2 transition-all duration-300 w-full">
+                <div onclick="openPotensiModal(${item.id})" 
+                     class="group cursor-pointer relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-card-hover border border-slate-200/90 min-h-[250px] sm:h-96 md:h-[380px] flex flex-col justify-end p-5 sm:p-8 bg-slate-950 text-white lg:col-span-2 transition-all duration-300 w-full">
                     <img src="${fotoUrl}" 
                          alt="${item.judulPotensi}" 
                          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-75"
@@ -288,19 +312,24 @@ function renderPotensiDesa(listPotensi) {
                                 ${item.kategori}
                             </span>
                         </div>
-                        <h4 class="text-base sm:text-2xl font-extrabold text-white leading-tight group-hover:text-blue-300 transition-colors">
+                        <h4 class="text-base sm:text-2xl font-extrabold text-white leading-tight group-hover:text-amber-300 transition-colors">
                             ${item.judulPotensi}
                         </h4>
                         <p class="text-xs sm:text-sm text-slate-300 line-clamp-2 leading-relaxed">
                             ${item.deskripsi || '-'}
                         </p>
+                        <div class="pt-2 flex items-center gap-1.5 text-xs font-bold text-amber-300">
+                            <span>Lihat Penjelasan Lengkap</span>
+                            <i class="fa-solid fa-circle-arrow-right text-xs"></i>
+                        </div>
                     </div>
                 </div>
             `;
         } else {
-            // 🖼️ REGULAR IMMERSIVE CARD
+            // 🖼️ REGULAR IMMERSIVE CARD (onClick Open Modal)
             return `
-                <div class="group relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-card-hover border border-slate-200/90 min-h-[220px] sm:h-80 flex flex-col justify-end p-4 sm:p-5 bg-slate-950 text-white transition-all duration-300 w-full">
+                <div onclick="openPotensiModal(${item.id})" 
+                     class="group cursor-pointer relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-card-hover border border-slate-200/90 min-h-[220px] sm:h-80 flex flex-col justify-end p-4 sm:p-5 bg-slate-950 text-white transition-all duration-300 w-full">
                     <img src="${fotoUrl}" 
                          alt="${item.judulPotensi}" 
                          class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80"
@@ -320,7 +349,7 @@ function renderPotensiDesa(listPotensi) {
                             ${item.deskripsi || '-'}
                         </p>
                         <div class="pt-1.5 flex items-center justify-between text-xs font-semibold text-blue-300 border-t border-white/10">
-                            <span>Eksplorasi</span>
+                            <span>Baca Detail</span>
                             <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
                         </div>
                     </div>
@@ -328,6 +357,68 @@ function renderPotensiDesa(listPotensi) {
             `;
         }
     }).join('');
+}
+
+/**
+ * 3C. Function Open & Close Modal Detail Potensi Desa
+ */
+function openPotensiModal(id) {
+    const item = cachedPotensi.find(p => p.id === id);
+    if (!item) return;
+
+    const modal = document.getElementById("potensi-modal");
+    const modalContent = document.getElementById("potensi-modal-content");
+    if (!modal || !modalContent) return;
+
+    const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
+    const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
+
+    modalContent.innerHTML = `
+        <div class="relative">
+            <img src="${fotoUrl}" alt="${item.judulPotensi}" class="w-full h-48 sm:h-64 object-cover">
+            <button onclick="closePotensiModal()" 
+                    class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-950/70 text-white flex items-center justify-center hover:bg-slate-950 transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <span class="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-bps-blue text-white shadow-md">
+                ${item.kategori}
+            </span>
+        </div>
+        <div class="p-5 sm:p-6 space-y-3">
+            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
+                ${item.judulPotensi}
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                ${item.deskripsi || 'Belum ada penjelasan detail untuk potensi ini.'}
+            </p>
+            <div class="pt-3 border-t border-slate-100 flex justify-end">
+                <button onclick="closePotensiModal()" 
+                        class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors">
+                    Tutup Penjelasan
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+    setTimeout(() => {
+        modalContent.classList.remove("scale-95", "opacity-0");
+        modalContent.classList.add("scale-100", "opacity-100");
+    }, 10);
+}
+
+function closePotensiModal() {
+    const modal = document.getElementById("potensi-modal");
+    const modalContent = document.getElementById("potensi-modal-content");
+    if (!modal || !modalContent) return;
+
+    modalContent.classList.remove("scale-100", "opacity-100");
+    modalContent.classList.add("scale-95", "opacity-0");
+    setTimeout(() => {
+        modal.classList.remove("flex");
+        modal.classList.add("hidden");
+    }, 200);
 }
 
 /**

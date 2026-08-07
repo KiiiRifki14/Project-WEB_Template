@@ -11,10 +11,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- 2. FontAwesome 6 CDN (Ikon Modern) -->
+    <!-- 2. FontAwesome 6 CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- 3. Tailwind CSS CDN + Konfigurasi Palette Kustom -->
+    <!-- 3. Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -35,14 +35,14 @@
                     },
                     boxShadow: {
                         'glass': '0 8px 32px 0 rgba(0, 91, 170, 0.08)',
-                        'card-hover': '0 20px 40px -15px rgba(0, 91, 170, 0.12)',
+                        'card-hover': '0 20px 40px -15px rgba(0, 91, 170, 0.15)',
                     }
                 }
             }
         }
     </script>
     
-    <!-- 4. Chart.js CDN (Visualisasi Grafik) -->
+    <!-- 4. Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -58,20 +58,20 @@
         }
 
         .glass-header {
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(226, 232, 240, 0.9);
         }
 
         .hero-pattern {
-            background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
         }
 
         .no-scrollbar::-webkit-scrollbar {
@@ -86,14 +86,14 @@
 <body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-bps-blue selection:text-white overflow-x-hidden w-full max-w-full">
 
     <!-- ==========================================
-         TOP NAVBAR / HEADER LOGO (RESPONSIVE)
+         TOP NAVBAR + HAMBURGER MENU MOBILE
          ========================================== -->
-    <header class="sticky top-0 z-50 glass-header border-b border-slate-200/80 shadow-2xs w-full">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+    <header class="sticky top-0 z-40 glass-header border-b border-slate-200/80 shadow-2xs w-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-2">
             
             <!-- Branding Left -->
-            <div class="flex items-center gap-2 sm:gap-3.5">
-                <div class="flex items-center gap-1.5 bg-slate-100/90 p-1 sm:p-1.5 rounded-xl border border-slate-200/60">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex items-center gap-1.5 bg-slate-100/90 px-2 py-1 rounded-xl border border-slate-200/70 shadow-2xs">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Lambang_Kabupaten_Subang.png" 
                          alt="Kabupaten Subang" 
                          class="h-6 sm:h-8 w-auto object-contain"
@@ -109,66 +109,106 @@
                     <span id="fallback-bps" class="hidden h-5 px-1 rounded bg-bps-blue text-white font-bold text-[9px] items-center justify-center">BPS</span>
                 </div>
 
-                <div class="hidden md:block leading-tight">
+                <div class="leading-tight">
                     <div class="flex items-center gap-1.5">
-                        <h1 class="text-xs font-extrabold text-bps-navy tracking-wide uppercase">DESA CANTIK</h1>
-                        <span class="px-1.5 py-0.2 text-[9px] font-bold rounded bg-blue-100 text-bps-blue">BPS SUBANG</span>
+                        <h1 class="text-xs sm:text-sm font-extrabold text-bps-navy tracking-wide uppercase">DESA CANTIK</h1>
+                        <span class="px-1.5 py-0.2 text-[9px] font-bold rounded bg-blue-100 text-bps-blue">SUBANG</span>
                     </div>
-                    <p class="text-[11px] text-slate-500 font-medium">Desa Cinta Statistik</p>
+                    <p class="text-[10px] text-slate-500 font-medium hidden sm:block">Desa Cinta Statistik</p>
                 </div>
             </div>
 
-            <!-- Header Center/Right -->
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-600">
+                <a href="#stat-cards-section" class="hover:text-bps-blue transition-colors">Data Makro</a>
+                <a href="#potensi-section" class="hover:text-bps-blue transition-colors">Potensi Wilayah</a>
+                <a href="#job-section" class="hover:text-bps-blue transition-colors">Demografi</a>
+                <a href="#dokumen-section" class="hover:text-bps-blue transition-colors">Dokumen</a>
+            </nav>
+
+            <!-- Right Badge & Mobile Hamburger Toggle -->
             <div class="flex items-center gap-2">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold bg-blue-50 text-bps-blue border border-blue-200/80">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-bps-blue border border-blue-200">
                     <span class="relative flex h-2 w-2">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
-                    <span id="header-village-tag" class="truncate max-w-[110px] sm:max-w-none">Desa Sadawarna</span>
+                    <span id="header-village-tag" class="truncate max-w-[95px] sm:max-w-none">Sadawarna</span>
                 </div>
 
-                <a href="#dokumen-section" 
-                   class="inline-flex items-center gap-1.5 px-3 py-1 sm:px-4 sm:py-1.5 text-xs font-bold text-white bg-bps-blue hover:bg-blue-700 rounded-xl shadow-xs transition-all">
-                    <i class="fa-solid fa-file-arrow-down text-xs"></i>
-                    <span class="hidden sm:inline">Dokumen</span>
-                </a>
+                <!-- Tombol Hamburger Garis 3 Khusus Mobile -->
+                <button id="mobile-menu-btn" 
+                        onclick="toggleMobileMenu()" 
+                        class="md:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none border border-slate-200/80 transition-all">
+                    <i class="fa-solid fa-bars text-base" id="menu-icon"></i>
+                </button>
             </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown Slide-Down -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white/98 backdrop-blur-md px-4 py-3 shadow-lg space-y-2 text-xs font-medium text-slate-700">
+            <a href="#stat-cards-section" onclick="toggleMobileMenu()" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 hover:text-bps-blue transition-colors">
+                <i class="fa-solid fa-chart-line text-bps-blue w-5"></i>
+                <span>Data Makro Desa</span>
+            </a>
+            <a href="#potensi-section" onclick="toggleMobileMenu()" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 hover:text-bps-blue transition-colors">
+                <i class="fa-solid fa-gem text-amber-500 w-5"></i>
+                <span>Potensi & Keunggulan Wilayah</span>
+            </a>
+            <a href="#job-section" onclick="toggleMobileMenu()" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 hover:text-bps-blue transition-colors">
+                <i class="fa-solid fa-pie-chart text-emerald-500 w-5"></i>
+                <span>Distribusi Mata Pencaharian</span>
+            </a>
+            <a href="#dokumen-section" onclick="toggleMobileMenu()" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 hover:text-bps-blue transition-colors">
+                <i class="fa-solid fa-folder-open text-indigo-500 w-5"></i>
+                <span>Publikasi & Dokumen Resmi</span>
+            </a>
+            <a href="#footer-section" onclick="toggleMobileMenu()" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 hover:text-bps-blue transition-colors">
+                <i class="fa-solid fa-building text-slate-500 w-5"></i>
+                <span>Sekretariat & Kontak</span>
+            </a>
         </div>
     </header>
 
     <!-- ==========================================
-         HERO SECTION
+         HERO / BANNER SECTION (MEWAH & ESTETIK)
          ========================================== -->
-    <section class="relative bg-gradient-to-br from-bps-dark via-bps-navy to-slate-900 text-white overflow-hidden pt-6 pb-12 sm:pt-12 sm:pb-20 w-full">
-        <div class="absolute inset-0 opacity-15 hero-pattern pointer-events-none"></div>
+    <section class="relative bg-gradient-to-br from-bps-dark via-bps-navy to-slate-950 text-white overflow-hidden py-8 sm:py-14 md:py-20 w-full">
+        <!-- Visual Accent Glow Effects -->
+        <div class="absolute inset-0 opacity-20 hero-pattern pointer-events-none"></div>
+        <div class="absolute -top-32 -right-32 w-80 h-80 sm:w-96 sm:h-96 bg-blue-500/25 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-32 -left-32 w-80 h-80 sm:w-96 sm:h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="max-w-3xl">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/10 text-blue-200 text-xs font-semibold mb-3 border border-white/15 shadow-sm">
-                    <i class="fa-solid fa-award text-amber-400"></i>
-                    <span>Portal Resmi Desa Cinta Statistik (Desa Cantik)</span>
+                <!-- Pill Badge Showcase -->
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-blue-200 text-xs font-semibold mb-3 border border-white/20 shadow-sm">
+                    <span class="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[10px]">RESI MIKRO</span>
+                    <span>Portal Resmi Desa Cantik BPS Subang</span>
                 </div>
 
-                <h2 id="hero-title" class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-snug sm:leading-tight mb-3">
+                <!-- Main Title -->
+                <h2 id="hero-title" class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-3">
                     Publikasi Data & Potensi <br class="hidden sm:block">
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-teal-200 to-emerald-300" id="hero-village-name">
                         Desa Sadawarna
                     </span>
                 </h2>
 
-                <p id="hero-description" class="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed mb-4 font-normal max-w-2xl">
-                    Pusat publikasi data makro, indikator sosial demografi, galeri potensi keunggulan desa, dan dokumen resmi terpadu.
+                <!-- Subtitle Description -->
+                <p id="hero-description" class="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed mb-5 font-normal max-w-2xl">
+                    Pusat publikasi terpadu data statistik makro, indikator demografi, galeri potensi keunggulan wilayah, dan dokumen publikasi resmi desa.
                 </p>
                 
-                <div class="flex flex-wrap items-center gap-2 sm:gap-6 text-xs text-slate-300 border-t border-white/10 pt-3">
-                    <div class="flex items-center gap-1.5 bg-white/5 px-3 py-1 rounded-lg border border-white/5">
-                        <i class="fa-solid fa-location-dot text-rose-400 text-xs"></i>
+                <!-- Tag Pills -->
+                <div class="flex flex-wrap items-center gap-2 text-xs text-slate-300 border-t border-white/10 pt-4">
+                    <div class="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1 rounded-xl border border-white/10">
+                        <i class="fa-solid fa-location-dot text-rose-400"></i>
                         <span id="hero-district">Kecamatan Cibogo, Kab. Subang</span>
                     </div>
-                    <div class="flex items-center gap-1.5 bg-white/5 px-3 py-1 rounded-lg border border-white/5">
-                        <i class="fa-solid fa-barcode text-blue-400 text-xs"></i>
-                        <span>Kode: <strong id="hero-code" class="text-white font-mono">3213030005</strong></span>
+                    <div class="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1 rounded-xl border border-white/10">
+                        <i class="fa-solid fa-barcode text-blue-400"></i>
+                        <span>Kode Wilayah: <strong id="hero-code" class="text-white font-mono">3213030005</strong></span>
                     </div>
                 </div>
             </div>
@@ -260,7 +300,7 @@
         </section>
 
         <!-- ==========================================
-             2. GALERI POTENSI DESA (RESPONSIVE GRID 1-COL MOBILE, 3-COL DESKTOP)
+             2. GALERI POTENSI DESA + MODAL POPUP DETIL
              ========================================== -->
         <section id="potensi-section" class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-sm border border-slate-200/80 w-full box-border">
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-4 mb-5 border-b border-slate-100">
@@ -271,7 +311,7 @@
                     <h3 class="text-lg sm:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
                         <span>Potensi & Keunggulan Wilayah</span>
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Eksplorasi destinasi wisata, pertanian, UMKM, dan sarana publik</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Klik pada kartu potensi untuk membaca penjelasan lengkap</p>
                 </div>
 
                 <!-- Filter Pills Bar -->
@@ -280,19 +320,17 @@
                 </div>
             </div>
 
-            <!-- Responsive Clean Grid (1 Col Mobile, 2 Col Tablet, 3 Col Desktop) -->
+            <!-- Responsive Clean Grid -->
             <div id="potensi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
                 <!-- Skeleton Placeholders -->
                 <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-100 animate-pulse h-64 sm:h-80 w-full"></div>
-                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-100 animate-pulse h-64 sm:h-80 w-full hidden sm:block"></div>
-                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-100 animate-pulse h-64 sm:h-80 w-full hidden lg:block"></div>
             </div>
         </section>
 
         <!-- ==========================================
-             3. CHART DEMOGRAFI (RESPONSIVE GRID)
+             3. CHART DEMOGRAFI (DISTRIBUSI PEKERJAAN)
              ========================================== -->
-        <section class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-sm border border-slate-200/80 w-full box-border">
+        <section id="job-section" class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-sm border border-slate-200/80 w-full box-border">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-100">
                 <div>
                     <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
@@ -317,7 +355,6 @@
                 <!-- Progress Bar Legend Breakdown -->
                 <div class="lg:col-span-7 w-full">
                     <div id="job-legend-list" class="space-y-3 w-full">
-                        <div class="animate-pulse h-10 bg-slate-100 rounded-xl w-full"></div>
                         <div class="animate-pulse h-10 bg-slate-100 rounded-xl w-full"></div>
                     </div>
                 </div>
@@ -379,49 +416,58 @@
     </main>
 
     <!-- ==========================================
-         FOOTER
+         POPUP MODAL DETIL POTENSI DESA
          ========================================== -->
-    <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 py-8 sm:py-10 mt-auto w-full">
+    <div id="potensi-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm transition-opacity">
+        <div id="potensi-modal-content" class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 transform transition-all scale-95 opacity-0 duration-300">
+            <!-- Content Injected via app.js -->
+        </div>
+    </div>
+
+    <!-- ==========================================
+         FOOTER RINGKAS (COMPACT FOOTER)
+         ========================================== -->
+    <footer id="footer-section" class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 py-6 w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 pb-6 border-b border-slate-800">
-                <div class="space-y-2.5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pb-5 border-b border-slate-800">
+                <div class="space-y-1.5">
                     <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 rounded bg-bps-blue text-white font-extrabold text-xs">BPS</span>
-                        <span class="font-bold text-white text-sm">Desa Cantik Subang</span>
+                        <span class="px-2 py-0.5 rounded bg-bps-blue text-white font-extrabold text-[10px]">BPS</span>
+                        <span class="font-bold text-white text-xs">Desa Cantik Subang</span>
                     </div>
                     <p id="footer-village-desc" class="text-slate-400 leading-relaxed text-[11px]">
                         Program Pembinaan Desa Cinta Statistik oleh BPS Kabupaten Subang.
                     </p>
                 </div>
 
-                <div class="space-y-1.5">
-                    <h4 class="font-semibold text-white text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-building text-blue-400"></i> Sekretariat Desa
+                <div class="space-y-1">
+                    <h4 class="font-semibold text-white text-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-building text-blue-400 text-[11px]"></i> Sekretariat Desa
                     </h4>
-                    <p id="footer-address" class="text-slate-400 text-[11px]">Jl. Raya Sadawarna No. 01, Kec. Cibogo, Kab. Subang</p>
+                    <p id="footer-address" class="text-slate-400 text-[11px]">Jl. Raya Sadawarna No. 01, Subang</p>
                     <p class="text-slate-400 text-[11px]">Email: <span id="footer-email" class="text-slate-300">pemdes.sadawarna@subang.go.id</span></p>
                 </div>
 
-                <div class="space-y-1.5">
-                    <h4 class="font-semibold text-white text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-handshake text-emerald-400"></i> Inisiator & Mitra
+                <div class="space-y-1">
+                    <h4 class="font-semibold text-white text-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-handshake text-emerald-400 text-[11px]"></i> Inisiator & Mitra
                     </h4>
-                    <p class="text-slate-400 text-[11px]">BPS Kabupaten Subang x Pemdes</p>
-                    <div class="pt-1">
-                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-mono border border-slate-700">
-                            Zero-Maintenance Template v1.6
+                    <p class="text-slate-400 text-[11px]">BPS Kabupaten Subang x Pemdes Sadawarna</p>
+                    <div class="pt-0.5">
+                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] font-mono border border-slate-700">
+                            Zero-Maintenance Template v2.0
                         </span>
                     </div>
                 </div>
             </div>
 
-            <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-[11px]">
+            <div class="pt-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left text-[11px]">
                 <p class="text-slate-500">
-                    &copy; 2026 Badan Pusat Statistik Kabupaten Subang. Hak Cipta Dilindungi.
+                    &copy; 2026 BPS Kabupaten Subang. Hak Cipta Dilindungi.
                 </p>
                 <div class="flex items-center gap-4 text-slate-400">
-                    <a href="https://subangkab.bps.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-white">BPS Subang</a>
-                    <a href="https://subang.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-white">Pemkab Subang</a>
+                    <a href="https://subangkab.bps.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">BPS Subang</a>
+                    <a href="https://subang.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Pemkab Subang</a>
                 </div>
             </div>
         </div>
