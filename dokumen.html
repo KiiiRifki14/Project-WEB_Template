@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth overflow-x-hidden w-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pusat Dokumen Publikasi | Desa Cantik BPS Subang</title>
+    <meta name="description" content="Pusat Dokumen Resmi, Monografi Desa, Peraturan Desa (Perdes), dan Publikasi KCDA BPS Subang">
+    
+    <!-- 1. Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- 2. FontAwesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- 3. Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        bps: {
+                            blue: '#005baa',
+                            dark: '#0a192f',
+                            navy: '#0f2b48',
+                            light: '#f0f6ff',
+                            amber: '#f59e0b',
+                            emerald: '#10b981'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-bps-blue selection:text-white overflow-x-hidden w-full max-w-full">
+
+    <!-- TOP NAVBAR -->
+    <header class="sticky top-0 z-40 glass-header border-b border-slate-200/80 shadow-2xs w-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-2">
+            
+            <a href="./index.html" class="flex items-center gap-2 sm:gap-3">
+                <div class="flex items-center gap-1.5 bg-slate-100/90 px-2 py-1 rounded-xl border border-slate-200/70 shadow-2xs">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Lambang_Kabupaten_Subang.png" 
+                         alt="Kabupaten Subang" 
+                         class="h-6 sm:h-8 w-auto object-contain">
+                    <span class="h-4 w-[1px] bg-slate-300"></span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg" 
+                         alt="BPS Indonesia" 
+                         class="h-5 sm:h-7 w-auto object-contain">
+                </div>
+
+                <div class="leading-tight">
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-xs sm:text-sm font-extrabold text-bps-navy tracking-wide uppercase">DESA CANTIK</h1>
+                        <span class="px-1.5 py-0.2 text-[9px] font-bold rounded bg-blue-100 text-bps-blue">SUBANG</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 font-medium hidden sm:block">Pusat Dokumen Resmi</p>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-2">
+                <a href="./index.html" 
+                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Beranda Utama</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6 w-full box-border">
+        
+        <!-- Header Section -->
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 w-full space-y-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div>
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold mb-2 border border-indigo-200">
+                        <i class="fa-solid fa-file-pdf text-indigo-600"></i> Repositori Resmi
+                    </div>
+                    <h2 class="text-xl sm:text-3xl font-extrabold text-slate-900 flex items-center gap-2">
+                        <span>Pusat Publikasi & Dokumen Resmi</span>
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Unduh publikasi Kecamatan Dalam Angka (KCDA), Monografi Desa, Peraturan Desa (Perdes), dan laporan statistik.</p>
+                </div>
+
+                <a href="./index.html" 
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all self-start md:self-auto">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    <span>Kembali ke Beranda</span>
+                </a>
+            </div>
+
+            <!-- Filter Kategori & Search Bar -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+                <div id="doc-category-filter-bar" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar w-full sm:w-auto">
+                    <button onclick="filterDokumenKategori('Semua')" class="doc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-bps-blue text-white shadow-xs">Semua Dokumen</button>
+                    <button onclick="filterDokumenKategori('Publikasi BPS')" class="doc-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Publikasi BPS</button>
+                    <button onclick="filterDokumenKategori('Profil Wilayah')" class="doc-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Profil Wilayah</button>
+                    <button onclick="filterDokumenKategori('Perdes')" class="doc-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">Perdes</button>
+                </div>
+
+                <div class="relative w-full sm:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" 
+                           id="document-search" 
+                           placeholder="Cari nama atau tahun dokumen..." 
+                           class="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-bps-blue/30 focus:border-bps-blue transition-all">
+                </div>
+            </div>
+        </div>
+
+        <!-- List Dokumen Mobile View -->
+        <div id="document-mobile-cards" class="grid grid-cols-1 gap-3 sm:hidden w-full"></div>
+
+        <!-- List Dokumen Desktop Table View -->
+        <div class="hidden sm:block bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 overflow-hidden w-full">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-600 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                        <th scope="col" class="py-4 px-6">Nama Dokumen & Deskripsi</th>
+                        <th scope="col" class="py-4 px-4">Kategori</th>
+                        <th scope="col" class="py-4 px-4 text-center">Tahun</th>
+                        <th scope="col" class="py-4 px-4 text-center">Ukuran</th>
+                        <th scope="col" class="py-4 px-6 text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="document-table-body" class="divide-y divide-slate-100 text-sm">
+                    <tr>
+                        <td colspan="5" class="py-10 text-center text-slate-400">
+                            <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-bps-blue"></i>
+                            <p class="text-xs">Memuat daftar dokumen...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 py-6 w-full mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px]">
+            <p>&copy; 2026 Badan Pusat Statistik Kabupaten Subang. Hak Cipta Dilindungi.</p>
+            <a href="./index.html" class="text-blue-400 font-bold hover:underline">Kembali ke Beranda Utama</a>
+        </div>
+    </footer>
+
+    <script src="./app.js"></script>
+</body>
+</html>

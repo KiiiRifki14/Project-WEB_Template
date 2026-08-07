@@ -39,6 +39,7 @@ let jobChartInstance = null;
 let cachedDokumen = []; // Cache dokumen untuk fitur pencarian
 let cachedPotensi = []; // Cache potensi desa untuk filter
 let activePotensiCategory = "Semua";
+let activeDocCategory = "Semua";
 
 /**
  * Inisialisasi Aplikasi saat DOM selesai dimuat
@@ -47,7 +48,53 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("🚀 Initializing Micro-Portal Desa Cantik BPS Subang...");
     loadData();
     setupSearchListener();
+
+    // Check URL Hash for initial view switching
+    if (window.location.hash === "#dokumen") {
+        switchView("dokumen");
+    }
 });
+
+/**
+ * SPA View Switcher: Beranda Utama vs Halaman Khusus Dokumen Publikasi
+ */
+function switchView(viewName) {
+    const viewHome = document.getElementById("view-home");
+    const viewDokumen = document.getElementById("view-dokumen");
+    const tabHome = document.getElementById("nav-tab-home");
+    const tabDokumen = document.getElementById("nav-tab-dokumen");
+
+    if (!viewHome || !viewDokumen) return;
+
+    if (viewName === "dokumen") {
+        viewHome.classList.add("hidden");
+        viewDokumen.classList.remove("hidden");
+
+        if (tabHome) {
+            tabHome.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
+        }
+        if (tabDokumen) {
+            tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-bps-blue bg-blue-50 font-bold border border-blue-200 transition-all flex items-center gap-1.5";
+        }
+
+        window.location.hash = "dokumen";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } else {
+        viewDokumen.classList.add("hidden");
+        viewHome.classList.remove("hidden");
+
+        if (tabHome) {
+            tabHome.className = "px-3.5 py-1.5 rounded-xl text-bps-blue bg-blue-50 font-bold border border-blue-200 transition-all flex items-center gap-1.5";
+        }
+        if (tabDokumen) {
+            tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
+        }
+
+        window.location.hash = "home";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
 
 /**
  * Toggle Mobile Hamburger Menu
@@ -79,13 +126,11 @@ async function loadData() {
     try {
         let data = {};
 
-        // Cek apakah menggunakan API SheetDB (mengandung domain sheetdb.io)
         if (CONFIG.DATA_URL.includes("sheetdb.io")) {
             console.log("📡 Mengambil data dinamis dari Google Sheets via SheetDB API...");
             
-            // Melakukan fetch paralel untuk 5 sheet/tab berbeda di Google Sheets
             const [resIdentitas, resMakro, resPotensi, resJobs, resDocs] = await Promise.all([
-                fetch(`${CONFIG.DATA_URL}`), // default tab (identitas)
+                fetch(`${CONFIG.DATA_URL}`),
                 fetch(`${CONFIG.DATA_URL}?sheet=statistikMakro`),
                 fetch(`${CONFIG.DATA_URL}?sheet=potensiDesa`),
                 fetch(`${CONFIG.DATA_URL}?sheet=mataPencaharian`),
@@ -102,11 +147,9 @@ async function loadData() {
             const jobsArr = await resJobs.json();
             const docsArr = await resDocs.json();
 
-            // Transformasi array respons SheetDB ke format terstruktur
             data.identitas = identitasArr[0] || {};
             data.statistikMakro = makroArr[0] || {};
             
-            // Smart Parsing Angka Indonesia (mengatasi koma desimal '60,22' & titik ribuan '147.424')
             if (data.statistikMakro) {
                 data.statistikMakro.totalPenduduk = parseAngkaIndo(data.statistikMakro.totalPenduduk);
                 data.statistikMakro.luasWilayah = parseAngkaIndo(data.statistikMakro.luasWilayah);
@@ -116,7 +159,6 @@ async function loadData() {
                 data.statistikMakro.jumlahKk = parseAngkaIndo(data.statistikMakro.jumlahKk);
             }
 
-            // Tab Potensi Desa
             data.potensiDesa = Array.isArray(potensiArr) ? potensiArr.map((item, index) => ({
                 id: parseAngkaIndo(item.id) || (index + 1),
                 judulPotensi: item.judulPotensi || "-",
@@ -125,14 +167,12 @@ async function loadData() {
                 urlFoto: item.urlFoto || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
             })) : [];
 
-            // Tab Mata Pencaharian
             data.mataPencaharian = jobsArr.map(item => ({
                 kategori: item.kategori,
                 jumlah: parseAngkaIndo(item.jumlah) || 0,
                 persentase: parseAngkaIndo(item.persentase)
             }));
 
-            // Tab Dokumen Publikasi
             data.dokumenPublikasi = docsArr.map(item => ({
                 id: parseAngkaIndo(item.id) || 0,
                 judul: item.judul || "-",
@@ -154,7 +194,6 @@ async function loadData() {
 
         console.log("✅ Data Berhasil Diproses:", data);
 
-        // Render seluruh komponen
         if (data.identitas) renderIdentitas(data.identitas);
         if (data.statistikMakro) renderStatCards(data.statistikMakro);
         
@@ -178,7 +217,7 @@ async function loadData() {
 }
 
 /**
- * 1. Render Identitas Desa pada Header, Hero, dan Footer
+ * 1. Render Identitas Desa
  */
 function renderIdentitas(identitas) {
     const namaDesa = identitas.namaDesa || CONFIG.NAMA_DESA;
@@ -200,7 +239,6 @@ function renderIdentitas(identitas) {
     if (heroDistrict) heroDistrict.textContent = `${kecamatan}, ${kabupaten}`;
     if (heroCode) heroCode.textContent = identitas.kodeDesa || "-";
 
-    // Footer Info
     const footerDesc = document.getElementById("footer-village-desc");
     const footerAddress = document.getElementById("footer-address");
     const footerEmail = document.getElementById("footer-email");
@@ -211,7 +249,7 @@ function renderIdentitas(identitas) {
 }
 
 /**
- * 2. Render Angka pada 4 Stat Cards Utama (Data Makro)
+ * 2. Render Stat Cards Utama
  */
 function renderStatCards(makro) {
     const elPenduduk = document.getElementById("stat-penduduk");
@@ -230,7 +268,7 @@ function renderStatCards(makro) {
 }
 
 /**
- * 3A. Render Filter Pills Bar untuk Potensi Desa
+ * 3A. Filter Potensi Desa
  */
 function renderPotensiFilterBar(listPotensi) {
     const filterContainer = document.getElementById("potensi-filter-bar");
@@ -253,9 +291,6 @@ function renderPotensiFilterBar(listPotensi) {
     }).join('');
 }
 
-/**
- * Handler Klik Filter Kategori Potensi
- */
 window.filterPotensi = function(category) {
     activePotensiCategory = category;
     renderPotensiFilterBar(cachedPotensi);
@@ -269,7 +304,7 @@ window.filterPotensi = function(category) {
 };
 
 /**
- * 3B. Render Potensi Cards dengan Dukungan Modal Popup onClick
+ * 3B. Render Potensi Cards
  */
 function renderPotensiDesa(listPotensi) {
     const container = document.getElementById("potensi-grid");
@@ -292,7 +327,6 @@ function renderPotensiDesa(listPotensi) {
         const isFeatured = (activePotensiCategory === "Semua" && index === 0);
 
         if (isFeatured) {
-            // 🌟 FEATURED SPOTLIGHT CARD (onClick Open Modal)
             return `
                 <div onclick="openPotensiModal(${item.id})" 
                      class="group cursor-pointer relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-card-hover border border-slate-200/90 min-h-[250px] sm:h-96 md:h-[380px] flex flex-col justify-end p-5 sm:p-8 bg-slate-950 text-white lg:col-span-2 transition-all duration-300 w-full">
@@ -326,7 +360,6 @@ function renderPotensiDesa(listPotensi) {
                 </div>
             `;
         } else {
-            // 🖼️ REGULAR IMMERSIVE CARD (onClick Open Modal)
             return `
                 <div onclick="openPotensiModal(${item.id})" 
                      class="group cursor-pointer relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-card-hover border border-slate-200/90 min-h-[220px] sm:h-80 flex flex-col justify-end p-4 sm:p-5 bg-slate-950 text-white transition-all duration-300 w-full">
@@ -360,7 +393,7 @@ function renderPotensiDesa(listPotensi) {
 }
 
 /**
- * 3C. Function Open & Close Modal Detail Potensi Desa
+ * 3C. Function Open & Close Modal Detail Potensi
  */
 function openPotensiModal(id) {
     const item = cachedPotensi.find(p => p.id === id);
@@ -422,7 +455,7 @@ function closePotensiModal() {
 }
 
 /**
- * 4. Render Visualisasi Grafik Chart.js & Progress Bar Breakdown
+ * 4. Render Chart Demografi Pekerjaan
  */
 function renderJobChart(listPekerjaan) {
     const ctx = document.getElementById("jobChart");
@@ -532,8 +565,35 @@ function renderJobChart(listPekerjaan) {
 }
 
 /**
- * 5. Render Dokumen Publikasi Desa (Dual Mobile Card & Desktop Table)
+ * 5. Render Dokumen Publikasi Desa & Filter Kategori
  */
+function filterDokumenKategori(category) {
+    activeDocCategory = category;
+
+    // Update active tab buttons style
+    const filterBtns = document.querySelectorAll(".doc-filter-btn");
+    filterBtns.forEach(btn => {
+        if (btn.textContent.trim() === category || (category === "Semua" && btn.textContent.trim().includes("Semua"))) {
+            btn.className = "doc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-bps-blue text-white shadow-xs";
+        } else {
+            btn.className = "doc-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200";
+        }
+    });
+
+    if (category === "Semua") {
+        renderDokumenPublikasi(cachedDokumen);
+    } else {
+        const filtered = cachedDokumen.filter(doc => {
+            const kat = (doc.kategori || "").toLowerCase();
+            if (category === "Publikasi BPS") return kat.includes("bps");
+            if (category === "Profil Wilayah") return kat.includes("profil") || kat.includes("monografi");
+            if (category === "Perdes") return kat.includes("peraturan") || kat.includes("perdes");
+            return kat.includes(category.toLowerCase());
+        });
+        renderDokumenPublikasi(filtered);
+    }
+}
+
 function renderDokumenPublikasi(listDokumen) {
     const tbody = document.getElementById("document-table-body");
     const mobileContainer = document.getElementById("document-mobile-cards");
@@ -542,7 +602,7 @@ function renderDokumenPublikasi(listDokumen) {
         const emptyStateHTML = `
             <div class="py-10 text-center text-slate-400 col-span-full w-full">
                 <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-300"></i>
-                <p class="text-xs">Tidak ada dokumen publikasi yang cocok dengan pencarian.</p>
+                <p class="text-xs">Tidak ada dokumen publikasi yang cocok dengan kriteria.</p>
             </div>
         `;
         if (tbody) tbody.innerHTML = `<tr><td colspan="5">${emptyStateHTML}</td></tr>`;
@@ -585,7 +645,7 @@ function renderDokumenPublikasi(listDokumen) {
                            target="_blank" 
                            rel="noopener noreferrer" 
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-bps-blue bg-blue-50 hover:bg-bps-blue hover:text-white border border-blue-200/80 transition-all duration-200 shadow-2xs">
-                            <span>Buka</span>
+                            <span>Buka Dokumen</span>
                             <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                         </a>
                     </td>
@@ -610,7 +670,7 @@ function renderDokumenPublikasi(listDokumen) {
                             </span>
                         </div>
                         <span class="text-[10px] text-slate-400 font-mono bg-slate-100 px-2 py-0.5 rounded">
-                            ${doc.tahun}
+                            Tahun ${doc.tahun}
                         </span>
                     </div>
 
@@ -695,7 +755,7 @@ function getCategoryBadgeStyle(kategori) {
 }
 
 /**
- * Utility Helper: Format Ribuan (misal 5420 -> 5.420)
+ * Utility Helper: Format Ribuan
  */
 function formatRibuan(num) {
     if (num === null || num === undefined || isNaN(num)) return "-";
@@ -703,7 +763,7 @@ function formatRibuan(num) {
 }
 
 /**
- * Utility Helper: Format Desimal (misal 14.85 -> 14,85)
+ * Utility Helper: Format Desimal
  */
 function formatDesimal(num) {
     if (num === null || num === undefined || isNaN(num)) return "-";
