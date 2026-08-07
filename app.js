@@ -37,6 +37,8 @@ const CONFIG = {
 // Global State Variables
 let jobChartInstance = null;
 let cachedDokumen = []; // Cache dokumen untuk fitur pencarian
+let cachedPotensi = []; // Cache potensi desa untuk filter
+let activePotensiCategory = "Semua";
 
 /**
  * Inisialisasi Aplikasi saat DOM selesai dimuat
@@ -82,19 +84,19 @@ async function loadData() {
             data.identitas = identitasArr[0] || {};
             data.statistikMakro = makroArr[0] || {};
             
-            // Konversi tipe data string dari API SheetDB menjadi Number
+            // Smart Parsing Angka Indonesia (mengatasi koma desimal '60,22' & titik ribuan '147.424')
             if (data.statistikMakro) {
-                data.statistikMakro.totalPenduduk = Number(data.statistikMakro.totalPenduduk) || null;
-                data.statistikMakro.luasWilayah = Number(data.statistikMakro.luasWilayah) || null;
-                data.statistikMakro.kepadatanPenduduk = Number(data.statistikMakro.kepadatanPenduduk) || null;
-                data.statistikMakro.jumlahRt = Number(data.statistikMakro.jumlahRt) || null;
-                data.statistikMakro.jumlahRw = Number(data.statistikMakro.jumlahRw) || null;
-                data.statistikMakro.jumlahKk = Number(data.statistikMakro.jumlahKk) || null;
+                data.statistikMakro.totalPenduduk = parseAngkaIndo(data.statistikMakro.totalPenduduk);
+                data.statistikMakro.luasWilayah = parseAngkaIndo(data.statistikMakro.luasWilayah);
+                data.statistikMakro.kepadatanPenduduk = parseAngkaIndo(data.statistikMakro.kepadatanPenduduk);
+                data.statistikMakro.jumlahRt = parseAngkaIndo(data.statistikMakro.jumlahRt);
+                data.statistikMakro.jumlahRw = parseAngkaIndo(data.statistikMakro.jumlahRw);
+                data.statistikMakro.jumlahKk = parseAngkaIndo(data.statistikMakro.jumlahKk);
             }
 
             // Tab Potensi Desa
             data.potensiDesa = Array.isArray(potensiArr) ? potensiArr.map(item => ({
-                id: Number(item.id) || 0,
+                id: parseAngkaIndo(item.id) || 0,
                 judulPotensi: item.judulPotensi || "-",
                 kategori: item.kategori || "Potensi",
                 deskripsi: item.deskripsi || "-",
@@ -104,16 +106,16 @@ async function loadData() {
             // Tab Mata Pencaharian
             data.mataPencaharian = jobsArr.map(item => ({
                 kategori: item.kategori,
-                jumlah: Number(item.jumlah) || 0,
-                persentase: Number(item.persentase) || null
+                jumlah: parseAngkaIndo(item.jumlah) || 0,
+                persentase: parseAngkaIndo(item.persentase)
             }));
 
             // Tab Dokumen Publikasi
             data.dokumenPublikasi = docsArr.map(item => ({
-                id: Number(item.id) || 0,
+                id: parseAngkaIndo(item.id) || 0,
                 judul: item.judul || "-",
                 kategori: item.kategori || "-",
-                tahun: Number(item.tahun) || 0,
+                tahun: parseAngkaIndo(item.tahun) || 0,
                 ukuran: item.ukuran || "-",
                 deskripsi: item.deskripsi || "-",
                 urlDrive: item.urlDrive || "#"
@@ -134,7 +136,13 @@ async function loadData() {
         // Render seluruh komponen
         if (data.identitas) renderIdentitas(data.identitas);
         if (data.statistikMakro) renderStatCards(data.statistikMakro);
-        if (data.potensiDesa) renderPotensiDesa(data.potensiDesa);
+        
+        if (data.potensiDesa) {
+            cachedPotensi = data.potensiDesa;
+            renderPotensiFilterBar(cachedPotensi);
+            renderPotensiDesa(cachedPotensi);
+        }
+
         if (data.mataPencaharian) renderJobChart(data.mataPencaharian);
         
         if (data.dokumenPublikasi) {
@@ -208,7 +216,46 @@ function renderStatCards(makro) {
 }
 
 /**
- * 3. Render Galeri Potensi & Keunggulan Desa (Modul Kartu Visual Foto)
+ * 3A. Render Filter Pills Bar untuk Potensi Desa
+ */
+function renderPotensiFilterBar(listPotensi) {
+    const filterContainer = document.getElementById("potensi-filter-bar");
+    if (!filterContainer) return;
+
+    const categories = ["Semua", ...new Set(listPotensi.map(item => item.kategori).filter(Boolean))];
+
+    filterContainer.innerHTML = categories.map(cat => {
+        const isActive = cat === activePotensiCategory;
+        const btnClass = isActive
+            ? "bg-bps-blue text-white shadow-sm border-bps-blue font-bold"
+            : "bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200/80 font-medium";
+
+        return `
+            <button onclick="filterPotensi('${cat}')" 
+                    class="px-3 py-1.5 rounded-xl text-xs border transition-all duration-200 ${btnClass}">
+                ${cat}
+            </button>
+        `;
+    }).join('');
+}
+
+/**
+ * Handler Klik Filter Kategori Potensi
+ */
+window.filterPotensi = function(category) {
+    activePotensiCategory = category;
+    renderPotensiFilterBar(cachedPotensi);
+
+    if (category === "Semua") {
+        renderPotensiDesa(cachedPotensi);
+    } else {
+        const filtered = cachedPotensi.filter(item => item.kategori === category);
+        renderPotensiDesa(filtered);
+    }
+};
+
+/**
+ * 3B. Render Dynamic Asymmetric Bento Grid Layout untuk Potensi Desa
  */
 function renderPotensiDesa(listPotensi) {
     const container = document.getElementById("potensi-grid");
@@ -216,55 +263,77 @@ function renderPotensiDesa(listPotensi) {
 
     if (!listPotensi || listPotensi.length === 0) {
         container.innerHTML = `
-            <div class="col-span-full py-10 text-center text-slate-400">
+            <div class="col-span-full py-12 text-center text-slate-400">
                 <i class="fa-solid fa-gem text-3xl mb-2 text-slate-300"></i>
-                <p class="text-xs">Belum ada data potensi desa yang dimasukkan.</p>
+                <p class="text-xs">Belum ada potensi desa dalam kategori ini.</p>
             </div>
         `;
         return;
     }
 
-    container.innerHTML = listPotensi.map(item => {
-        const badgeStyle = getPotensiBadgeStyle(item.kategori);
-        const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
-        const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
+    const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
 
-        return `
-            <div class="group bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 flex flex-col">
-                <!-- Foto Sampul dengan Hover Zoom & Badge Kategori -->
-                <div class="relative h-48 sm:h-52 w-full overflow-hidden bg-slate-100">
+    container.innerHTML = listPotensi.map((item, index) => {
+        const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
+        const isFeatured = (activePotensiCategory === "Semua" && index === 0);
+
+        if (isFeatured) {
+            return `
+                <div class="group relative rounded-3xl overflow-hidden shadow-md hover:shadow-card-hover border border-slate-200/90 h-80 sm:h-96 md:h-[380px] flex flex-col justify-end p-6 sm:p-8 bg-slate-950 text-white lg:col-span-2 transition-all duration-300">
                     <img src="${fotoUrl}" 
                          alt="${item.judulPotensi}" 
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                         class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-75"
                          onerror="this.src='${placeholderImg}'">
                     
-                    <!-- Overlay Gradient Gradient Shadow -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-60"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>
 
-                    <!-- Badge Kategori -->
-                    <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-extrabold tracking-wide uppercase shadow-md ${badgeStyle}">
-                        ${item.kategori}
-                    </span>
-                </div>
-
-                <!-- Detail Deskripsi Kartu -->
-                <div class="p-5 flex flex-col justify-between flex-1 bg-white">
-                    <div>
-                        <h4 class="text-base font-extrabold text-slate-900 group-hover:text-bps-blue transition-colors line-clamp-1 mb-1.5">
+                    <div class="relative z-10 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-3 py-1 rounded-full text-[10px] sm:text-xs font-extrabold bg-amber-400 text-slate-950 shadow-md">
+                                ⭐ POTENSI UNGGULAN
+                            </span>
+                            <span class="px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold bg-white/20 backdrop-blur-md text-white border border-white/20">
+                                ${item.kategori}
+                            </span>
+                        </div>
+                        <h4 class="text-lg sm:text-2xl font-extrabold text-white leading-snug group-hover:text-blue-300 transition-colors">
                             ${item.judulPotensi}
                         </h4>
-                        <p class="text-xs text-slate-500 leading-relaxed line-clamp-3">
+                        <p class="text-xs sm:text-sm text-slate-300 line-clamp-2 max-w-2xl leading-relaxed">
                             ${item.deskripsi || '-'}
                         </p>
                     </div>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="group relative rounded-3xl overflow-hidden shadow-2xs hover:shadow-card-hover border border-slate-200/90 h-80 flex flex-col justify-end p-5 bg-slate-950 text-white transition-all duration-300">
+                    <img src="${fotoUrl}" 
+                         alt="${item.judulPotensi}" 
+                         class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80"
+                         onerror="this.src='${placeholderImg}'">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent"></div>
 
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-bps-blue">
-                        <span>Potensi Unggulan</span>
-                        <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[11px] font-extrabold bg-white/90 backdrop-blur-md text-slate-900 shadow-md">
+                        ${item.kategori}
+                    </span>
+
+                    <div class="relative z-10 space-y-2">
+                        <h4 class="text-base font-extrabold text-white group-hover:text-blue-300 transition-colors line-clamp-1">
+                            ${item.judulPotensi}
+                        </h4>
+                        <p class="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                            ${item.deskripsi || '-'}
+                        </p>
+                        <div class="pt-2 flex items-center justify-between text-xs font-semibold text-blue-300 border-t border-white/10">
+                            <span>Eksplorasi Detail</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
     }).join('');
 }
 
@@ -510,16 +579,31 @@ function setupSearchListener() {
 }
 
 /**
- * Helper Warna Badge Kategori Potensi Desa
+ * Smart Parser Angka Format Indonesia
+ * Mengubah "60,22" -> 60.22 dan "147.424" -> 147424
  */
-function getPotensiBadgeStyle(kategori) {
-    if (!kategori) return "bg-white/90 text-slate-800 border-white/50";
-    const kat = kategori.toLowerCase();
-    if (kat.includes("wisata")) return "bg-emerald-500/90 text-white backdrop-blur-md";
-    if (kat.includes("pertanian") || kat.includes("perkebunan")) return "bg-amber-500/90 text-white backdrop-blur-md";
-    if (kat.includes("umkm") || kat.includes("ekonomi")) return "bg-indigo-600/90 text-white backdrop-blur-md";
-    if (kat.includes("seni") || kat.includes("budaya")) return "bg-rose-500/90 text-white backdrop-blur-md";
-    return "bg-slate-800/90 text-white backdrop-blur-md";
+function parseAngkaIndo(val) {
+    if (val === null || val === undefined) return null;
+    if (typeof val === 'number') return val;
+    
+    let str = String(val).trim();
+    if (!str) return null;
+
+    // Jika mengandung koma sebagai desimal (misal "60,22")
+    if (str.includes(',')) {
+        str = str.replace(/\./g, '').replace(',', '.');
+    } 
+    // Jika mengandung titik ribuan (misal "147.424" atau "1.450.000")
+    else if (str.includes('.')) {
+        // Cek jika cuma ada 1 titik dan 3 digit di belakangnya (format ribuan Indonesia)
+        const parts = str.split('.');
+        if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) {
+            str = str.replace(/\./g, '');
+        }
+    }
+
+    const num = parseFloat(str);
+    return isNaN(num) ? null : num;
 }
 
 /**

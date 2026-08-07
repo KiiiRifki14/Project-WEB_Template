@@ -271,28 +271,33 @@
         </section>
 
         <!-- ==========================================
-             2. GALERI POTENSI & KEUNGGULAN DESA (MODUL BARU)
+             2. GALERI POTENSI DESA (BENTO ASYMMETRIC GRID + FILTER TABS)
              ========================================== -->
         <section id="potensi-section" class="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-slate-100">
+            <!-- Header Section -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-5 mb-6 border-b border-slate-100">
                 <div>
-                    <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-gem text-amber-500"></i>
-                        <span>Galeri Potensi & Keunggulan Desa</span>
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs font-bold mb-2 border border-amber-200/60">
+                        <i class="fa-solid fa-sparkles text-amber-500"></i> Showcase Unggulan
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+                        <span>Potensi & Keunggulan Wilayah</span>
                     </h3>
-                    <p class="text-xs text-slate-500 mt-1">Pameran komoditas pertanian, destinasi wisata, dan produk UMKM unggulan lokal</p>
+                    <p class="text-xs text-slate-500 mt-1">Eksplorasi destinasi wisata, komoditas pertanian, produk UMKM, dan sarana publik desa</p>
                 </div>
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs font-semibold self-start sm:self-auto border border-amber-200/60">
-                    <i class="fa-solid fa-store"></i> Produk & Wisata
+
+                <!-- Filter Pills Bar (Render Dinamis via app.js) -->
+                <div id="potensi-filter-bar" class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <!-- Tombol filter diisi dinamis oleh JS -->
                 </div>
             </div>
 
-            <!-- Grid Card Potensi Desa -->
-            <div id="potensi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-                <!-- Skeleton Placeholder Card -->
-                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 animate-pulse h-72"></div>
-                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 animate-pulse h-72 hidden sm:block"></div>
-                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 animate-pulse h-72 hidden lg:block"></div>
+            <!-- Asymmetric Bento Grid Layout Container -->
+            <div id="potensi-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                <!-- Skeleton Loading Placeholders -->
+                <div class="lg:col-span-2 rounded-3xl overflow-hidden bg-slate-100 animate-pulse h-80"></div>
+                <div class="rounded-3xl overflow-hidden bg-slate-100 animate-pulse h-80"></div>
+                <div class="rounded-3xl overflow-hidden bg-slate-100 animate-pulse h-80 hidden md:block"></div>
             </div>
         </section>
 
@@ -426,7 +431,7 @@
                     <p class="text-slate-400 text-[11px]">Kolaborasi: <strong class="text-slate-200">Tim PKL / Pembinaan Desa Cantik</strong> x Pemdes Sadawarna</p>
                     <div class="pt-2">
                         <span class="px-2.5 py-1 rounded bg-slate-800 text-slate-300 text-[10px] font-mono border border-slate-700">
-                            Zero-Maintenance Template v1.3
+                            Zero-Maintenance Template v1.4
                         </span>
                     </div>
                 </div>

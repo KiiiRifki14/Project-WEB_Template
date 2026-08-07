@@ -1,90 +1,128 @@
 {
   "identitas": {
-    "namaDesa": "Sadawarna",
-    "kecamatan": "Cibogo",
+    "namaKecamatan": "Kecamatan Subang",
+    "kecamatan": "Subang",
     "kabupaten": "Kabupaten Subang",
     "provinsi": "Jawa Barat",
-    "kodeDesa": "3213030005",
-    "deskripsi": "Desa Sadawarna merupakan salah satu desa unggulan di Kecamatan Cibogo, Kabupaten Subang yang kaya akan komoditas pertanian, wisata alam Bendungan Sadawarna, serta UMKM lokal.",
-    "alamatKantor": "Jl. Raya Sadawarna No. 01, Kec. Cibogo, Kab. Subang 41285",
-    "email": "pemdes.sadawarna@subang.go.id",
-    "telepon": "(0260) 412345"
+    "kodeDesa": "3213100",
+    "deskripsi": "Kecamatan Subang merupakan pusat pemerintahan dan ibukota Kabupaten Subang yang terletak pada ketinggian 88 mdpl dengan jarak 0 km dari pusat pemerintahan kabupaten. Memiliki luas wilayah 60.22 km² atau 2.78% dari total luas Kabupaten Subang. Secara administratif terdiri dari 8 kelurahan, 163 RW, dan 599 RT dengan total penduduk sebanyak 147.424 jiwa pada tahun 2025.",
+    "alamatKantor": "Jl. Supratman No. 2, Karanganyar, Kec. Subang, Kabupaten Subang, Jawa Barat 41211",
+    "email": "kecamatan.subang@subangkab.go.id",
+    "telepon": "(0260) 411003"
   },
   "statistikMakro": {
-    "totalPenduduk": 5420,
-    "luasWilayah": 14.85,
-    "kepadatanPenduduk": 365,
-    "jumlahRt": 24,
-    "jumlahRw": 6,
-    "jumlahKk": 1680
+    "totalPenduduk": 147424,
+    "luasWilayah": 60.22,
+    "kepadatanPenduduk": 2448,
+    "jumlahRt": 599,
+    "jumlahRw": 163,
+    "jumlahKelurahan": 8
   },
   "potensiDesa": [
     {
       "id": 1,
-      "judulPotensi": "Nanas Simadu Sadawarna",
-      "kategori": "Pertanian",
-      "deskripsi": "Komoditas nanas manis khas Subang yang menjadi produk unggulan pertanian lokal Desa Sadawarna.",
-      "urlFoto": "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=800&q=80"
+      "judulPotensi": "Pusat Pelayanan Kesehatan Terpadu RSUD Subang",
+      "kategori": "Fasilitas Publik & Kesehatan",
+      "deskripsi": "Menjadi rujukan kesehatan utama di Kabupaten Subang dengan 3 Rumah Sakit Umum (termasuk RSUD Subang), 1 RS Khusus Bersalin, 2 Puskesmas (Cikalapa & Sukarahayu), 44 Apotek, serta didukung 17 Dokter Umum/Spesialis, 44 Perawat, dan 34 Bidan.",
+      "urlFoto": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"
     },
     {
       "id": 2,
-      "judulPotensi": "Kawasan Bendungan Sadawarna",
-      "kategori": "Wisata",
-      "deskripsi": "Destinasi wisata air dan bendungan strategis nasional yang menyuguhkan pemandangan alam asri.",
-      "urlFoto": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+      "judulPotensi": "Pusat Pendidikan & Perguruan Tinggi Kabupaten Subang",
+      "kategori": "Pendidikan",
+      "deskripsi": "Pusat pendidikan terlengkap dengan 70 SD, 18 SMP, 11 SMA, 14 SMK, serta 5 Perguruan Tinggi/Universitas di wilayah Kecamatan Subang yang melayani puluhan ribu pelajar dan mahasiswa.",
+      "urlFoto": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"
     },
     {
       "id": 3,
-      "judulPotensi": "Kerajinan Bambu & Anyaman",
-      "kategori": "UMKM",
-      "deskripsi": "Produk ekonomi kreatif warga desa berupa aneka kerajinan tangan berbahan bambu berkualitas.",
-      "urlFoto": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80"
+      "judulPotensi": "Kawasan Perdagangan, Jasa & Investasi PMDN",
+      "kategori": "UMKM & Perdagangan",
+      "deskripsi": "Pusat kegiatan ekonomi dan investasi PMDN terbesar di Kabupaten Subang dengan 2.062 proyek investasi bernilai Rp1.118 triliun dan menyerap 7.511 tenaga kerja, didukung 325 unit usaha Koperasi dan UMKM.",
+      "urlFoto": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": 4,
+      "judulPotensi": "Jaringan Layanan Air Minum Perumda Tirta Rangga Subang",
+      "kategori": "Infrastruktur & Publik",
+      "deskripsi": "Menyediakan akses air bersih bagi 8.868 pelanggan terdaftar di Kota Subang dengan volume air terdistribusi sebesar 1.635.127 m³ dan nilai realisasi mencapai Rp14,32 miliar per tahun.",
+      "urlFoto": "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": 5,
+      "judulPotensi": "Pusat Pemerintahan & Kompleks Peribadatan Kota Subang",
+      "kategori": "Pemerintahan",
+      "deskripsi": "Lokasi pusat perkantoran Pemkab Subang dan Sekretariat Daerah, dilengkapi 223 Masjid, 8 Gereja Protestan, dan 1 Gereja Katolik sebagai sarana harmonisasi keagamaan warga kota.",
+      "urlFoto": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80"
     }
   ],
   "mataPencaharian": [
-    { "kategori": "Petani & Pekebun", "jumlah": 1850, "persentase": 34.1 },
-    { "kategori": "Buruh Tani", "jumlah": 1120, "persentase": 20.7 },
-    { "kategori": "Karyawan Swasta", "jumlah": 980, "persentase": 18.1 },
-    { "kategori": "Wirausaha & Pedagang", "jumlah": 750, "persentase": 13.8 },
-    { "kategori": "PNS / TNI / Polri", "jumlah": 220, "persentase": 4.1 },
-    { "kategori": "Sektor Lainnya", "jumlah": 500, "persentase": 9.2 }
+    {
+      "kategori": "Buruh / Karyawan / Pegawai Swasta & BUMN",
+      "jumlah": 273728,
+      "persentase": 32.26
+    },
+    {
+      "kategori": "Berusaha Sendiri (Wiraswasta / Mandiri)",
+      "jumlah": 260278,
+      "persentase": 30.67
+    },
+    {
+      "kategori": "Pekerja Bebas (Pertanian & Non-Pertanian)",
+      "jumlah": 182490,
+      "persentase": 21.5
+    },
+    {
+      "kategori": "Berusaha Dibantu Buruh Tidak Tetap / Tidak Dibayar",
+      "jumlah": 61158,
+      "persentase": 7.21
+    },
+    {
+      "kategori": "Pekerja Keluarga / Tidak Dibayar",
+      "jumlah": 47836,
+      "persentase": 5.64
+    },
+    {
+      "kategori": "Berusaha Dibantu Buruh Tetap / Dibayar",
+      "jumlah": 23082,
+      "persentase": 2.72
+    }
   ],
   "dokumenPublikasi": [
     {
       "id": 1,
-      "judul": "Kecamatan Cibogo Dalam Angka 2026",
+      "judul": "Kecamatan Subang Dalam Angka 2026",
       "kategori": "Publikasi BPS",
       "tahun": 2026,
-      "ukuran": "4.2 MB",
-      "deskripsi": "Rujukan statistik tahunan resmi Kecamatan Cibogo yang diterbitkan oleh BPS Kabupaten Subang.",
-      "urlDrive": "https://drive.google.com/file/d/1sample_kcda_2026/view"
+      "ukuran": "4.5 MB",
+      "deskripsi": "Publikasi tahunan resmi BPS Kabupaten Subang menyajikan data statistik sektoral, sosial, demografi, dan potensi wilayah Kecamatan Subang.",
+      "urlDrive": "https://drive.google.com/file/d/1_kecamatan_subang_dalam_angka_2026/view"
     },
     {
       "id": 2,
       "judul": "Kabupaten Subang Dalam Angka 2026",
       "kategori": "Publikasi BPS",
       "tahun": 2026,
-      "ukuran": "12.5 MB",
-      "deskripsi": "Publikasi komprehensif data indikator sosial, ekonomi, dan pembangunan Kabupaten Subang tahun 2026.",
-      "urlDrive": "https://drive.google.com/file/d/1sample_subangkab_2026/view"
+      "ukuran": "12.8 MB",
+      "deskripsi": "Publikasi komprehensif daerah Kabupaten Subang tahun 2026 yang merangkum data 30 kecamatan termasuk data rinci Kecamatan Subang.",
+      "urlDrive": "https://drive.google.com/file/d/1_kabupaten_subang_dalam_angka_2026/view"
     },
     {
       "id": 3,
-      "judul": "Monografi Desa Sadawarna Tahun 2025",
-      "kategori": "Profil Desa",
+      "judul": "Statistik Daerah Kecamatan Subang 2025",
+      "kategori": "Profil Wilayah",
       "tahun": 2025,
-      "ukuran": "2.8 MB",
-      "deskripsi": "Himpunan data potensi desa, batas wilayah, dan kependudukan Desa Sadawarna.",
-      "urlDrive": "https://drive.google.com/file/d/1sample_monografi_2025/view"
+      "ukuran": "3.2 MB",
+      "deskripsi": "Ringkasan analisis indikator makro, sosial, demografi, dan ekonomi Kecamatan Subang untuk bahan perencana pembangunan.",
+      "urlDrive": "https://drive.google.com/file/d/1_statistik_daerah_kecamatan_subang_2025/view"
     },
     {
       "id": 4,
-      "judul": "Perdes No. 03/2025 - APBDes Sadawarna",
-      "kategori": "Peraturan Desa",
+      "judul": "Laporan Kinerja Instansi Pemerintah (LKjIP) Kecamatan Subang 2025",
+      "kategori": "Laporan Kinerja",
       "tahun": 2025,
-      "ukuran": "1.5 MB",
-      "deskripsi": "Laporan transparansi Anggaran Pendapatan dan Belanja Desa Sadawarna Tahun Anggaran 2025.",
-      "urlDrive": "https://drive.google.com/file/d/1sample_perdes_2025/view"
+      "ukuran": "2.8 MB",
+      "deskripsi": "Laporan akuntabilitas kinerja penyelenggaraan pelayanan publik dan capaian program kerja Kecamatan Subang tahun 2025.",
+      "urlDrive": "https://drive.google.com/file/d/1_lkjip_kecamatan_subang_2025/view"
     }
   ]
 }
