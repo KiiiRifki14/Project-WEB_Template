@@ -102,7 +102,7 @@
 <body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-bps-blue selection:text-white overflow-x-hidden w-full max-w-full">
 
     <!-- ==========================================
-         TOP NAVBAR (SIMPLE & LEGA DI HP)
+         TOP NAVBAR (DESKTOP & MOBILE TABS)
          ========================================== -->
     <header class="sticky top-0 z-40 glass-header border-b border-slate-200/80 shadow-2xs w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-2">
@@ -134,7 +134,7 @@
                 </div>
             </div>
 
-            <!-- Desktop Nav Links -->
+            <!-- Desktop Nav Links (3 Tab Utama) -->
             <nav class="hidden md:flex items-center gap-1 text-xs font-semibold">
                 <button onclick="switchView('home')" 
                         id="nav-tab-home" 
@@ -143,6 +143,13 @@
                     <span>Beranda Utama</span>
                 </button>
                 
+                <button onclick="switchView('potensi')" 
+                        id="nav-tab-potensi" 
+                        class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-gem text-xs text-amber-500"></i>
+                    <span>Galeri Potensi Wilayah</span>
+                </button>
+
                 <button onclick="switchView('dokumen')" 
                         id="nav-tab-dokumen" 
                         class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5">
@@ -171,7 +178,7 @@
             </div>
         </div>
 
-        <!-- Sleek, Clean Light-Themed Mobile Menu Drawer (Bersih, Rapi & Harmonis) -->
+        <!-- Sleek, Clean Light-Themed Mobile Menu Drawer (3 Tab Navigasi Utuh) -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white/98 backdrop-blur-xl px-4 py-3.5 shadow-xl space-y-2.5 text-slate-800 animate-menu-slide rounded-b-2xl">
             
             <div class="pb-2 border-b border-slate-100 flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider">
@@ -195,7 +202,23 @@
                 <i class="fa-solid fa-chevron-right text-xs text-bps-blue"></i>
             </button>
 
-            <!-- Tombol 2: Pusat Dokumen Publikasi -->
+            <!-- Tombol 2: Galeri Potensi Wilayah -->
+            <button onclick="switchView('potensi'); toggleMobileMenu();" 
+                    id="mobile-btn-potensi"
+                    class="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/60 font-medium transition-all text-left">
+                <div class="flex items-center gap-3">
+                    <div id="mobile-btn-potensi-icon" class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-gem text-sm"></i>
+                    </div>
+                    <div>
+                        <div id="mobile-btn-potensi-title" class="text-xs font-bold text-slate-800">Galeri Potensi Wilayah</div>
+                        <div id="mobile-btn-potensi-sub" class="text-[10px] text-slate-500 font-normal">Peta Lokasi, UMKM & Wisata Rinci</div>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+            </button>
+
+            <!-- Tombol 3: Pusat Dokumen Publikasi -->
             <button onclick="switchView('dokumen'); toggleMobileMenu();" 
                     id="mobile-btn-dokumen"
                     class="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/60 font-medium transition-all text-left">
@@ -215,9 +238,9 @@
             <div class="pt-1.5 space-y-1 border-t border-slate-100">
                 <a href="#potensi-section" onclick="if(document.getElementById('view-home').classList.contains('hidden')) switchView('home'); toggleMobileMenu();" class="flex items-center gap-3 p-2 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-bps-blue transition-colors text-xs font-medium">
                     <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 border border-amber-200/60">
-                        <i class="fa-solid fa-gem text-xs"></i>
+                        <i class="fa-solid fa-sparkles text-xs"></i>
                     </div>
-                    <span>Potensi & Keunggulan Wilayah</span>
+                    <span>Showcase Potensi Utama</span>
                 </a>
                 <a href="#job-section" onclick="if(document.getElementById('view-home').classList.contains('hidden')) switchView('home'); toggleMobileMenu();" class="flex items-center gap-3 p-2 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-bps-blue transition-colors text-xs font-medium">
                     <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 border border-emerald-200/60">
@@ -236,7 +259,7 @@
     </header>
 
     <!-- ==========================================
-         HERO BANNER (STABEL DESKRIPSI TANPA FLICKER)
+         HERO BANNER (DYNAMIC BY VIEW)
          ========================================== -->
     <section id="hero-banner-section" class="relative bg-gradient-to-br from-bps-dark via-bps-navy to-slate-950 text-white overflow-hidden pt-8 pb-14 sm:pt-14 sm:pb-20 w-full transition-all duration-300">
         <!-- Visual Ambient Glow Effects -->
@@ -246,7 +269,7 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="max-w-3xl">
-                <!-- Pill Badge Showcase (Pill Long & No-Wrap Text) -->
+                <!-- Pill Badge Showcase -->
                 <div class="inline-flex flex-wrap items-center gap-2 p-1.5 pr-3.5 rounded-full bg-white/10 backdrop-blur-md text-blue-200 text-xs font-semibold mb-3.5 border border-white/20 shadow-sm max-w-full">
                     <span id="hero-badge-tag" class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[10px] sm:text-xs leading-none flex-shrink-0 shadow-xs">MICRO-PORTAL</span>
                     <span id="hero-badge-sub" class="text-[11px] sm:text-xs font-semibold text-slate-200">Desa Cinta Statistik BPS Subang</span>
@@ -260,7 +283,7 @@
                     </span>
                 </h2>
 
-                <!-- Subtitle Description (Disinkronkan 100% Persis dengan Data Google Sheets) -->
+                <!-- Subtitle Description -->
                 <p id="hero-description" class="text-slate-300 text-[11px] sm:text-sm md:text-base leading-relaxed mb-4 font-normal max-w-2xl">
                     Kecamatan Subang merupakan pusat pemerintahan dan ibukota Kabupaten Subang yang terletak pada ketinggian 88 mdpl dengan jarak 0 km dari pusat pemerintahan kabupaten. Memiliki luas wilayah 60.22 km² atau 2.78% dari total luas Kabupaten Subang. Secara administratif terdiri dari 8 kelurahan, 163 RW, dan 599 RT dengan total penduduk sebanyak 147.424 jiwa pada tahun 2025.
                 </p>
@@ -378,8 +401,14 @@
                         <p class="text-xs text-slate-500 mt-0.5">Klik pada kartu potensi untuk membaca penjelasan lengkap</p>
                     </div>
 
-                    <div id="potensi-filter-bar" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0 w-full sm:w-auto">
-                        <!-- Filter Buttons Rendered by JS -->
+                    <div class="flex items-center gap-2">
+                        <div id="potensi-filter-bar" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0 w-full sm:w-auto">
+                            <!-- Filter Buttons Rendered by JS -->
+                        </div>
+                        <button onclick="switchView('potensi')" class="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all">
+                            <span>Buka Halaman Rinci</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -423,7 +452,7 @@
                 </div>
             </section>
 
-            <!-- Banner Pintas ke Dokumen -->
+            <!-- Banner Pintas ke Dokumen & Potensi -->
             <section class="bg-gradient-to-r from-blue-900 to-bps-navy rounded-2xl sm:rounded-3xl p-6 text-white flex flex-col sm:flex-row items-center justify-between gap-4 border border-blue-800 shadow-md">
                 <div class="space-y-1 text-center sm:text-left">
                     <h3 class="text-base sm:text-xl font-extrabold flex items-center justify-center sm:justify-start gap-2">
@@ -442,7 +471,90 @@
         </div>
 
         <!-- ==========================================
-             VIEW 2: HALAMAN KHUSUS DOKUMEN PUBLIKASI
+             VIEW 2: HALAMAN KHUSUS GALERI POTENSI RINCI
+             ========================================== -->
+        <div id="view-potensi" class="hidden space-y-6">
+            
+            <!-- Header Halaman Potensi -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 w-full space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 text-amber-800 text-xs font-bold mb-2 border border-amber-200">
+                            <i class="fa-solid fa-gem text-amber-500"></i> Katalog Spasial & Komoditas
+                        </div>
+                        <h2 class="text-xl sm:text-3xl font-extrabold text-slate-900 flex items-center gap-2">
+                            <span>Direktori Potensi & Keunggulan Wilayah</span>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1">Eksplorasi peta lokasi interaktif, data profil komoditas pertanian, destinasi wisata, serta sentra UMKM lokal Desa Sadawarna.</p>
+                    </div>
+
+                    <!-- Tombol Kembali ke Beranda -->
+                    <button onclick="switchView('home')" 
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all self-start md:self-auto">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        <span>Kembali ke Beranda Utama</span>
+                    </button>
+                </div>
+
+                <!-- Filter Kategori & Search Input Bar Khusus Potensi -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+                    <!-- Filter Pills Kategori -->
+                    <div id="potensi-view-filter-bar" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar w-full sm:w-auto">
+                        <!-- Rendered by JS -->
+                    </div>
+
+                    <!-- Search Input Potensi -->
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" 
+                               id="potensi-search" 
+                               placeholder="Cari nama potensi, UMKM, lokasi..." 
+                               class="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PETA LOKASI INTERAKTIF & LOKASI SPASIAL DESA -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200/90 space-y-3 w-full box-border">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                    <div>
+                        <h3 class="text-sm sm:text-base font-extrabold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-rose-500"></i>
+                            <span>Peta Lokasi Spasial Potensi Wilayah</span>
+                        </h3>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Peta interaktif persebaran objek wisata, komoditas nanas simadu, dan sentra UMKM Desa Sadawarna</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold self-start sm:self-auto">
+                        📍 Titik GPS Terverifikasi
+                    </span>
+                </div>
+
+                <!-- Google Maps Frame Embed -->
+                <div class="relative w-full h-64 sm:h-80 md:h-96 rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-100">
+                    <iframe title="Peta Lokasi Desa Sadawarna Subang" 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.784411132644!2d107.82031109999999!3d-6.570133200000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69315dcdad5741%3A0x6b10faef0e6ef3d1!2sBendungan%20Sadawarna!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid" 
+                            class="w-full h-full border-0" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- KATALOG UTAMA POTENSI (CARD GRID RINCI) -->
+            <div id="potensi-view-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                <!-- Rendered by JS -->
+            </div>
+
+            <!-- Control Bar Pagination Khusus View Potensi -->
+            <div id="potensi-view-pagination-container" class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs w-full box-border">
+                <!-- Rendered dynamically by app.js -->
+            </div>
+
+        </div>
+
+        <!-- ==========================================
+             VIEW 3: HALAMAN KHUSUS DOKUMEN PUBLIKASI
              ========================================== -->
         <div id="view-dokumen" class="hidden space-y-6">
             
@@ -521,7 +633,7 @@
     </main>
 
     <!-- ==========================================
-         POPUP MODAL DETIL POTENSI DESA
+         POPUP MODAL DETIL POTENSI DESA (SUPER RINCI)
          ========================================== -->
     <div id="potensi-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm transition-opacity">
         <div id="potensi-modal-content" class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 transform transition-all scale-95 opacity-0 duration-300">
@@ -560,7 +672,7 @@
                     <p class="text-slate-400 text-[11px]">BPS Kabupaten Subang x Pemdes Sadawarna</p>
                     <div class="pt-0.5">
                         <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] font-mono border border-slate-700">
-                            Zero-Maintenance Template v3.4
+                            Zero-Maintenance Template v4.0
                         </span>
                     </div>
                 </div>

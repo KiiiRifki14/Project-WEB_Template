@@ -23,36 +23,61 @@
       "id": 1,
       "judulPotensi": "Kawasan Wisata Bendungan Sadawarna",
       "kategori": "Wisata & Alam",
-      "deskripsi": "Destinasi wisata air dan ikon waduk strategis nasional dengan lanskap danau asri serta potensi ekonomi kreatif di sekitar kawasan.",
+      "deskripsi": "Destinasi wisata air strategis nasional yang menyajikan pemandangan waduk asri, area memancing keluarga, wisata perahu, serta wahana swafoto kekinian.",
+      "lokasi": "Dusun Sadawarna I, Kec. Cibogo, Subang",
+      "nilaiEkonomi": "± Rp 1,8 Miliar / Tahun",
+      "pengelola": "Pokdarwis Sadawarna x BBWS Citarum",
       "urlFoto": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
     },
     {
       "id": 2,
-      "judulPotensi": "Nanas Simadu Sadawarna",
+      "judulPotensi": "Perkebunan Nanas Simadu Super",
       "kategori": "Pertanian",
-      "deskripsi": "Komoditas buah nanas manis khas Subang yang menjadi produk unggulan pertanian dan kebanggaan petani lokal.",
+      "deskripsi": "Komoditas buah nanas manis khas Subang berkadar gula tinggi yang dikembangkan secara holistik oleh gabungan kelompok tani desa.",
+      "lokasi": "Blok Babakan Agro, Desa Sadawarna",
+      "nilaiEkonomi": "Kapasitas Panen 320 Ton / Tahun",
+      "pengelola": "Gabungan Kelompok Tani (Gapoktan) Simadu",
       "urlFoto": "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=800&q=80"
     },
     {
       "id": 3,
-      "judulPotensi": "Kerajinan Anyaman Bambu Kreatif",
+      "judulPotensi": "Sentra Kerajinan Anyaman Bambu",
       "kategori": "UMKM",
-      "deskripsi": "Produk ekonomi kreatif warga desa berupa perabotan dan anyaman berbahan bambu lokal bernilai seni tinggi.",
+      "deskripsi": "Pusat kreasi produk souvenir, perabotan rumah tangga, dan saung bambu berbahan baku lokal yang dipasarkan hingga mancanegara.",
+      "lokasi": "RW 03 Kp. Anyar, Desa Sadawarna",
+      "nilaiEkonomi": "± Rp 450 Juta / Tahun",
+      "pengelola": "Koperasi Warga Bambu Mandiri",
       "urlFoto": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80"
     },
     {
       "id": 4,
-      "judulPotensi": "Pusat Layanan Kesehatan & Posyandu",
-      "kategori": "Fasilitas Publik",
-      "deskripsi": "Sarana pelayanan kesehatan terpadu masyarakat desa untuk mendukung kesejahteraan warga dan anak balita.",
-      "urlFoto": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80"
+      "judulPotensi": "Budidaya Ikan Air Tawar & Keramba",
+      "kategori": "Perikanan",
+      "deskripsi": "Pengembangan perikanan darat berupa budidaya gurame, nila, dan lele di sepanjang aliran waduk dan empang warga desa.",
+      "lokasi": "Pesisir Aliran Waduk Sadawarna",
+      "nilaiEkonomi": "Kapasitas 85 Ton / Tahun",
+      "pengelola": "Kelompok Pembudidaya Ikan (Pokdakan) Tirta",
+      "urlFoto": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80"
     },
     {
       "id": 5,
-      "judulPotensi": "Seni Budaya & Tradisi Lokal",
-      "kategori": "Budaya",
-      "deskripsi": "Pelestarian kesenian daerah dan kearifan lokal yang rutin diselenggarakan dalam ajang festival desa.",
-      "urlFoto": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80"
+      "judulPotensi": "Pertanian Padi Organik Ramah Lingkungan",
+      "kategori": "Pertanian",
+      "deskripsi": "Lahan persawahan bebas pestisida kimia yang menghasilkan beras organik bermutu tinggi dengan irigasi teknis murni.",
+      "lokasi": "Hamparan Sawah Blok Garung",
+      "nilaiEkonomi": "Panen 450 Ton Padi / Tahun",
+      "pengelola": "Kelompok Tani Sri Sadawarna",
+      "urlFoto": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": 6,
+      "judulPotensi": "Olahan Makanan & Keripik Nanas Lokal",
+      "kategori": "UMKM",
+      "deskripsi": "Industri rumahan pengolahan olahan pangan turunan nanas berupa keripik nanas renyah, dodol nanas, dan sirup segar.",
+      "lokasi": "Kampung Mekar Asri RT 12",
+      "nilaiEkonomi": "± Rp 300 Juta / Tahun",
+      "pengelola": "Kelompok Wanita Tani (KWT) Melati",
+      "urlFoto": "https://images.unsplash.com/photo-1509358271058-acd05cc93898?auto=format&fit=crop&w=800&q=80"
     }
   ],
   "mataPencaharian": [
@@ -123,6 +148,24 @@
       "ukuran": "1.5 MB",
       "deskripsi": "Laporan transparansi Anggaran Pendapatan dan Belanja Desa Sadawarna Tahun Anggaran 2025.",
       "urlDrive": "https://drive.google.com/file/d/1sample_perdes_2025/view"
+    },
+    {
+      "id": 5,
+      "judul": "Laporan Akuntabilitas Kinerja Pemdes 2025",
+      "kategori": "Profil Desa",
+      "tahun": 2025,
+      "ukuran": "3.1 MB",
+      "deskripsi": "Dokumen pertanggungjawaban capaian kinerja penyelenggaraan pemerintahan Desa Sadawarna.",
+      "urlDrive": "https://drive.google.com/file/d/1sample_lakip_2025/view"
+    },
+    {
+      "id": 6,
+      "judul": "Peta Tematik Potensi Ekonomi Desa 2025",
+      "kategori": "Publikasi BPS",
+      "tahun": 2025,
+      "ukuran": "5.6 MB",
+      "deskripsi": "Peta spasial persebaran titik potensi ekonomi, UMKM, dan sarana prasarana Desa Sadawarna.",
+      "urlDrive": "https://drive.google.com/file/d/1sample_peta_2025/view"
     }
   ]
 }

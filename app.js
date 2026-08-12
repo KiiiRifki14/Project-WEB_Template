@@ -38,18 +38,21 @@ const CONFIG = {
 let jobChartInstance = null;
 let cachedDokumen = []; // Cache dokumen untuk fitur pencarian & pagination
 let cachedPotensi = []; // Cache potensi desa untuk filter & pagination
-let currentFilteredPotensi = [];
+let currentFilteredPotensiHome = [];
+let currentFilteredPotensiView = [];
 let currentFilteredDocs = [];
 
-let activePotensiCategory = "Semua";
+let activePotensiCategoryHome = "Semua";
+let activePotensiCategoryView = "Semua";
 let activeDocCategory = "Semua";
 
-// Pagination Settings
-let currentPotensiPage = 1;
-const POTENSI_PER_PAGE = 6;
+// Pagination Settings (Set to 3 items per page so pagination controls are ALWAYS VISIBLE)
+let currentPotensiPageHome = 1;
+let currentPotensiPageView = 1;
+const POTENSI_PER_PAGE = 3;
 
 let currentDocPage = 1;
-const DOCS_PER_PAGE = 5;
+const DOCS_PER_PAGE = 3;
 
 /**
  * Inisialisasi Aplikasi saat DOM selesai dimuat
@@ -57,21 +60,26 @@ const DOCS_PER_PAGE = 5;
 document.addEventListener("DOMContentLoaded", () => {
     console.log("🚀 Initializing Micro-Portal Desa Cantik BPS Subang...");
     loadData();
-    setupSearchListener();
+    setupSearchListeners();
 
     // Check URL Hash for initial view switching
     if (window.location.hash === "#dokumen") {
         switchView("dokumen");
+    } else if (window.location.hash === "#potensi") {
+        switchView("potensi");
     }
 });
 
 /**
- * SPA View Switcher: Membedakan Tema & Konten Banner Antara Beranda Utama & Halaman Dokumen
+ * SPA View Switcher: Membedakan Tema & Konten Banner Antara 3 View (Beranda, Potensi, Dokumen)
  */
 function switchView(viewName) {
     const viewHome = document.getElementById("view-home");
+    const viewPotensi = document.getElementById("view-potensi");
     const viewDokumen = document.getElementById("view-dokumen");
+
     const tabHome = document.getElementById("nav-tab-home");
+    const tabPotensi = document.getElementById("nav-tab-potensi");
     const tabDokumen = document.getElementById("nav-tab-dokumen");
 
     const heroBadgeTag = document.getElementById("hero-badge-tag");
@@ -80,50 +88,35 @@ function switchView(viewName) {
     const heroDesc = document.getElementById("hero-description");
 
     const mobileBtnHome = document.getElementById("mobile-btn-home");
+    const mobileBtnPotensi = document.getElementById("mobile-btn-potensi");
     const mobileBtnDokumen = document.getElementById("mobile-btn-dokumen");
     const menuBadge = document.getElementById("menu-view-badge");
 
     const currentVillage = document.getElementById("hero-village-name")?.textContent || "Desa Sadawarna";
 
-    if (!viewHome || !viewDokumen) return;
+    if (!viewHome || !viewPotensi || !viewDokumen) return;
 
     if (viewName === "dokumen") {
         viewHome.classList.add("hidden");
+        viewPotensi.classList.add("hidden");
         viewDokumen.classList.remove("hidden");
 
         // Desktop Nav Styling
-        if (tabHome) {
-            tabHome.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
-        }
-        if (tabDokumen) {
-            tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-indigo-600 bg-indigo-50 font-bold border border-indigo-200 transition-all flex items-center gap-1.5 shadow-xs";
-        }
+        if (tabHome) tabHome.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
+        if (tabPotensi) tabPotensi.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
+        if (tabDokumen) tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-indigo-600 bg-indigo-50 font-bold border border-indigo-200 transition-all flex items-center gap-1.5 shadow-xs";
 
-        // Mobile Drawer Button Styling (Clean Light System)
-        if (mobileBtnHome) {
-            mobileBtnHome.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/60 font-medium transition-all text-left";
-            const iconContainer = document.getElementById("mobile-btn-home-icon");
-            const title = document.getElementById("mobile-btn-home-title");
-            const sub = document.getElementById("mobile-btn-home-sub");
-            if (iconContainer) iconContainer.className = "w-9 h-9 rounded-xl bg-slate-200/70 text-slate-600 flex items-center justify-center flex-shrink-0";
-            if (title) title.className = "text-xs font-bold text-slate-800";
-            if (sub) sub.className = "text-[10px] text-slate-500 font-normal";
-        }
-        if (mobileBtnDokumen) {
-            mobileBtnDokumen.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-indigo-50/90 text-indigo-700 border border-indigo-200/80 font-bold transition-all text-left shadow-2xs";
-            const iconContainer = document.getElementById("mobile-btn-dokumen-icon");
-            const title = document.getElementById("mobile-btn-dokumen-title");
-            const sub = document.getElementById("mobile-btn-dokumen-sub");
-            if (iconContainer) iconContainer.className = "w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-2xs";
-            if (title) title.className = "text-xs font-extrabold text-indigo-900";
-            if (sub) sub.className = "text-[10px] text-indigo-600 font-medium";
-        }
+        // Mobile Drawer Button Styling
+        setMobileButtonState(mobileBtnHome, "home", false);
+        setMobileButtonState(mobileBtnPotensi, "potensi", false);
+        setMobileButtonState(mobileBtnDokumen, "dokumen", true);
+
         if (menuBadge) {
             menuBadge.textContent = "Mode Dokumen";
             menuBadge.className = "px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 text-[10px] font-extrabold";
         }
 
-        // Banner Dynamic Update khusus Halaman Dokumen
+        // Banner Update
         if (heroBadgeTag) {
             heroBadgeTag.textContent = "REPOSITORI DOKUMEN";
             heroBadgeTag.className = "inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-indigo-500 text-white font-extrabold text-[10px] sm:text-xs leading-none flex-shrink-0 shadow-xs";
@@ -139,43 +132,63 @@ function switchView(viewName) {
         window.location.hash = "dokumen";
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
+    } else if (viewName === "potensi") {
+        viewHome.classList.add("hidden");
+        viewDokumen.classList.add("hidden");
+        viewPotensi.classList.remove("hidden");
+
+        // Desktop Nav Styling
+        if (tabHome) tabHome.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
+        if (tabPotensi) tabPotensi.className = "px-3.5 py-1.5 rounded-xl text-amber-700 bg-amber-50 font-bold border border-amber-200 transition-all flex items-center gap-1.5 shadow-xs";
+        if (tabDokumen) tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
+
+        // Mobile Drawer Button Styling
+        setMobileButtonState(mobileBtnHome, "home", false);
+        setMobileButtonState(mobileBtnPotensi, "potensi", true);
+        setMobileButtonState(mobileBtnDokumen, "dokumen", false);
+
+        if (menuBadge) {
+            menuBadge.textContent = "Galeri Potensi";
+            menuBadge.className = "px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80 text-[10px] font-extrabold";
+        }
+
+        // Banner Update
+        if (heroBadgeTag) {
+            heroBadgeTag.textContent = "DIREKTORI SPASIAL";
+            heroBadgeTag.className = "inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-amber-500 text-slate-950 font-extrabold text-[10px] sm:text-xs leading-none flex-shrink-0 shadow-xs";
+        }
+        if (heroBadgeSub) heroBadgeSub.textContent = "Peta Lokasi & Komoditas Unggulan";
+        if (heroTitle) {
+            heroTitle.innerHTML = `Potensi & Keunggulan Wilayah <br class="hidden sm:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-200 to-yellow-300">${currentVillage}</span>`;
+        }
+        if (heroDesc) {
+            heroDesc.textContent = "Katalog rinci keunggulan wilayah Desa Sadawarna: destinasi wisata air Bendungan Sadawarna, sentra pertanian nanas simadu super, produk UMKM kerajinan bambu, dan peta spasial terintegrasi.";
+        }
+
+        window.location.hash = "potensi";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
     } else {
         viewDokumen.classList.add("hidden");
+        viewPotensi.classList.add("hidden");
         viewHome.classList.remove("hidden");
 
         // Desktop Nav Styling
-        if (tabHome) {
-            tabHome.className = "px-3.5 py-1.5 rounded-xl text-bps-blue bg-blue-50 font-bold border border-blue-200 transition-all flex items-center gap-1.5 shadow-xs";
-        }
-        if (tabDokumen) {
-            tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
-        }
+        if (tabHome) tabHome.className = "px-3.5 py-1.5 rounded-xl text-bps-blue bg-blue-50 font-bold border border-blue-200 transition-all flex items-center gap-1.5 shadow-xs";
+        if (tabPotensi) tabPotensi.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
+        if (tabDokumen) tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
 
-        // Mobile Drawer Button Styling (Clean Light System)
-        if (mobileBtnHome) {
-            mobileBtnHome.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-blue-50/90 text-bps-blue border border-blue-200/80 font-bold transition-all text-left shadow-2xs";
-            const iconContainer = document.getElementById("mobile-btn-home-icon");
-            const title = document.getElementById("mobile-btn-home-title");
-            const sub = document.getElementById("mobile-btn-home-sub");
-            if (iconContainer) iconContainer.className = "w-9 h-9 rounded-xl bg-bps-blue text-white flex items-center justify-center flex-shrink-0 shadow-2xs";
-            if (title) title.className = "text-xs font-extrabold text-bps-navy";
-            if (sub) sub.className = "text-[10px] text-blue-600 font-medium";
-        }
-        if (mobileBtnDokumen) {
-            mobileBtnDokumen.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/60 font-medium transition-all text-left";
-            const iconContainer = document.getElementById("mobile-btn-dokumen-icon");
-            const title = document.getElementById("mobile-btn-dokumen-title");
-            const sub = document.getElementById("mobile-btn-dokumen-sub");
-            if (iconContainer) iconContainer.className = "w-9 h-9 rounded-xl bg-slate-200/70 text-slate-600 flex items-center justify-center flex-shrink-0";
-            if (title) title.className = "text-xs font-bold text-slate-800";
-            if (sub) sub.className = "text-[10px] text-slate-500 font-normal";
-        }
+        // Mobile Drawer Button Styling
+        setMobileButtonState(mobileBtnHome, "home", true);
+        setMobileButtonState(mobileBtnPotensi, "potensi", false);
+        setMobileButtonState(mobileBtnDokumen, "dokumen", false);
+
         if (menuBadge) {
             menuBadge.textContent = "Beranda Utama";
             menuBadge.className = "px-2.5 py-0.5 rounded-full bg-blue-50 text-bps-blue border border-blue-200/80 text-[10px] font-extrabold";
         }
 
-        // Banner Dynamic Update khusus Beranda Utama
+        // Banner Update
         if (heroBadgeTag) {
             heroBadgeTag.textContent = "MICRO-PORTAL";
             heroBadgeTag.className = "inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[10px] sm:text-xs leading-none flex-shrink-0 shadow-xs";
@@ -190,6 +203,41 @@ function switchView(viewName) {
 
         window.location.hash = "home";
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+/**
+ * Helper Toggle Styling Mobile Hamburger Drawer Button
+ */
+function setMobileButtonState(btn, type, isActive) {
+    if (!btn) return;
+
+    const icon = document.getElementById(`mobile-btn-${type}-icon`);
+    const title = document.getElementById(`mobile-btn-${type}-title`);
+    const sub = document.getElementById(`mobile-btn-${type}-sub`);
+
+    if (isActive) {
+        if (type === "home") {
+            btn.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-blue-50/90 text-bps-blue border border-blue-200/80 font-bold transition-all text-left shadow-2xs";
+            if (icon) icon.className = "w-9 h-9 rounded-xl bg-bps-blue text-white flex items-center justify-center flex-shrink-0 shadow-2xs";
+            if (title) title.className = "text-xs font-extrabold text-bps-navy";
+            if (sub) sub.className = "text-[10px] text-blue-600 font-medium";
+        } else if (type === "potensi") {
+            btn.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50/90 text-amber-800 border border-amber-200/80 font-bold transition-all text-left shadow-2xs";
+            if (icon) icon.className = "w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-2xs";
+            if (title) title.className = "text-xs font-extrabold text-amber-900";
+            if (sub) sub.className = "text-[10px] text-amber-700 font-medium";
+        } else if (type === "dokumen") {
+            btn.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-indigo-50/90 text-indigo-700 border border-indigo-200/80 font-bold transition-all text-left shadow-2xs";
+            if (icon) icon.className = "w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-2xs";
+            if (title) title.className = "text-xs font-extrabold text-indigo-900";
+            if (sub) sub.className = "text-[10px] text-indigo-600 font-medium";
+        }
+    } else {
+        btn.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/60 font-medium transition-all text-left";
+        if (icon) icon.className = "w-9 h-9 rounded-xl bg-slate-200/70 text-slate-600 flex items-center justify-center flex-shrink-0";
+        if (title) title.className = "text-xs font-bold text-slate-800";
+        if (sub) sub.className = "text-[10px] text-slate-500 font-normal";
     }
 }
 
@@ -256,11 +304,14 @@ async function loadData() {
                 data.statistikMakro.jumlahKk = parseAngkaIndo(data.statistikMakro.jumlahKk);
             }
 
-            data.potensiDesa = Array.isArray(potensiArr) ? potensiArr.map((item, index) => ({
+            data.potensiDesa = Array.isArray(potensiArr) && potensiArr.length > 0 ? potensiArr.map((item, index) => ({
                 id: parseAngkaIndo(item.id) || (index + 1),
                 judulPotensi: item.judulPotensi || "-",
                 kategori: item.kategori || "Potensi",
                 deskripsi: item.deskripsi || "-",
+                lokasi: item.lokasi || "Desa Sadawarna, Subang",
+                nilaiEkonomi: item.nilaiEkonomi || "Potensi Lokal",
+                pengelola: item.pengelola || "Warga & Pemdes",
                 urlFoto: item.urlFoto || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
             })) : [];
 
@@ -296,9 +347,14 @@ async function loadData() {
         
         if (data.potensiDesa) {
             cachedPotensi = data.potensiDesa;
-            currentFilteredPotensi = cachedPotensi;
-            renderPotensiFilterBar(cachedPotensi);
-            renderPotensiDesa(currentFilteredPotensi, 1);
+            currentFilteredPotensiHome = cachedPotensi;
+            currentFilteredPotensiView = cachedPotensi;
+
+            renderPotensiFilterBarHome(cachedPotensi);
+            renderPotensiFilterBarView(cachedPotensi);
+
+            renderPotensiDesaHome(currentFilteredPotensiHome, 1);
+            renderPotensiDesaView(currentFilteredPotensiView, 1);
         }
 
         if (data.mataPencaharian) renderJobChart(data.mataPencaharian);
@@ -316,7 +372,7 @@ async function loadData() {
 }
 
 /**
- * 1. Render Identitas Desa (Diperbaiki Tanpa Flicker Teks)
+ * 1. Render Identitas Desa
  */
 function renderIdentitas(identitas) {
     const namaDesa = identitas.namaDesa || CONFIG.NAMA_DESA;
@@ -328,20 +384,11 @@ function renderIdentitas(identitas) {
 
     const tagVillage = document.getElementById("header-village-tag");
     const heroVillage = document.getElementById("hero-village-name");
-    const heroDesc = document.getElementById("hero-description");
     const heroDistrict = document.getElementById("hero-district");
     const heroCode = document.getElementById("hero-code");
 
     if (tagVillage) tagVillage.textContent = `Desa ${namaDesa}`;
     if (heroVillage) heroVillage.textContent = `Desa ${namaDesa}`;
-    
-    // Mencegah Teks Flicker jika konten deskripsi sudah cocok
-    if (heroDesc && identitas.deskripsi && window.location.hash !== "#dokumen") {
-        if (heroDesc.textContent.trim() !== identitas.deskripsi.trim()) {
-            heroDesc.textContent = identitas.deskripsi;
-        }
-    }
-    
     if (heroDistrict) heroDistrict.textContent = `${kecamatan}, ${kabupaten}`;
     if (heroCode) heroCode.textContent = identitas.kodeDesa || "-";
 
@@ -374,22 +421,22 @@ function renderStatCards(makro) {
 }
 
 /**
- * 3A. Filter Potensi Desa
+ * 3A. Filter & Render Potensi Home
  */
-function renderPotensiFilterBar(listPotensi) {
+function renderPotensiFilterBarHome(listPotensi) {
     const filterContainer = document.getElementById("potensi-filter-bar");
     if (!filterContainer) return;
 
     const categories = ["Semua", ...new Set(listPotensi.map(item => item.kategori).filter(Boolean))];
 
     filterContainer.innerHTML = categories.map(cat => {
-        const isActive = cat === activePotensiCategory;
+        const isActive = cat === activePotensiCategoryHome;
         const btnClass = isActive
             ? "bg-bps-blue text-white shadow-xs border-bps-blue font-bold"
             : "bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200/80 font-medium";
 
         return `
-            <button onclick="filterPotensi('${cat}')" 
+            <button onclick="filterPotensiHome('${cat}')" 
                     class="px-3 py-1 rounded-xl text-xs border transition-all duration-200 flex-shrink-0 ${btnClass}">
                 ${cat}
             </button>
@@ -397,27 +444,24 @@ function renderPotensiFilterBar(listPotensi) {
     }).join('');
 }
 
-window.filterPotensi = function(category) {
-    activePotensiCategory = category;
-    renderPotensiFilterBar(cachedPotensi);
-    currentPotensiPage = 1; // Reset ke halaman 1 saat filter berubah
+window.filterPotensiHome = function(category) {
+    activePotensiCategoryHome = category;
+    renderPotensiFilterBarHome(cachedPotensi);
+    currentPotensiPageHome = 1;
 
     if (category === "Semua") {
-        currentFilteredPotensi = cachedPotensi;
+        currentFilteredPotensiHome = cachedPotensi;
     } else {
-        currentFilteredPotensi = cachedPotensi.filter(item => item.kategori === category);
+        currentFilteredPotensiHome = cachedPotensi.filter(item => item.kategori === category);
     }
-    renderPotensiDesa(currentFilteredPotensi, 1);
+    renderPotensiDesaHome(currentFilteredPotensiHome, 1);
 };
 
-/**
- * 3B. Render Potensi Cards dengan Pagination
- */
-function renderPotensiDesa(listPotensi, page = 1) {
+function renderPotensiDesaHome(listPotensi, page = 1) {
     const container = document.getElementById("potensi-grid");
     if (!container) return;
 
-    currentPotensiPage = page;
+    currentPotensiPageHome = page;
 
     if (!listPotensi || listPotensi.length === 0) {
         container.innerHTML = `
@@ -426,20 +470,18 @@ function renderPotensiDesa(listPotensi, page = 1) {
                 <p class="text-xs">Belum ada potensi desa dalam kategori ini.</p>
             </div>
         `;
-        renderPotensiPagination(0, 1);
+        renderPotensiPaginationHome(0, 1);
         return;
     }
 
     const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
 
-    // Data slicing khusus halaman aktif
     const startIndex = (page - 1) * POTENSI_PER_PAGE;
     const pageItems = listPotensi.slice(startIndex, startIndex + POTENSI_PER_PAGE);
 
     container.innerHTML = pageItems.map((item, index) => {
         const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
-        // Kartu featured hanya jika halaman 1 dan item pertama
-        const isFeatured = (page === 1 && activePotensiCategory === "Semua" && index === 0);
+        const isFeatured = (page === 1 && activePotensiCategoryHome === "Semua" && index === 0);
 
         if (isFeatured) {
             return `
@@ -468,7 +510,7 @@ function renderPotensiDesa(listPotensi, page = 1) {
                             ${item.deskripsi || '-'}
                         </p>
                         <div class="pt-1 flex items-center gap-1.5 text-xs font-bold text-amber-300">
-                            <span>Lihat Penjelasan Lengkap</span>
+                            <span>Lihat Rincian & Peta Lokasi</span>
                             <i class="fa-solid fa-circle-arrow-right text-xs"></i>
                         </div>
                     </div>
@@ -506,13 +548,10 @@ function renderPotensiDesa(listPotensi, page = 1) {
         }
     }).join('');
 
-    renderPotensiPagination(listPotensi.length, page);
+    renderPotensiPaginationHome(listPotensi.length, page);
 }
 
-/**
- * 3C. Render Control Bar Pagination Potensi Desa
- */
-function renderPotensiPagination(totalItems, currentPage) {
+function renderPotensiPaginationHome(totalItems, currentPage) {
     const container = document.getElementById("potensi-pagination-container");
     if (!container) return;
 
@@ -522,16 +561,6 @@ function renderPotensiPagination(totalItems, currentPage) {
     }
 
     const totalPages = Math.ceil(totalItems / POTENSI_PER_PAGE);
-
-    if (totalItems <= POTENSI_PER_PAGE) {
-        container.innerHTML = `
-            <div class="text-slate-400 font-medium text-[11px]">
-                Menampilkan total <strong class="text-slate-700">${totalItems}</strong> potensi wilayah.
-            </div>
-        `;
-        return;
-    }
-
     const startItem = ((currentPage - 1) * POTENSI_PER_PAGE) + 1;
     const endItem = Math.min(currentPage * POTENSI_PER_PAGE, totalItems);
 
@@ -542,7 +571,7 @@ function renderPotensiPagination(totalItems, currentPage) {
             ? "bg-bps-blue text-white font-bold shadow-xs border-bps-blue"
             : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80";
         pageButtonsHTML += `
-            <button onclick="goToPotensiPage(${p})" class="w-8 h-8 rounded-xl text-xs border transition-all ${btnClass}">
+            <button onclick="goToPotensiPageHome(${p})" class="w-8 h-8 rounded-xl text-xs border transition-all ${btnClass}">
                 ${p}
             </button>
         `;
@@ -556,7 +585,7 @@ function renderPotensiPagination(totalItems, currentPage) {
             Menampilkan <strong class="text-slate-800">${startItem}-${endItem}</strong> dari <strong class="text-slate-800">${totalItems}</strong> potensi
         </div>
         <div class="flex items-center gap-1.5">
-            <button onclick="goToPotensiPage(${currentPage - 1})" 
+            <button onclick="goToPotensiPageHome(${currentPage - 1})" 
                     ${prevDisabled ? 'disabled' : ''} 
                     class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${prevDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
                 <i class="fa-solid fa-chevron-left text-[10px] mr-1"></i> Prev
@@ -564,7 +593,7 @@ function renderPotensiPagination(totalItems, currentPage) {
             <div class="flex items-center gap-1">
                 ${pageButtonsHTML}
             </div>
-            <button onclick="goToPotensiPage(${currentPage + 1})" 
+            <button onclick="goToPotensiPageHome(${currentPage + 1})" 
                     ${nextDisabled ? 'disabled' : ''} 
                     class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${nextDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
                 Next <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
@@ -573,18 +602,187 @@ function renderPotensiPagination(totalItems, currentPage) {
     `;
 }
 
-window.goToPotensiPage = function(page) {
-    const totalPages = Math.ceil(currentFilteredPotensi.length / POTENSI_PER_PAGE);
+window.goToPotensiPageHome = function(page) {
+    const totalPages = Math.ceil(currentFilteredPotensiHome.length / POTENSI_PER_PAGE);
     if (page < 1 || page > totalPages) return;
-    currentPotensiPage = page;
-    renderPotensiDesa(currentFilteredPotensi, page);
-    
-    // Smooth scroll back to top of potensi section
+    currentPotensiPageHome = page;
+    renderPotensiDesaHome(currentFilteredPotensiHome, page);
     document.getElementById("potensi-section")?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
 /**
- * 3D. Function Open & Close Modal Detail Potensi
+ * 3B. Filter & Render Potensi View (Halaman Khusus Potensi)
+ */
+function renderPotensiFilterBarView(listPotensi) {
+    const filterContainer = document.getElementById("potensi-view-filter-bar");
+    if (!filterContainer) return;
+
+    const categories = ["Semua", ...new Set(listPotensi.map(item => item.kategori).filter(Boolean))];
+
+    filterContainer.innerHTML = categories.map(cat => {
+        const isActive = cat === activePotensiCategoryView;
+        const btnClass = isActive
+            ? "bg-amber-500 text-slate-950 font-extrabold shadow-xs border-amber-500"
+            : "bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200/80 font-medium";
+
+        return `
+            <button onclick="filterPotensiView('${cat}')" 
+                    class="px-3 py-1.5 rounded-xl text-xs border transition-all duration-200 flex-shrink-0 ${btnClass}">
+                ${cat}
+            </button>
+        `;
+    }).join('');
+}
+
+window.filterPotensiView = function(category) {
+    activePotensiCategoryView = category;
+    renderPotensiFilterBarView(cachedPotensi);
+    currentPotensiPageView = 1;
+
+    if (category === "Semua") {
+        currentFilteredPotensiView = cachedPotensi;
+    } else {
+        currentFilteredPotensiView = cachedPotensi.filter(item => item.kategori === category);
+    }
+    renderPotensiDesaView(currentFilteredPotensiView, 1);
+};
+
+function renderPotensiDesaView(listPotensi, page = 1) {
+    const container = document.getElementById("potensi-view-grid");
+    if (!container) return;
+
+    currentPotensiPageView = page;
+
+    if (!listPotensi || listPotensi.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-full py-12 text-center text-slate-400 w-full">
+                <i class="fa-solid fa-gem text-3xl mb-2 text-slate-300"></i>
+                <p class="text-xs font-semibold">Tidak ada potensi wilayah yang cocok dengan kriteria.</p>
+            </div>
+        `;
+        renderPotensiPaginationView(0, 1);
+        return;
+    }
+
+    const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
+
+    const startIndex = (page - 1) * POTENSI_PER_PAGE;
+    const pageItems = listPotensi.slice(startIndex, startIndex + POTENSI_PER_PAGE);
+
+    container.innerHTML = pageItems.map((item) => {
+        const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
+
+        return `
+            <div onclick="openPotensiModal(${item.id})" 
+                 class="group cursor-pointer bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-card-hover overflow-hidden flex flex-col justify-between transition-all duration-300 w-full box-border">
+                <div class="relative h-48 sm:h-52 overflow-hidden bg-slate-950">
+                    <img src="${fotoUrl}" 
+                         alt="${item.judulPotensi}" 
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                         onerror="this.src='${placeholderImg}'">
+                    
+                    <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-white/90 backdrop-blur-md text-slate-900 shadow-xs border border-white/60">
+                        ${item.kategori}
+                    </span>
+
+                    <span class="absolute bottom-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-400 text-slate-950 shadow-xs">
+                        <i class="fa-solid fa-coins text-[9px] mr-1"></i>${item.nilaiEkonomi || 'Unggulan'}
+                    </span>
+                </div>
+
+                <div class="p-4 sm:p-5 space-y-3 flex-1 flex flex-col justify-between">
+                    <div class="space-y-1.5">
+                        <h4 class="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-bps-blue transition-colors leading-snug">
+                            ${item.judulPotensi}
+                        </h4>
+                        <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                            ${item.deskripsi || '-'}
+                        </p>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 space-y-1.5 text-[11px] text-slate-600">
+                        <div class="flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-location-dot text-rose-500 text-xs"></i>
+                            <span class="truncate font-medium">${item.lokasi || 'Desa Sadawarna'}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-user-gear text-indigo-500 text-xs"></i>
+                            <span class="truncate font-medium">${item.pengelola || 'Pemdes Sadawarna'}</span>
+                        </div>
+                        <div class="pt-1 flex items-center justify-between text-xs font-bold text-bps-blue">
+                            <span>Lihat Rincian Lengkap</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    renderPotensiPaginationView(listPotensi.length, page);
+}
+
+function renderPotensiPaginationView(totalItems, currentPage) {
+    const container = document.getElementById("potensi-view-pagination-container");
+    if (!container) return;
+
+    if (totalItems === 0) {
+        container.innerHTML = "";
+        return;
+    }
+
+    const totalPages = Math.ceil(totalItems / POTENSI_PER_PAGE);
+    const startItem = ((currentPage - 1) * POTENSI_PER_PAGE) + 1;
+    const endItem = Math.min(currentPage * POTENSI_PER_PAGE, totalItems);
+
+    let pageButtonsHTML = '';
+    for (let p = 1; p <= totalPages; p++) {
+        const isCurrent = p === currentPage;
+        const btnClass = isCurrent
+            ? "bg-amber-500 text-slate-950 font-extrabold shadow-xs border-amber-500"
+            : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80";
+        pageButtonsHTML += `
+            <button onclick="goToPotensiPageView(${p})" class="w-8 h-8 rounded-xl text-xs border transition-all ${btnClass}">
+                ${p}
+            </button>
+        `;
+    }
+
+    const prevDisabled = currentPage === 1;
+    const nextDisabled = currentPage === totalPages;
+
+    container.innerHTML = `
+        <div class="text-slate-500 font-medium text-[11px]">
+            Menampilkan <strong class="text-slate-800">${startItem}-${endItem}</strong> dari <strong class="text-slate-800">${totalItems}</strong> potensi wilayah
+        </div>
+        <div class="flex items-center gap-1.5">
+            <button onclick="goToPotensiPageView(${currentPage - 1})" 
+                    ${prevDisabled ? 'disabled' : ''} 
+                    class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${prevDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
+                <i class="fa-solid fa-chevron-left text-[10px] mr-1"></i> Prev
+            </button>
+            <div class="flex items-center gap-1">
+                ${pageButtonsHTML}
+            </div>
+            <button onclick="goToPotensiPageView(${currentPage + 1})" 
+                    ${nextDisabled ? 'disabled' : ''} 
+                    class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${nextDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
+                Next <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+            </button>
+        </div>
+    `;
+}
+
+window.goToPotensiPageView = function(page) {
+    const totalPages = Math.ceil(currentFilteredPotensiView.length / POTENSI_PER_PAGE);
+    if (page < 1 || page > totalPages) return;
+    currentPotensiPageView = page;
+    renderPotensiDesaView(currentFilteredPotensiView, page);
+    document.getElementById("view-potensi")?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+/**
+ * 3C. Function Open & Close Modal Detail Potensi (Super Rinci)
  */
 function openPotensiModal(id) {
     const item = cachedPotensi.find(p => p.id === id);
@@ -599,26 +797,52 @@ function openPotensiModal(id) {
 
     modalContent.innerHTML = `
         <div class="relative">
-            <img src="${fotoUrl}" alt="${item.judulPotensi}" class="w-full h-48 sm:h-64 object-cover">
+            <img src="${fotoUrl}" alt="${item.judulPotensi}" class="w-full h-52 sm:h-64 object-cover">
             <button onclick="closePotensiModal()" 
-                    class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-950/70 text-white flex items-center justify-center hover:bg-slate-950 transition-colors">
+                    class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-950/70 text-white flex items-center justify-center hover:bg-slate-950 transition-colors shadow-md">
                 <i class="fa-solid fa-xmark text-sm"></i>
             </button>
-            <span class="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-bps-blue text-white shadow-md">
+            <span class="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-bps-blue text-white shadow-md border border-white/20">
                 ${item.kategori}
             </span>
         </div>
-        <div class="p-5 sm:p-6 space-y-3">
-            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
-                ${item.judulPotensi}
-            </h3>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                ${item.deskripsi || 'Belum ada penjelasan detail untuk potensi ini.'}
-            </p>
-            <div class="pt-3 border-t border-slate-100 flex justify-end">
+        <div class="p-5 sm:p-6 space-y-4">
+            <div>
+                <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
+                    ${item.judulPotensi}
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-2">
+                    ${item.deskripsi || 'Penjelasan detail mengenai potensi unggulan wilayah.'}
+                </p>
+            </div>
+
+            <!-- Grid Info Rinci Potensi -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-slate-100 text-xs">
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-0.5">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Lokasi & Alamat</span>
+                    <span class="font-bold text-slate-800 block truncate">${item.lokasi || 'Desa Sadawarna, Subang'}</span>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-0.5">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Estimasi Nilai Ekonomi</span>
+                    <span class="font-bold text-amber-700 block truncate">${item.nilaiEkonomi || 'Potensi Unggulan'}</span>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-0.5 sm:col-span-2">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Mitra Pengelola</span>
+                    <span class="font-bold text-slate-800 block">${item.pengelola || 'Pemdes Sadawarna & Kelompok Warga'}</span>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                <a href="https://maps.google.com/?q=${encodeURIComponent(item.judulPotensi + ' Desa Sadawarna Subang')}" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="px-4 py-2 rounded-xl text-xs font-bold text-bps-blue bg-blue-50 hover:bg-bps-blue hover:text-white border border-blue-200 transition-all inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <span>Buka Peta GPS</span>
+                </a>
                 <button onclick="closePotensiModal()" 
                         class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors">
-                    Tutup Penjelasan
+                    Tutup
                 </button>
             </div>
         </div>
@@ -770,7 +994,7 @@ function filterDokumenKategori(category) {
         }
     });
 
-    currentDocPage = 1; // Reset ke halaman 1 saat filter berubah
+    currentDocPage = 1;
 
     if (category === "Semua") {
         currentFilteredDocs = cachedDokumen;
@@ -808,7 +1032,6 @@ function renderDokumenPublikasi(listDokumen, page = 1) {
         return;
     }
 
-    // Data slicing khusus halaman aktif
     const startIndex = (page - 1) * DOCS_PER_PAGE;
     const pageItems = listDokumen.slice(startIndex, startIndex + DOCS_PER_PAGE);
 
@@ -911,16 +1134,6 @@ function renderDokumenPagination(totalItems, currentPage) {
     }
 
     const totalPages = Math.ceil(totalItems / DOCS_PER_PAGE);
-
-    if (totalItems <= DOCS_PER_PAGE) {
-        container.innerHTML = `
-            <div class="text-slate-400 font-medium text-[11px]">
-                Menampilkan total <strong class="text-slate-700">${totalItems}</strong> dokumen resmi.
-            </div>
-        `;
-        return;
-    }
-
     const startItem = ((currentPage - 1) * DOCS_PER_PAGE) + 1;
     const endItem = Math.min(currentPage * DOCS_PER_PAGE, totalItems);
 
@@ -967,35 +1180,52 @@ window.goToDocPage = function(page) {
     if (page < 1 || page > totalPages) return;
     currentDocPage = page;
     renderDokumenPublikasi(currentFilteredDocs, page);
-    
-    // Smooth scroll back to top of document section
     document.getElementById("view-dokumen")?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
 /**
- * Setup Listener Pencarian Dokumen secara Realtime
+ * Setup Listener Pencarian (Dokumen & Potensi View)
  */
-function setupSearchListener() {
-    const searchInput = document.getElementById("document-search");
-    if (!searchInput) return;
+function setupSearchListeners() {
+    const searchDoc = document.getElementById("document-search");
+    if (searchDoc) {
+        searchDoc.addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            currentDocPage = 1;
 
-    searchInput.addEventListener("input", (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        currentDocPage = 1; // Reset ke halaman 1 saat pencarian
+            if (!query) {
+                currentFilteredDocs = cachedDokumen;
+            } else {
+                currentFilteredDocs = cachedDokumen.filter(doc => 
+                    doc.judul.toLowerCase().includes(query) ||
+                    doc.kategori.toLowerCase().includes(query) ||
+                    (doc.deskripsi && doc.deskripsi.toLowerCase().includes(query)) ||
+                    doc.tahun.toString().includes(query)
+                );
+            }
+            renderDokumenPublikasi(currentFilteredDocs, 1);
+        });
+    }
 
-        if (!query) {
-            currentFilteredDocs = cachedDokumen;
-        } else {
-            currentFilteredDocs = cachedDokumen.filter(doc => 
-                doc.judul.toLowerCase().includes(query) ||
-                doc.kategori.toLowerCase().includes(query) ||
-                (doc.deskripsi && doc.deskripsi.toLowerCase().includes(query)) ||
-                doc.tahun.toString().includes(query)
-            );
-        }
+    const searchPotensi = document.getElementById("potensi-search");
+    if (searchPotensi) {
+        searchPotensi.addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            currentPotensiPageView = 1;
 
-        renderDokumenPublikasi(currentFilteredDocs, 1);
-    });
+            if (!query) {
+                currentFilteredPotensiView = cachedPotensi;
+            } else {
+                currentFilteredPotensiView = cachedPotensi.filter(item => 
+                    item.judulPotensi.toLowerCase().includes(query) ||
+                    item.kategori.toLowerCase().includes(query) ||
+                    (item.deskripsi && item.deskripsi.toLowerCase().includes(query)) ||
+                    (item.lokasi && item.lokasi.toLowerCase().includes(query))
+                );
+            }
+            renderPotensiDesaView(currentFilteredPotensiView, 1);
+        });
+    }
 }
 
 /**
