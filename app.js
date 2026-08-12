@@ -113,10 +113,10 @@ function switchView(viewName) {
             menuBadge.className = "px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 text-[10px] font-extrabold";
         }
 
-        // Banner Dynamic Update khusus Halaman Dokumen
+        // Banner Dynamic Update khusus Halaman Dokumen (No-Wrap Pill & Comfort Padding)
         if (heroBadgeTag) {
             heroBadgeTag.textContent = "REPOSITORI DOKUMEN";
-            heroBadgeTag.className = "px-2 py-0.5 rounded-full bg-indigo-500 text-white font-extrabold text-[10px]";
+            heroBadgeTag.className = "inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-indigo-500 text-white font-extrabold text-[10px] sm:text-xs leading-none flex-shrink-0 shadow-xs";
         }
         if (heroBadgeSub) heroBadgeSub.textContent = "Publikasi BPS, Monografi & Perdes";
         if (heroTitle) {
@@ -165,10 +165,10 @@ function switchView(viewName) {
             menuBadge.className = "px-2.5 py-0.5 rounded-full bg-blue-50 text-bps-blue border border-blue-200/80 text-[10px] font-extrabold";
         }
 
-        // Banner Dynamic Update khusus Beranda Utama
+        // Banner Dynamic Update khusus Beranda Utama (No-Wrap Pill & Comfort Padding)
         if (heroBadgeTag) {
             heroBadgeTag.textContent = "MICRO-PORTAL";
-            heroBadgeTag.className = "px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[10px]";
+            heroBadgeTag.className = "inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[10px] sm:text-xs leading-none flex-shrink-0 shadow-xs";
         }
         if (heroBadgeSub) heroBadgeSub.textContent = "Desa Cinta Statistik BPS Subang";
         if (heroTitle) {
@@ -393,7 +393,7 @@ window.filterPotensi = function(category) {
 };
 
 /**
- * 3B. Render Potensi Cards
+ * 3B. Render Potensi Cards (Lencana No-Wrap & Padding Lega)
  */
 function renderPotensiDesa(listPotensi) {
     const container = document.getElementById("potensi-grid");
@@ -418,7 +418,7 @@ function renderPotensiDesa(listPotensi) {
         if (isFeatured) {
             return `
                 <div onclick="openPotensiModal(${item.id})" 
-                     class="group cursor-pointer relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-card-hover border border-slate-200/90 min-h-[250px] sm:h-96 md:h-[380px] flex flex-col justify-end p-5 sm:p-8 bg-slate-950 text-white lg:col-span-2 transition-all duration-300 w-full">
+                     class="group cursor-pointer relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-card-hover border border-slate-200/90 min-h-[260px] sm:h-96 md:h-[380px] flex flex-col justify-end p-5 sm:p-8 bg-slate-950 text-white lg:col-span-2 transition-all duration-300 w-full">
                     <img src="${fotoUrl}" 
                          alt="${item.judulPotensi}" 
                          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-75"
@@ -426,12 +426,12 @@ function renderPotensiDesa(listPotensi) {
                     
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>
 
-                    <div class="relative z-10 space-y-2 sm:space-y-3">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-extrabold bg-amber-400 text-slate-950 shadow-xs">
+                    <div class="relative z-10 space-y-2.5 sm:space-y-3">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-extrabold bg-amber-400 text-slate-950 shadow-xs leading-none flex-shrink-0 border border-amber-300">
                                 ⭐ POTENSI UNGGULAN
                             </span>
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-white/20 backdrop-blur-md text-white border border-white/20">
+                            <span class="inline-flex items-center whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-bold bg-white/20 backdrop-blur-md text-white border border-white/25 leading-none flex-shrink-0">
                                 ${item.kategori}
                             </span>
                         </div>
@@ -441,7 +441,7 @@ function renderPotensiDesa(listPotensi) {
                         <p class="text-xs sm:text-sm text-slate-300 line-clamp-2 leading-relaxed">
                             ${item.deskripsi || '-'}
                         </p>
-                        <div class="pt-2 flex items-center gap-1.5 text-xs font-bold text-amber-300">
+                        <div class="pt-1 flex items-center gap-1.5 text-xs font-bold text-amber-300">
                             <span>Lihat Penjelasan Lengkap</span>
                             <i class="fa-solid fa-circle-arrow-right text-xs"></i>
                         </div>
@@ -459,7 +459,7 @@ function renderPotensiDesa(listPotensi) {
                     
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent"></div>
 
-                    <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-extrabold bg-white/90 backdrop-blur-md text-slate-900 shadow-xs">
+                    <span class="absolute top-3 left-3 inline-flex items-center whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold bg-white/90 backdrop-blur-md text-slate-900 shadow-xs leading-none border border-white/50">
                         ${item.kategori}
                     </span>
 
