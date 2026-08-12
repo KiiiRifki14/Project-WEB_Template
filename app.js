@@ -36,6 +36,7 @@ const CONFIG = {
 
 // Global State Variables
 let jobChartInstance = null;
+let cachedIdentitas = {}; // Cache identitas desa dari Google Sheets
 let cachedDokumen = []; // Cache dokumen untuk fitur pencarian & pagination
 let cachedPotensi = []; // Cache potensi desa untuk filter & pagination
 let currentFilteredPotensiHome = [];
@@ -231,7 +232,7 @@ function switchView(viewName) {
             heroTitle.innerHTML = `Publikasi Data & Potensi <br class="hidden sm:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-teal-200 to-emerald-300">${currentVillage}</span>`;
         }
         if (heroDesc) {
-            heroDesc.textContent = "Kecamatan Subang merupakan pusat pemerintahan dan ibukota Kabupaten Subang yang terletak pada ketinggian 88 mdpl dengan jarak 0 km dari pusat pemerintahan kabupaten. Memiliki luas wilayah 60.22 km² atau 2.78% dari total luas Kabupaten Subang. Secara administratif terdiri dari 8 kelurahan, 163 RW, dan 599 RT dengan total penduduk sebanyak 147.424 jiwa pada tahun 2025.";
+            heroDesc.textContent = cachedIdentitas.deskripsi || "Kecamatan Subang merupakan pusat pemerintahan dan ibukota Kabupaten Subang yang terletak pada ketinggian 88 mdpl dengan jarak 0 km dari pusat pemerintahan kabupaten. Memiliki luas wilayah 60.22 km² atau 2.78% dari total luas Kabupaten Subang. Secara administratif terdiri dari 8 kelurahan, 163 RW, dan 599 RT dengan total penduduk sebanyak 147.424 jiwa pada tahun 2025.";
         }
 
         window.location.hash = "home";
@@ -408,6 +409,7 @@ async function loadData() {
  * 1. Render Identitas Desa
  */
 function renderIdentitas(identitas) {
+    cachedIdentitas = identitas || {};
     const namaDesa = identitas.namaDesa || CONFIG.NAMA_DESA;
     const kecamatan = identitas.kecamatan || CONFIG.KECAMATAN;
     const kabupaten = identitas.kabupaten || CONFIG.KABUPATEN;
@@ -419,11 +421,15 @@ function renderIdentitas(identitas) {
     const heroVillage = document.getElementById("hero-village-name");
     const heroDistrict = document.getElementById("hero-district");
     const heroCode = document.getElementById("hero-code");
+    const heroDesc = document.getElementById("hero-description");
 
     if (tagVillage) tagVillage.textContent = `Desa ${namaDesa}`;
     if (heroVillage) heroVillage.textContent = `Desa ${namaDesa}`;
     if (heroDistrict) heroDistrict.textContent = `${kecamatan}, ${kabupaten}`;
     if (heroCode) heroCode.textContent = identitas.kodeDesa || "-";
+    if (heroDesc && identitas.deskripsi && identitas.deskripsi.trim() !== "") {
+        heroDesc.textContent = identitas.deskripsi;
+    }
 
     const footerDesc = document.getElementById("footer-village-desc");
     const footerAddress = document.getElementById("footer-address");
