@@ -236,7 +236,7 @@
     </header>
 
     <!-- ==========================================
-         HERO BANNER (JARAK PADAT & TULISAN RAPI DI HP)
+         HERO BANNER (STABEL DESKRIPSI TANPA FLICKER)
          ========================================== -->
     <section id="hero-banner-section" class="relative bg-gradient-to-br from-bps-dark via-bps-navy to-slate-950 text-white overflow-hidden pt-8 pb-14 sm:pt-14 sm:pb-20 w-full transition-all duration-300">
         <!-- Visual Ambient Glow Effects -->
@@ -260,9 +260,9 @@
                     </span>
                 </h2>
 
-                <!-- Subtitle Description (Ukuran Teks Dikecilkan dan Dirapikan Khusus HP) -->
+                <!-- Subtitle Description (Presisi Teks Statis Sinkron dengan Sheets untuk Mencegah Flicker) -->
                 <p id="hero-description" class="text-slate-300 text-[11px] sm:text-sm md:text-base leading-relaxed mb-4 font-normal max-w-2xl">
-                    Pusat publikasi terpadu data statistik makro, indikator demografi, galeri potensi keunggulan wilayah, dan dokumen resmi desa.
+                    Desa Sadawarna merupakan salah satu desa unggulan di Kecamatan Cibogo, Kabupaten Subang yang kaya akan komoditas pertanian, wisata alam Bendungan Sadawarna, serta UMKM lokal.
                 </p>
                 
                 <!-- Tag Pills -->
@@ -365,7 +365,7 @@
                 </div>
             </section>
 
-            <!-- 2. Galeri Potensi Desa -->
+            <!-- 2. Galeri Potensi Desa (dengan Pagination Interaktif) -->
             <section id="potensi-section" class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-sm border border-slate-200/80 w-full box-border">
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-4 mb-5 border-b border-slate-100">
                     <div>
@@ -385,6 +385,11 @@
 
                 <div id="potensi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
                     <!-- Cards Rendered by JS -->
+                </div>
+
+                <!-- Control Bar Pagination Potensi Desa -->
+                <div id="potensi-pagination-container" class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    <!-- Rendered dynamically by app.js -->
                 </div>
             </section>
 
@@ -506,6 +511,11 @@
                 </table>
             </div>
 
+            <!-- Control Bar Pagination Dokumen Publikasi -->
+            <div id="document-pagination-container" class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs w-full box-border">
+                <!-- Rendered dynamically by app.js -->
+            </div>
+
         </div>
 
     </main>
@@ -550,7 +560,7 @@
                     <p class="text-slate-400 text-[11px]">BPS Kabupaten Subang x Pemdes Sadawarna</p>
                     <div class="pt-0.5">
                         <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] font-mono border border-slate-700">
-                            Zero-Maintenance Template v3.2
+                            Zero-Maintenance Template v3.3
                         </span>
                     </div>
                 </div>

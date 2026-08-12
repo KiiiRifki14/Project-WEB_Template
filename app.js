@@ -36,10 +36,20 @@ const CONFIG = {
 
 // Global State Variables
 let jobChartInstance = null;
-let cachedDokumen = []; // Cache dokumen untuk fitur pencarian
-let cachedPotensi = []; // Cache potensi desa untuk filter
+let cachedDokumen = []; // Cache dokumen untuk fitur pencarian & pagination
+let cachedPotensi = []; // Cache potensi desa untuk filter & pagination
+let currentFilteredPotensi = [];
+let currentFilteredDocs = [];
+
 let activePotensiCategory = "Semua";
 let activeDocCategory = "Semua";
+
+// Pagination Settings
+let currentPotensiPage = 1;
+const POTENSI_PER_PAGE = 6;
+
+let currentDocPage = 1;
+const DOCS_PER_PAGE = 5;
 
 /**
  * Inisialisasi Aplikasi saat DOM selesai dimuat
@@ -113,7 +123,7 @@ function switchView(viewName) {
             menuBadge.className = "px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 text-[10px] font-extrabold";
         }
 
-        // Banner Dynamic Update khusus Halaman Dokumen (No-Wrap Pill & Comfort Padding)
+        // Banner Dynamic Update khusus Halaman Dokumen
         if (heroBadgeTag) {
             heroBadgeTag.textContent = "REPOSITORI DOKUMEN";
             heroBadgeTag.className = "inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-indigo-500 text-white font-extrabold text-[10px] sm:text-xs leading-none flex-shrink-0 shadow-xs";
@@ -165,7 +175,7 @@ function switchView(viewName) {
             menuBadge.className = "px-2.5 py-0.5 rounded-full bg-blue-50 text-bps-blue border border-blue-200/80 text-[10px] font-extrabold";
         }
 
-        // Banner Dynamic Update khusus Beranda Utama (No-Wrap Pill & Comfort Padding)
+        // Banner Dynamic Update khusus Beranda Utama
         if (heroBadgeTag) {
             heroBadgeTag.textContent = "MICRO-PORTAL";
             heroBadgeTag.className = "inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[10px] sm:text-xs leading-none flex-shrink-0 shadow-xs";
@@ -175,7 +185,7 @@ function switchView(viewName) {
             heroTitle.innerHTML = `Publikasi Data & Potensi <br class="hidden sm:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-teal-200 to-emerald-300">${currentVillage}</span>`;
         }
         if (heroDesc) {
-            heroDesc.textContent = "Pusat publikasi terpadu data statistik makro, indikator demografi, galeri potensi keunggulan wilayah, dan dokumen resmi desa.";
+            heroDesc.textContent = "Desa Sadawarna merupakan salah satu desa unggulan di Kecamatan Cibogo, Kabupaten Subang yang kaya akan komoditas pertanian, wisata alam Bendungan Sadawarna, serta UMKM lokal.";
         }
 
         window.location.hash = "home";
@@ -286,15 +296,17 @@ async function loadData() {
         
         if (data.potensiDesa) {
             cachedPotensi = data.potensiDesa;
+            currentFilteredPotensi = cachedPotensi;
             renderPotensiFilterBar(cachedPotensi);
-            renderPotensiDesa(cachedPotensi);
+            renderPotensiDesa(currentFilteredPotensi, 1);
         }
 
         if (data.mataPencaharian) renderJobChart(data.mataPencaharian);
         
         if (data.dokumenPublikasi) {
             cachedDokumen = data.dokumenPublikasi;
-            renderDokumenPublikasi(cachedDokumen);
+            currentFilteredDocs = cachedDokumen;
+            renderDokumenPublikasi(currentFilteredDocs, 1);
         }
 
     } catch (error) {
@@ -304,7 +316,7 @@ async function loadData() {
 }
 
 /**
- * 1. Render Identitas Desa
+ * 1. Render Identitas Desa (Diperbaiki Tanpa Flicker Teks)
  */
 function renderIdentitas(identitas) {
     const namaDesa = identitas.namaDesa || CONFIG.NAMA_DESA;
@@ -322,9 +334,14 @@ function renderIdentitas(identitas) {
 
     if (tagVillage) tagVillage.textContent = `Desa ${namaDesa}`;
     if (heroVillage) heroVillage.textContent = `Desa ${namaDesa}`;
+    
+    // Mencegah Teks Flicker jika konten deskripsi sudah cocok
     if (heroDesc && identitas.deskripsi && window.location.hash !== "#dokumen") {
-        heroDesc.textContent = identitas.deskripsi;
+        if (heroDesc.textContent.trim() !== identitas.deskripsi.trim()) {
+            heroDesc.textContent = identitas.deskripsi;
+        }
     }
+    
     if (heroDistrict) heroDistrict.textContent = `${kecamatan}, ${kabupaten}`;
     if (heroCode) heroCode.textContent = identitas.kodeDesa || "-";
 
@@ -383,21 +400,24 @@ function renderPotensiFilterBar(listPotensi) {
 window.filterPotensi = function(category) {
     activePotensiCategory = category;
     renderPotensiFilterBar(cachedPotensi);
+    currentPotensiPage = 1; // Reset ke halaman 1 saat filter berubah
 
     if (category === "Semua") {
-        renderPotensiDesa(cachedPotensi);
+        currentFilteredPotensi = cachedPotensi;
     } else {
-        const filtered = cachedPotensi.filter(item => item.kategori === category);
-        renderPotensiDesa(filtered);
+        currentFilteredPotensi = cachedPotensi.filter(item => item.kategori === category);
     }
+    renderPotensiDesa(currentFilteredPotensi, 1);
 };
 
 /**
- * 3B. Render Potensi Cards (Lencana No-Wrap & Padding Lega)
+ * 3B. Render Potensi Cards dengan Pagination
  */
-function renderPotensiDesa(listPotensi) {
+function renderPotensiDesa(listPotensi, page = 1) {
     const container = document.getElementById("potensi-grid");
     if (!container) return;
+
+    currentPotensiPage = page;
 
     if (!listPotensi || listPotensi.length === 0) {
         container.innerHTML = `
@@ -406,14 +426,20 @@ function renderPotensiDesa(listPotensi) {
                 <p class="text-xs">Belum ada potensi desa dalam kategori ini.</p>
             </div>
         `;
+        renderPotensiPagination(0, 1);
         return;
     }
 
     const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
 
-    container.innerHTML = listPotensi.map((item, index) => {
+    // Data slicing khusus halaman aktif
+    const startIndex = (page - 1) * POTENSI_PER_PAGE;
+    const pageItems = listPotensi.slice(startIndex, startIndex + POTENSI_PER_PAGE);
+
+    container.innerHTML = pageItems.map((item, index) => {
         const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
-        const isFeatured = (activePotensiCategory === "Semua" && index === 0);
+        // Kartu featured hanya jika halaman 1 dan item pertama
+        const isFeatured = (page === 1 && activePotensiCategory === "Semua" && index === 0);
 
         if (isFeatured) {
             return `
@@ -479,10 +505,86 @@ function renderPotensiDesa(listPotensi) {
             `;
         }
     }).join('');
+
+    renderPotensiPagination(listPotensi.length, page);
 }
 
 /**
- * 3C. Function Open & Close Modal Detail Potensi
+ * 3C. Render Control Bar Pagination Potensi Desa
+ */
+function renderPotensiPagination(totalItems, currentPage) {
+    const container = document.getElementById("potensi-pagination-container");
+    if (!container) return;
+
+    if (totalItems === 0) {
+        container.innerHTML = "";
+        return;
+    }
+
+    const totalPages = Math.ceil(totalItems / POTENSI_PER_PAGE);
+
+    if (totalItems <= POTENSI_PER_PAGE) {
+        container.innerHTML = `
+            <div class="text-slate-400 font-medium text-[11px]">
+                Menampilkan total <strong class="text-slate-700">${totalItems}</strong> potensi wilayah.
+            </div>
+        `;
+        return;
+    }
+
+    const startItem = ((currentPage - 1) * POTENSI_PER_PAGE) + 1;
+    const endItem = Math.min(currentPage * POTENSI_PER_PAGE, totalItems);
+
+    let pageButtonsHTML = '';
+    for (let p = 1; p <= totalPages; p++) {
+        const isCurrent = p === currentPage;
+        const btnClass = isCurrent
+            ? "bg-bps-blue text-white font-bold shadow-xs border-bps-blue"
+            : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80";
+        pageButtonsHTML += `
+            <button onclick="goToPotensiPage(${p})" class="w-8 h-8 rounded-xl text-xs border transition-all ${btnClass}">
+                ${p}
+            </button>
+        `;
+    }
+
+    const prevDisabled = currentPage === 1;
+    const nextDisabled = currentPage === totalPages;
+
+    container.innerHTML = `
+        <div class="text-slate-500 font-medium text-[11px]">
+            Menampilkan <strong class="text-slate-800">${startItem}-${endItem}</strong> dari <strong class="text-slate-800">${totalItems}</strong> potensi
+        </div>
+        <div class="flex items-center gap-1.5">
+            <button onclick="goToPotensiPage(${currentPage - 1})" 
+                    ${prevDisabled ? 'disabled' : ''} 
+                    class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${prevDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
+                <i class="fa-solid fa-chevron-left text-[10px] mr-1"></i> Prev
+            </button>
+            <div class="flex items-center gap-1">
+                ${pageButtonsHTML}
+            </div>
+            <button onclick="goToPotensiPage(${currentPage + 1})" 
+                    ${nextDisabled ? 'disabled' : ''} 
+                    class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${nextDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
+                Next <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+            </button>
+        </div>
+    `;
+}
+
+window.goToPotensiPage = function(page) {
+    const totalPages = Math.ceil(currentFilteredPotensi.length / POTENSI_PER_PAGE);
+    if (page < 1 || page > totalPages) return;
+    currentPotensiPage = page;
+    renderPotensiDesa(currentFilteredPotensi, page);
+    
+    // Smooth scroll back to top of potensi section
+    document.getElementById("potensi-section")?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+/**
+ * 3D. Function Open & Close Modal Detail Potensi
  */
 function openPotensiModal(id) {
     const item = cachedPotensi.find(p => p.id === id);
@@ -654,7 +756,7 @@ function renderJobChart(listPekerjaan) {
 }
 
 /**
- * 5. Render Dokumen Publikasi Desa & Filter Kategori
+ * 5A. Filter Dokumen Publikasi Desa
  */
 function filterDokumenKategori(category) {
     activeDocCategory = category;
@@ -668,23 +770,30 @@ function filterDokumenKategori(category) {
         }
     });
 
+    currentDocPage = 1; // Reset ke halaman 1 saat filter berubah
+
     if (category === "Semua") {
-        renderDokumenPublikasi(cachedDokumen);
+        currentFilteredDocs = cachedDokumen;
     } else {
-        const filtered = cachedDokumen.filter(doc => {
+        currentFilteredDocs = cachedDokumen.filter(doc => {
             const kat = (doc.kategori || "").toLowerCase();
             if (category === "Publikasi BPS") return kat.includes("bps");
             if (category === "Profil Wilayah") return kat.includes("profil") || kat.includes("monografi");
             if (category === "Perdes") return kat.includes("peraturan") || kat.includes("perdes");
             return kat.includes(category.toLowerCase());
         });
-        renderDokumenPublikasi(filtered);
     }
+    renderDokumenPublikasi(currentFilteredDocs, 1);
 }
 
-function renderDokumenPublikasi(listDokumen) {
+/**
+ * 5B. Render Dokumen Publikasi Desa dengan Pagination
+ */
+function renderDokumenPublikasi(listDokumen, page = 1) {
     const tbody = document.getElementById("document-table-body");
     const mobileContainer = document.getElementById("document-mobile-cards");
+
+    currentDocPage = page;
 
     if (!listDokumen || listDokumen.length === 0) {
         const emptyStateHTML = `
@@ -695,11 +804,16 @@ function renderDokumenPublikasi(listDokumen) {
         `;
         if (tbody) tbody.innerHTML = `<tr><td colspan="5">${emptyStateHTML}</td></tr>`;
         if (mobileContainer) mobileContainer.innerHTML = emptyStateHTML;
+        renderDokumenPagination(0, 1);
         return;
     }
 
+    // Data slicing khusus halaman aktif
+    const startIndex = (page - 1) * DOCS_PER_PAGE;
+    const pageItems = listDokumen.slice(startIndex, startIndex + DOCS_PER_PAGE);
+
     if (tbody) {
-        tbody.innerHTML = listDokumen.map((doc) => {
+        tbody.innerHTML = pageItems.map((doc) => {
             const badgeStyle = getCategoryBadgeStyle(doc.kategori);
 
             return `
@@ -743,7 +857,7 @@ function renderDokumenPublikasi(listDokumen) {
     }
 
     if (mobileContainer) {
-        mobileContainer.innerHTML = listDokumen.map((doc) => {
+        mobileContainer.innerHTML = pageItems.map((doc) => {
             const badgeStyle = getCategoryBadgeStyle(doc.kategori);
 
             return `
@@ -780,7 +894,83 @@ function renderDokumenPublikasi(listDokumen) {
             `;
         }).join('');
     }
+
+    renderDokumenPagination(listDokumen.length, page);
 }
+
+/**
+ * 5C. Render Control Bar Pagination Dokumen Publikasi
+ */
+function renderDokumenPagination(totalItems, currentPage) {
+    const container = document.getElementById("document-pagination-container");
+    if (!container) return;
+
+    if (totalItems === 0) {
+        container.innerHTML = "";
+        return;
+    }
+
+    const totalPages = Math.ceil(totalItems / DOCS_PER_PAGE);
+
+    if (totalItems <= DOCS_PER_PAGE) {
+        container.innerHTML = `
+            <div class="text-slate-400 font-medium text-[11px]">
+                Menampilkan total <strong class="text-slate-700">${totalItems}</strong> dokumen resmi.
+            </div>
+        `;
+        return;
+    }
+
+    const startItem = ((currentPage - 1) * DOCS_PER_PAGE) + 1;
+    const endItem = Math.min(currentPage * DOCS_PER_PAGE, totalItems);
+
+    let pageButtonsHTML = '';
+    for (let p = 1; p <= totalPages; p++) {
+        const isCurrent = p === currentPage;
+        const btnClass = isCurrent
+            ? "bg-bps-blue text-white font-bold shadow-xs border-bps-blue"
+            : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80";
+        pageButtonsHTML += `
+            <button onclick="goToDocPage(${p})" class="w-8 h-8 rounded-xl text-xs border transition-all ${btnClass}">
+                ${p}
+            </button>
+        `;
+    }
+
+    const prevDisabled = currentPage === 1;
+    const nextDisabled = currentPage === totalPages;
+
+    container.innerHTML = `
+        <div class="text-slate-500 font-medium text-[11px]">
+            Menampilkan <strong class="text-slate-800">${startItem}-${endItem}</strong> dari <strong class="text-slate-800">${totalItems}</strong> dokumen
+        </div>
+        <div class="flex items-center gap-1.5">
+            <button onclick="goToDocPage(${currentPage - 1})" 
+                    ${prevDisabled ? 'disabled' : ''} 
+                    class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${prevDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
+                <i class="fa-solid fa-chevron-left text-[10px] mr-1"></i> Prev
+            </button>
+            <div class="flex items-center gap-1">
+                ${pageButtonsHTML}
+            </div>
+            <button onclick="goToDocPage(${currentPage + 1})" 
+                    ${nextDisabled ? 'disabled' : ''} 
+                    class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${nextDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
+                Next <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+            </button>
+        </div>
+    `;
+}
+
+window.goToDocPage = function(page) {
+    const totalPages = Math.ceil(currentFilteredDocs.length / DOCS_PER_PAGE);
+    if (page < 1 || page > totalPages) return;
+    currentDocPage = page;
+    renderDokumenPublikasi(currentFilteredDocs, page);
+    
+    // Smooth scroll back to top of document section
+    document.getElementById("view-dokumen")?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 /**
  * Setup Listener Pencarian Dokumen secara Realtime
@@ -791,19 +981,20 @@ function setupSearchListener() {
 
     searchInput.addEventListener("input", (e) => {
         const query = e.target.value.toLowerCase().trim();
+        currentDocPage = 1; // Reset ke halaman 1 saat pencarian
+
         if (!query) {
-            renderDokumenPublikasi(cachedDokumen);
-            return;
+            currentFilteredDocs = cachedDokumen;
+        } else {
+            currentFilteredDocs = cachedDokumen.filter(doc => 
+                doc.judul.toLowerCase().includes(query) ||
+                doc.kategori.toLowerCase().includes(query) ||
+                (doc.deskripsi && doc.deskripsi.toLowerCase().includes(query)) ||
+                doc.tahun.toString().includes(query)
+            );
         }
 
-        const filtered = cachedDokumen.filter(doc => 
-            doc.judul.toLowerCase().includes(query) ||
-            doc.kategori.toLowerCase().includes(query) ||
-            (doc.deskripsi && doc.deskripsi.toLowerCase().includes(query)) ||
-            doc.tahun.toString().includes(query)
-        );
-
-        renderDokumenPublikasi(filtered);
+        renderDokumenPublikasi(currentFilteredDocs, 1);
     });
 }
 
