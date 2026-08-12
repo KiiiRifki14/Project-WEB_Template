@@ -89,16 +89,28 @@ function switchView(viewName) {
             tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-indigo-600 bg-indigo-50 font-bold border border-indigo-200 transition-all flex items-center gap-1.5 shadow-xs";
         }
 
-        // Mobile Drawer Button Styling
+        // Mobile Drawer Button Styling (Clean Light System)
         if (mobileBtnHome) {
-            mobileBtnHome.className = "w-full flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold transition-all text-left";
+            mobileBtnHome.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/60 font-medium transition-all text-left";
+            const iconContainer = document.getElementById("mobile-btn-home-icon");
+            const title = document.getElementById("mobile-btn-home-title");
+            const sub = document.getElementById("mobile-btn-home-sub");
+            if (iconContainer) iconContainer.className = "w-9 h-9 rounded-xl bg-slate-200/70 text-slate-600 flex items-center justify-center flex-shrink-0";
+            if (title) title.className = "text-xs font-bold text-slate-800";
+            if (sub) sub.className = "text-[10px] text-slate-500 font-normal";
         }
         if (mobileBtnDokumen) {
-            mobileBtnDokumen.className = "w-full flex items-center justify-between p-3 rounded-2xl bg-indigo-600 text-white shadow-md font-bold transition-all text-left";
+            mobileBtnDokumen.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-indigo-50/90 text-indigo-700 border border-indigo-200/80 font-bold transition-all text-left shadow-2xs";
+            const iconContainer = document.getElementById("mobile-btn-dokumen-icon");
+            const title = document.getElementById("mobile-btn-dokumen-title");
+            const sub = document.getElementById("mobile-btn-dokumen-sub");
+            if (iconContainer) iconContainer.className = "w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-2xs";
+            if (title) title.className = "text-xs font-extrabold text-indigo-900";
+            if (sub) sub.className = "text-[10px] text-indigo-600 font-medium";
         }
         if (menuBadge) {
             menuBadge.textContent = "Mode Dokumen";
-            menuBadge.className = "px-2 py-0.5 rounded bg-indigo-900/80 text-indigo-300 border border-indigo-700 text-[10px]";
+            menuBadge.className = "px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 text-[10px] font-extrabold";
         }
 
         // Banner Dynamic Update khusus Halaman Dokumen
@@ -129,16 +141,28 @@ function switchView(viewName) {
             tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
         }
 
-        // Mobile Drawer Button Styling
+        // Mobile Drawer Button Styling (Clean Light System)
         if (mobileBtnHome) {
-            mobileBtnHome.className = "w-full flex items-center justify-between p-3 rounded-2xl bg-bps-blue text-white shadow-md font-bold transition-all text-left";
+            mobileBtnHome.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-blue-50/90 text-bps-blue border border-blue-200/80 font-bold transition-all text-left shadow-2xs";
+            const iconContainer = document.getElementById("mobile-btn-home-icon");
+            const title = document.getElementById("mobile-btn-home-title");
+            const sub = document.getElementById("mobile-btn-home-sub");
+            if (iconContainer) iconContainer.className = "w-9 h-9 rounded-xl bg-bps-blue text-white flex items-center justify-center flex-shrink-0 shadow-2xs";
+            if (title) title.className = "text-xs font-extrabold text-bps-navy";
+            if (sub) sub.className = "text-[10px] text-blue-600 font-medium";
         }
         if (mobileBtnDokumen) {
-            mobileBtnDokumen.className = "w-full flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold transition-all text-left";
+            mobileBtnDokumen.className = "w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/60 font-medium transition-all text-left";
+            const iconContainer = document.getElementById("mobile-btn-dokumen-icon");
+            const title = document.getElementById("mobile-btn-dokumen-title");
+            const sub = document.getElementById("mobile-btn-dokumen-sub");
+            if (iconContainer) iconContainer.className = "w-9 h-9 rounded-xl bg-slate-200/70 text-slate-600 flex items-center justify-center flex-shrink-0";
+            if (title) title.className = "text-xs font-bold text-slate-800";
+            if (sub) sub.className = "text-[10px] text-slate-500 font-normal";
         }
         if (menuBadge) {
             menuBadge.textContent = "Beranda Utama";
-            menuBadge.className = "px-2 py-0.5 rounded bg-blue-900/80 text-blue-300 border border-blue-700 text-[10px]";
+            menuBadge.className = "px-2.5 py-0.5 rounded-full bg-blue-50 text-bps-blue border border-blue-200/80 text-[10px] font-extrabold";
         }
 
         // Banner Dynamic Update khusus Beranda Utama
