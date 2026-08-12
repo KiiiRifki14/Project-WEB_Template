@@ -134,6 +134,8 @@ function switchView(viewName) {
         viewHome.classList.add("hidden");
         viewPotensi.classList.add("hidden");
         viewDokumen.classList.remove("hidden");
+        triggerViewAnimation(viewDokumen);
+        triggerHeroAnimation();
 
         // Desktop Nav Styling
         if (tabHome) tabHome.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
@@ -170,6 +172,8 @@ function switchView(viewName) {
         viewHome.classList.add("hidden");
         viewDokumen.classList.add("hidden");
         viewPotensi.classList.remove("hidden");
+        triggerViewAnimation(viewPotensi);
+        triggerHeroAnimation();
 
         // Desktop Nav Styling
         if (tabHome) tabHome.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
@@ -206,6 +210,8 @@ function switchView(viewName) {
         viewDokumen.classList.add("hidden");
         viewPotensi.classList.add("hidden");
         viewHome.classList.remove("hidden");
+        triggerViewAnimation(viewHome);
+        triggerHeroAnimation();
 
         // Desktop Nav Styling
         if (tabHome) tabHome.className = "px-3.5 py-1.5 rounded-xl text-bps-blue bg-blue-50 font-bold border border-blue-200 transition-all flex items-center gap-1.5 shadow-xs";
@@ -238,6 +244,24 @@ function switchView(viewName) {
         window.location.hash = "home";
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+}
+
+/**
+ * Helper Animasi Smooth Fade In saat Perpindahan View
+ */
+function triggerViewAnimation(targetEl) {
+    if (!targetEl) return;
+    targetEl.classList.remove("animate-fade-in");
+    void targetEl.offsetWidth;
+    targetEl.classList.add("animate-fade-in");
+}
+
+function triggerHeroAnimation() {
+    const heroContent = document.querySelector("#hero-banner-section .max-w-3xl");
+    if (!heroContent) return;
+    heroContent.classList.remove("animate-hero-fade");
+    void heroContent.offsetWidth;
+    heroContent.classList.add("animate-hero-fade");
 }
 
 /**
