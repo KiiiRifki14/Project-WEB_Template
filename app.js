@@ -185,7 +185,7 @@ function switchView(viewName) {
             heroTitle.innerHTML = `Publikasi Data & Potensi <br class="hidden sm:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-teal-200 to-emerald-300">${currentVillage}</span>`;
         }
         if (heroDesc) {
-            heroDesc.textContent = "Desa Sadawarna merupakan salah satu desa unggulan di Kecamatan Cibogo, Kabupaten Subang yang kaya akan komoditas pertanian, wisata alam Bendungan Sadawarna, serta UMKM lokal.";
+            heroDesc.textContent = "Kecamatan Subang merupakan pusat pemerintahan dan ibukota Kabupaten Subang yang terletak pada ketinggian 88 mdpl dengan jarak 0 km dari pusat pemerintahan kabupaten. Memiliki luas wilayah 60.22 km² atau 2.78% dari total luas Kabupaten Subang. Secara administratif terdiri dari 8 kelurahan, 163 RW, dan 599 RT dengan total penduduk sebanyak 147.424 jiwa pada tahun 2025.";
         }
 
         window.location.hash = "home";
