@@ -78,6 +78,26 @@
       "nilaiEkonomi": "± Rp 300 Juta / Tahun",
       "pengelola": "Kelompok Wanita Tani (KWT) Melati",
       "urlFoto": "https://images.unsplash.com/photo-1509358271058-acd05cc93898?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": 7,
+      "judulPotensi": "Ekowisata Hutan Pinus & Camping Ground",
+      "kategori": "Wisata & Alam",
+      "deskripsi": "Area bukit pinus hijau nan sejuk yang menjadi lokasi camping keluarga, jelajah alam, dan outbond edukasi warga.",
+      "lokasi": "Bukit Pasir Sadawarna RT 18",
+      "nilaiEkonomi": "± Rp 250 Juta / Tahun",
+      "pengelola": "LMDH x Pemdes Sadawarna",
+      "urlFoto": "https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": 8,
+      "judulPotensi": "Sentra Peternakan Sapi Perah & Susu Segar",
+      "kategori": "Peternakan",
+      "deskripsi": "Kawasan peternakan sapi perah warga yang memproduksi susu sapi murni harian dan olahan keju mentega desa.",
+      "lokasi": "Dusun Sadawarna II, Kec. Cibogo",
+      "nilaiEkonomi": "Produksi 1.200 Liter Susu / Hari",
+      "pengelola": "Koperasi Peternak Lembah Murni",
+      "urlFoto": "https://images.unsplash.com/photo-1546445317-29f4545f9d52?auto=format&fit=crop&w=800&q=80"
     }
   ],
   "mataPencaharian": [
@@ -166,6 +186,24 @@
       "ukuran": "5.6 MB",
       "deskripsi": "Peta spasial persebaran titik potensi ekonomi, UMKM, dan sarana prasarana Desa Sadawarna.",
       "urlDrive": "https://drive.google.com/file/d/1sample_peta_2025/view"
+    },
+    {
+      "id": 7,
+      "judul": "RPJMDes Sadawarna Periode 2024 - 2030",
+      "kategori": "Peraturan Desa",
+      "tahun": 2024,
+      "ukuran": "6.8 MB",
+      "deskripsi": "Rencana Pembangunan Jangka Menengah Desa Sadawarna arah prioritas pembangunan 6 tahun.",
+      "urlDrive": "https://drive.google.com/file/d/1sample_rpjmdes_2024/view"
+    },
+    {
+      "id": 8,
+      "judul": "Hasil Laporan Indeks Desa Membangun (IDM) 2025",
+      "kategori": "Publikasi BPS",
+      "tahun": 2025,
+      "ukuran": "3.4 MB",
+      "deskripsi": "Ringkasan nilai status kemandirian Desa Sadawarna dengan kategori Desa Mandiri.",
+      "urlDrive": "https://drive.google.com/file/d/1sample_idm_2025/view"
     }
   ]
 }

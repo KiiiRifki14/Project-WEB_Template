@@ -46,13 +46,31 @@ let activePotensiCategoryHome = "Semua";
 let activePotensiCategoryView = "Semua";
 let activeDocCategory = "Semua";
 
-// Pagination Settings (Set to 3 items per page so pagination controls are ALWAYS VISIBLE)
+// Current Pagination Pages
 let currentPotensiPageHome = 1;
 let currentPotensiPageView = 1;
-const POTENSI_PER_PAGE = 3;
-
 let currentDocPage = 1;
-const DOCS_PER_PAGE = 3;
+
+/**
+ * Helper Responsif: Menghitung Jumlah Item Per Halaman sesuai Lebar Layar (PC vs Mobile)
+ */
+function getPotensiItemsPerPage() {
+    if (window.innerWidth >= 1024) {
+        return 5; // PC Desktop: 1 kartu featured (2 kolom) + 1 kartu = Baris 1 (3 kolom); 3 kartu = Baris 2 (3 kolom). Total 5 kartu (Grid 100% Penuh tanpa lubang!)
+    } else if (window.innerWidth >= 640) {
+        return 4; // Tablet: 2 kolom x 2 baris = 4 kartu
+    } else {
+        return 3; // Mobile HP: 3 kartu per halaman (singkat & tanpa scroll panjang)
+    }
+}
+
+function getDocItemsPerPage() {
+    if (window.innerWidth >= 1024) {
+        return 6; // PC Desktop Table: 6 baris per halaman
+    } else {
+        return 3; // Mobile HP Cards: 3 kartu per halaman
+    }
+}
 
 /**
  * Inisialisasi Aplikasi saat DOM selesai dimuat
@@ -68,6 +86,21 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (window.location.hash === "#potensi") {
         switchView("potensi");
     }
+
+    // Auto-recalculate pagination items on screen resize with debounce
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (cachedPotensi.length > 0) {
+                renderPotensiDesaHome(currentFilteredPotensiHome, currentPotensiPageHome);
+                renderPotensiDesaView(currentFilteredPotensiView, currentPotensiPageView);
+            }
+            if (cachedDokumen.length > 0) {
+                renderDokumenPublikasi(currentFilteredDocs, currentDocPage);
+            }
+        }, 200);
+    });
 });
 
 /**
@@ -476,8 +509,9 @@ function renderPotensiDesaHome(listPotensi, page = 1) {
 
     const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
 
-    const startIndex = (page - 1) * POTENSI_PER_PAGE;
-    const pageItems = listPotensi.slice(startIndex, startIndex + POTENSI_PER_PAGE);
+    const itemsPerPage = getPotensiItemsPerPage();
+    const startIndex = (page - 1) * itemsPerPage;
+    const pageItems = listPotensi.slice(startIndex, startIndex + itemsPerPage);
 
     container.innerHTML = pageItems.map((item, index) => {
         const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
@@ -560,9 +594,10 @@ function renderPotensiPaginationHome(totalItems, currentPage) {
         return;
     }
 
-    const totalPages = Math.ceil(totalItems / POTENSI_PER_PAGE);
-    const startItem = ((currentPage - 1) * POTENSI_PER_PAGE) + 1;
-    const endItem = Math.min(currentPage * POTENSI_PER_PAGE, totalItems);
+    const itemsPerPage = getPotensiItemsPerPage();
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startItem = ((currentPage - 1) * itemsPerPage) + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
     let pageButtonsHTML = '';
     for (let p = 1; p <= totalPages; p++) {
@@ -603,7 +638,8 @@ function renderPotensiPaginationHome(totalItems, currentPage) {
 }
 
 window.goToPotensiPageHome = function(page) {
-    const totalPages = Math.ceil(currentFilteredPotensiHome.length / POTENSI_PER_PAGE);
+    const itemsPerPage = getPotensiItemsPerPage();
+    const totalPages = Math.ceil(currentFilteredPotensiHome.length / itemsPerPage);
     if (page < 1 || page > totalPages) return;
     currentPotensiPageHome = page;
     renderPotensiDesaHome(currentFilteredPotensiHome, page);
@@ -666,8 +702,9 @@ function renderPotensiDesaView(listPotensi, page = 1) {
 
     const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
 
-    const startIndex = (page - 1) * POTENSI_PER_PAGE;
-    const pageItems = listPotensi.slice(startIndex, startIndex + POTENSI_PER_PAGE);
+    const itemsPerPage = getPotensiItemsPerPage();
+    const startIndex = (page - 1) * itemsPerPage;
+    const pageItems = listPotensi.slice(startIndex, startIndex + itemsPerPage);
 
     container.innerHTML = pageItems.map((item) => {
         const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
@@ -731,9 +768,10 @@ function renderPotensiPaginationView(totalItems, currentPage) {
         return;
     }
 
-    const totalPages = Math.ceil(totalItems / POTENSI_PER_PAGE);
-    const startItem = ((currentPage - 1) * POTENSI_PER_PAGE) + 1;
-    const endItem = Math.min(currentPage * POTENSI_PER_PAGE, totalItems);
+    const itemsPerPage = getPotensiItemsPerPage();
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startItem = ((currentPage - 1) * itemsPerPage) + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
     let pageButtonsHTML = '';
     for (let p = 1; p <= totalPages; p++) {
@@ -774,7 +812,8 @@ function renderPotensiPaginationView(totalItems, currentPage) {
 }
 
 window.goToPotensiPageView = function(page) {
-    const totalPages = Math.ceil(currentFilteredPotensiView.length / POTENSI_PER_PAGE);
+    const itemsPerPage = getPotensiItemsPerPage();
+    const totalPages = Math.ceil(currentFilteredPotensiView.length / itemsPerPage);
     if (page < 1 || page > totalPages) return;
     currentPotensiPageView = page;
     renderPotensiDesaView(currentFilteredPotensiView, page);
@@ -1032,8 +1071,9 @@ function renderDokumenPublikasi(listDokumen, page = 1) {
         return;
     }
 
-    const startIndex = (page - 1) * DOCS_PER_PAGE;
-    const pageItems = listDokumen.slice(startIndex, startIndex + DOCS_PER_PAGE);
+    const itemsPerPage = getDocItemsPerPage();
+    const startIndex = (page - 1) * itemsPerPage;
+    const pageItems = listDokumen.slice(startIndex, startIndex + itemsPerPage);
 
     if (tbody) {
         tbody.innerHTML = pageItems.map((doc) => {
@@ -1133,9 +1173,10 @@ function renderDokumenPagination(totalItems, currentPage) {
         return;
     }
 
-    const totalPages = Math.ceil(totalItems / DOCS_PER_PAGE);
-    const startItem = ((currentPage - 1) * DOCS_PER_PAGE) + 1;
-    const endItem = Math.min(currentPage * DOCS_PER_PAGE, totalItems);
+    const itemsPerPage = getDocItemsPerPage();
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startItem = ((currentPage - 1) * itemsPerPage) + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
     let pageButtonsHTML = '';
     for (let p = 1; p <= totalPages; p++) {
@@ -1176,7 +1217,8 @@ function renderDokumenPagination(totalItems, currentPage) {
 }
 
 window.goToDocPage = function(page) {
-    const totalPages = Math.ceil(currentFilteredDocs.length / DOCS_PER_PAGE);
+    const itemsPerPage = getDocItemsPerPage();
+    const totalPages = Math.ceil(currentFilteredDocs.length / itemsPerPage);
     if (page < 1 || page > totalPages) return;
     currentDocPage = page;
     renderDokumenPublikasi(currentFilteredDocs, page);
