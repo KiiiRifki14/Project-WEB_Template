@@ -14,7 +14,7 @@ Proyek ini bertujuan membangun **Template Micro-Portal Web 1-Halaman (Single Pag
 
 - **Principle:** KISS (Keep It Stupid Simple), Zero-Maintenance, Light-Weight.
 - **No Heavy Frameworks:** Murni HTML5, Tailwind CSS (via CDN), FontAwesome (via CDN), Chart.js (via CDN), dan Vanilla JavaScript. Tanpa proses build (`npm`, `webpack`, dsb.).
-- **No Paid Backend/Database:** Memanfaatkan Google Sheets (via SheetDB / Google Visualization API / JSON lokal) sebagai database terdistribusi.
+- **No Paid Backend/Database:** Memanfaatkan Google Sheets (via Google Apps Script Web App 100% Gratis / SheetDB / JSON lokal) sebagai database terdistribusi.
 - **Zero Hosting Cost:** Didesain untuk di-host secara gratis via GitHub Pages atau Vercel.
 - **Mobile First & Fast Loading:** Tampilan responsif dan cepat diakses di daerah dengan sinyal internet terbatas.
 

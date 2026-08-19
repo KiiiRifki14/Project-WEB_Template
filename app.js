@@ -7,7 +7,9 @@
  * PETUNJUK KUSTOMISASI UNTUK OPERATOR DESA / BPS:
  * 1. Objek CONFIG di bawah ini adalah kontrol utama portal.
  * 2. CARA MENGHUBUNGKAN KE GOOGLE SHEETS (TANPA BACKEND):
- *    - Masukkan URL API SheetDB Anda ke variabel `DATA_URL` di bawah ini.
+ *    - Opsi A (Rekomendasi - 100% Gratis Unlimited): Masukkan URL Web App Google Apps Script Anda.
+ *      Contoh: DATA_URL: "https://script.google.com/macros/s/AKfycbx.../exec"
+ *    - Opsi B (SheetDB): Masukkan URL API SheetDB Anda.
  *      Contoh: DATA_URL: "https://sheetdb.io/api/v1/1s3selzgb4f1i"
  * 3. Jika menggunakan data lokal:
  *    - Biarkan CONFIG.DATA_URL bernilai "./data.json".
@@ -15,9 +17,9 @@
  */
 
 const CONFIG = {
-    // Sumber Data (Dapat berupa path file JSON lokal atau URL API Google Sheets via SheetDB)
-    DATA_URL: "https://sheetdb.io/api/v1/1s3selzgb4f1i",
-    
+    // Sumber Data (Dapat berupa Google Apps Script Web App URL, SheetDB API, atau "./data.json")
+    DATA_URL: "https://script.google.com/macros/s/AKfycbyjrdgz5LDHTcfP3jIRxFHeIbnff3gfQbcPJX2mKg_J1cLE3O1parB92lxWRgeP5mfH/exec",
+
     // Konfigurasi Fallback Identitas (jika data dari Sheets kosong)
     NAMA_DESA: "Sadawarna",
     KECAMATAN: "Kecamatan Cibogo",
@@ -329,9 +331,67 @@ async function loadData() {
     try {
         let data = {};
 
-        if (CONFIG.DATA_URL.includes("sheetdb.io")) {
+        if (CONFIG.DATA_URL.includes("script.google.com") || CONFIG.DATA_URL.includes("script.googleusercontent.com")) {
+            console.log("⚡ Mengambil data dinamis dari Google Apps Script Web App (100% Gratis & Unlimited)...");
+            const response = await fetch(CONFIG.DATA_URL);
+            if (!response.ok) {
+                throw new Error(`Gagal memuat data dari Google Apps Script Web App (Status HTTP: ${response.status})`);
+            }
+            const rawData = await response.json();
+
+            // Format GAS multi-sheet (objek berisi { identitas, statistikMakro, potensiDesa, mataPencaharian, dokumenPublikasi })
+            if (rawData.identitas || rawData.statistikMakro) {
+                const identitasObj = Array.isArray(rawData.identitas) ? rawData.identitas[0] : (rawData.identitas || {});
+                const makroObj = Array.isArray(rawData.statistikMakro) ? rawData.statistikMakro[0] : (rawData.statistikMakro || {});
+                const potensiArr = rawData.potensiDesa || [];
+                const jobsArr = rawData.mataPencaharian || [];
+                const docsArr = rawData.dokumenPublikasi || [];
+
+                data.identitas = identitasObj;
+                data.statistikMakro = makroObj;
+
+                if (data.statistikMakro) {
+                    data.statistikMakro.totalPenduduk = parseAngkaIndo(data.statistikMakro.totalPenduduk);
+                    data.statistikMakro.luasWilayah = parseAngkaIndo(data.statistikMakro.luasWilayah);
+                    data.statistikMakro.kepadatanPenduduk = parseAngkaIndo(data.statistikMakro.kepadatanPenduduk);
+                    data.statistikMakro.jumlahRt = parseAngkaIndo(data.statistikMakro.jumlahRt);
+                    data.statistikMakro.jumlahRw = parseAngkaIndo(data.statistikMakro.jumlahRw);
+                    data.statistikMakro.jumlahKk = parseAngkaIndo(data.statistikMakro.jumlahKk);
+                }
+
+                data.potensiDesa = Array.isArray(potensiArr) ? potensiArr.map((item, index) => ({
+                    id: parseAngkaIndo(item.id) || (index + 1),
+                    judulPotensi: item.judulPotensi || "-",
+                    kategori: item.kategori || "Potensi",
+                    deskripsi: item.deskripsi || "-",
+                    lokasi: item.lokasi || "Desa Sadawarna, Subang",
+                    nilaiEkonomi: item.nilaiEkonomi || "Potensi Lokal",
+                    pengelola: item.pengelola || "Warga & Pemdes",
+                    urlFoto: item.urlFoto || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+                })) : [];
+
+                data.mataPencaharian = Array.isArray(jobsArr) ? jobsArr.map(item => ({
+                    kategori: item.kategori,
+                    jumlah: parseAngkaIndo(item.jumlah) || 0,
+                    persentase: parseAngkaIndo(item.persentase)
+                })) : [];
+
+                data.dokumenPublikasi = Array.isArray(docsArr) ? docsArr.map(item => ({
+                    id: parseAngkaIndo(item.id) || 0,
+                    judul: item.judul || "-",
+                    kategori: item.kategori || "-",
+                    tahun: parseAngkaIndo(item.tahun) || 0,
+                    ukuran: item.ukuran || "-",
+                    deskripsi: item.deskripsi || "-",
+                    urlDrive: item.urlDrive || "#"
+                })) : [];
+            } else {
+                data = rawData;
+            }
+
+        } else if (CONFIG.DATA_URL.includes("sheetdb.io")) {
             console.log("📡 Mengambil data dinamis dari Google Sheets via SheetDB API...");
-            
+
             const [resIdentitas, resMakro, resPotensi, resJobs, resDocs] = await Promise.all([
                 fetch(`${CONFIG.DATA_URL}`),
                 fetch(`${CONFIG.DATA_URL}?sheet=statistikMakro`),
@@ -352,7 +412,7 @@ async function loadData() {
 
             data.identitas = identitasArr[0] || {};
             data.statistikMakro = makroArr[0] || {};
-            
+
             if (data.statistikMakro) {
                 data.statistikMakro.totalPenduduk = parseAngkaIndo(data.statistikMakro.totalPenduduk);
                 data.statistikMakro.luasWilayah = parseAngkaIndo(data.statistikMakro.luasWilayah);
@@ -402,7 +462,7 @@ async function loadData() {
 
         if (data.identitas) renderIdentitas(data.identitas);
         if (data.statistikMakro) renderStatCards(data.statistikMakro);
-        
+
         if (data.potensiDesa) {
             cachedPotensi = data.potensiDesa;
             currentFilteredPotensiHome = cachedPotensi;
@@ -416,7 +476,7 @@ async function loadData() {
         }
 
         if (data.mataPencaharian) renderJobChart(data.mataPencaharian);
-        
+
         if (data.dokumenPublikasi) {
             cachedDokumen = data.dokumenPublikasi;
             currentFilteredDocs = cachedDokumen;
@@ -437,7 +497,7 @@ function renderIdentitas(identitas) {
     const namaDesa = identitas.namaDesa || CONFIG.NAMA_DESA;
     const kecamatan = identitas.kecamatan || CONFIG.KECAMATAN;
     const kabupaten = identitas.kabupaten || CONFIG.KABUPATEN;
-    
+
     const alamat = identitas.alamatKantor || identitas.alamatKanttor || "-";
     const email = identitas.email || "-";
 
@@ -507,7 +567,7 @@ function renderPotensiFilterBarHome(listPotensi) {
     }).join('');
 }
 
-window.filterPotensiHome = function(category) {
+window.filterPotensiHome = function (category) {
     activePotensiCategoryHome = category;
     renderPotensiFilterBarHome(cachedPotensi);
     currentPotensiPageHome = 1;
@@ -667,7 +727,7 @@ function renderPotensiPaginationHome(totalItems, currentPage) {
     `;
 }
 
-window.goToPotensiPageHome = function(page) {
+window.goToPotensiPageHome = function (page) {
     const itemsPerPage = getPotensiItemsPerPage();
     const totalPages = Math.ceil(currentFilteredPotensiHome.length / itemsPerPage);
     if (page < 1 || page > totalPages) return;
@@ -700,7 +760,7 @@ function renderPotensiFilterBarView(listPotensi) {
     }).join('');
 }
 
-window.filterPotensiView = function(category) {
+window.filterPotensiView = function (category) {
     activePotensiCategoryView = category;
     renderPotensiFilterBarView(cachedPotensi);
     currentPotensiPageView = 1;
@@ -841,7 +901,7 @@ function renderPotensiPaginationView(totalItems, currentPage) {
     `;
 }
 
-window.goToPotensiPageView = function(page) {
+window.goToPotensiPageView = function (page) {
     const itemsPerPage = getPotensiItemsPerPage();
     const totalPages = Math.ceil(currentFilteredPotensiView.length / itemsPerPage);
     if (page < 1 || page > totalPages) return;
@@ -959,12 +1019,12 @@ function renderJobChart(listPekerjaan) {
 
     const centerTextPlugin = {
         id: 'centerText',
-        beforeDraw: function(chart) {
+        beforeDraw: function (chart) {
             const width = chart.width;
             const height = chart.height;
             const ctx = chart.ctx;
             ctx.restore();
-            
+
             const fontSize = (height / 160).toFixed(2);
             ctx.font = `bold ${fontSize}em "Plus Jakarta Sans", sans-serif`;
             ctx.textBaseline = "middle";
@@ -1006,7 +1066,7 @@ function renderJobChart(listPekerjaan) {
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
+                        label: function (context) {
                             const value = context.raw || 0;
                             const percentage = totalPekerja > 0 ? ((value / totalPekerja) * 100).toFixed(1) : 0;
                             return ` ${context.label}: ${formatRibuan(value)} jiwa (${percentage}%)`;
@@ -1022,7 +1082,7 @@ function renderJobChart(listPekerjaan) {
         legendContainer.innerHTML = listPekerjaan.map((item, index) => {
             const color = backgroundColors[index % backgroundColors.length];
             const pct = item.persentase !== null && item.persentase !== undefined
-                ? item.persentase 
+                ? item.persentase
                 : (totalPekerja > 0 ? ((item.jumlah / totalPekerja) * 100).toFixed(1) : 0);
 
             return `
@@ -1246,7 +1306,7 @@ function renderDokumenPagination(totalItems, currentPage) {
     `;
 }
 
-window.goToDocPage = function(page) {
+window.goToDocPage = function (page) {
     const itemsPerPage = getDocItemsPerPage();
     const totalPages = Math.ceil(currentFilteredDocs.length / itemsPerPage);
     if (page < 1 || page > totalPages) return;
@@ -1268,7 +1328,7 @@ function setupSearchListeners() {
             if (!query) {
                 currentFilteredDocs = cachedDokumen;
             } else {
-                currentFilteredDocs = cachedDokumen.filter(doc => 
+                currentFilteredDocs = cachedDokumen.filter(doc =>
                     doc.judul.toLowerCase().includes(query) ||
                     doc.kategori.toLowerCase().includes(query) ||
                     (doc.deskripsi && doc.deskripsi.toLowerCase().includes(query)) ||
@@ -1288,7 +1348,7 @@ function setupSearchListeners() {
             if (!query) {
                 currentFilteredPotensiView = cachedPotensi;
             } else {
-                currentFilteredPotensiView = cachedPotensi.filter(item => 
+                currentFilteredPotensiView = cachedPotensi.filter(item =>
                     item.judulPotensi.toLowerCase().includes(query) ||
                     item.kategori.toLowerCase().includes(query) ||
                     (item.deskripsi && item.deskripsi.toLowerCase().includes(query)) ||
@@ -1306,7 +1366,7 @@ function setupSearchListeners() {
 function parseAngkaIndo(val) {
     if (val === null || val === undefined) return null;
     if (typeof val === 'number') return val;
-    
+
     let str = String(val).trim();
     if (!str) return null;
 
