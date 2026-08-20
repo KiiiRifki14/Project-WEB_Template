@@ -38,6 +38,7 @@ const CONFIG = {
 
 // Global State Variables
 let jobChartInstance = null;
+let pertanianChartInstance = null;
 let cachedIdentitas = {}; // Cache identitas desa dari Google Sheets
 let cachedDokumen = []; // Cache dokumen untuk fitur pencarian & pagination
 let cachedPotensi = []; // Cache potensi desa untuk filter & pagination
@@ -724,7 +725,7 @@ function renderPotensiPaginationHome(totalItems, currentPage) {
         <div class="text-slate-500 font-medium text-[11px]">
             Menampilkan <strong class="text-slate-800">${startItem}-${endItem}</strong> dari <strong class="text-slate-800">${totalItems}</strong> potensi
         </div>
-        <div class="flex items-center gap-1.5">
+        <div class="flex flex-wrap items-center justify-center sm:justify-end gap-1.5">
             <button onclick="goToPotensiPageHome(${currentPage - 1})" 
                     ${prevDisabled ? 'disabled' : ''} 
                     class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${prevDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
@@ -898,7 +899,7 @@ function renderPotensiPaginationView(totalItems, currentPage) {
         <div class="text-slate-500 font-medium text-[11px]">
             Menampilkan <strong class="text-slate-800">${startItem}-${endItem}</strong> dari <strong class="text-slate-800">${totalItems}</strong> potensi wilayah
         </div>
-        <div class="flex items-center gap-1.5">
+        <div class="flex flex-wrap items-center justify-center sm:justify-end gap-1.5">
             <button onclick="goToPotensiPageView(${currentPage - 1})" 
                     ${prevDisabled ? 'disabled' : ''} 
                     class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${prevDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
@@ -979,44 +980,44 @@ function bukaDetailPotensi(id) {
         </div>
 
         <!-- 4 Key Indicator Cards (Highlight Bar) -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full box-border">
-            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 text-base font-bold">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 w-full box-border">
+            <div class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200/90 shadow-2xs flex items-center gap-2.5 sm:gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 text-xs sm:text-base font-bold">
                     <i class="fa-solid fa-coins"></i>
                 </div>
                 <div class="min-w-0">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Nilai Ekonomi / Panen</span>
+                    <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Nilai Ekonomi / Panen</span>
                     <span class="font-extrabold text-slate-900 text-xs sm:text-sm truncate block mt-0.5">${nilaiEkonomi}</span>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-100 text-bps-blue flex items-center justify-center flex-shrink-0 text-base font-bold">
+            <div class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200/90 shadow-2xs flex items-center gap-2.5 sm:gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-100 text-bps-blue flex items-center justify-center flex-shrink-0 text-xs sm:text-base font-bold">
                     <i class="fa-solid fa-users-gear"></i>
                 </div>
                 <div class="min-w-0">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Mitra Pengelola</span>
+                    <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Mitra Pengelola</span>
                     <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block mt-0.5">${pengelola}</span>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 text-base font-bold">
+            <div class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200/90 shadow-2xs flex items-center gap-2.5 sm:gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 text-xs sm:text-base font-bold">
                     <i class="fa-solid fa-location-dot"></i>
                 </div>
                 <div class="min-w-0">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Lokasi Presisi</span>
+                    <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Lokasi Presisi</span>
                     <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block mt-0.5">${lokasi}</span>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center flex-shrink-0 text-base font-bold">
+            <div class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200/90 shadow-2xs flex items-center gap-2.5 sm:gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center flex-shrink-0 text-xs sm:text-base font-bold">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <div class="min-w-0">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Status Pembinaan</span>
-                    <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block mt-0.5">Desa Cantik BPS 2026</span>
+                    <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Status Pembinaan</span>
+                    <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block mt-0.5">Desa Cantik 2026</span>
                 </div>
             </div>
         </div>
@@ -1553,7 +1554,7 @@ function renderDokumenPagination(totalItems, currentPage) {
         <div class="text-slate-500 font-medium text-[11px]">
             Menampilkan <strong class="text-slate-800">${startItem}-${endItem}</strong> dari <strong class="text-slate-800">${totalItems}</strong> dokumen
         </div>
-        <div class="flex items-center gap-1.5">
+        <div class="flex flex-wrap items-center justify-center sm:justify-end gap-1.5">
             <button onclick="goToDocPage(${currentPage - 1})" 
                     ${prevDisabled ? 'disabled' : ''} 
                     class="px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${prevDisabled ? 'opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80'}">
@@ -1932,7 +1933,7 @@ function renderStatistikEkonomi(data) {
 }
 
 /**
- * Render Pertanian & Peternakan
+ * Render Pertanian & Peternakan (Dengan Grafik Lingkaran / Doughnut Chart)
  */
 function renderPertanianPeternakan(data) {
     const container = document.getElementById("container-stat-pertanian");
@@ -1949,77 +1950,167 @@ function renderPertanianPeternakan(data) {
     const hasilTernak = data?.produksiTelurDaging || "45 Ton Daging & 12 Ton Telur / Tahun";
     const poktan = parseAngkaIndo(data?.jumlahKelompokTani) || 12;
 
+    const totalProduksi = padi + jagung + bawang + sayur + buah;
+
+    const listKomoditas = [
+        { label: "Padi Sawah & Ladang", icon: "🌾", jumlah: padi, color: "#10b981" },
+        { label: "Buah-buahan (Nanas Simadu)", icon: "🍍", jumlah: buah, color: "#f59e0b" },
+        { label: "Jagung & Palawija", icon: "🌽", jumlah: jagung, color: "#eab308" },
+        { label: "Sayuran & Hortikultura", icon: "🥬", jumlah: sayur, color: "#06b6d4" },
+        { label: "Bawang Merah", icon: "🧅", jumlah: bawang, color: "#f43f5e" }
+    ].sort((a, b) => b.jumlah - a.jumlah);
+
+    const legendHTML = listKomoditas.map(item => {
+        const pct = totalProduksi > 0 ? ((item.jumlah / totalProduksi) * 100).toFixed(1) : 0;
+        return `
+            <div class="space-y-1">
+                <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${item.color}"></span>
+                        <span class="font-bold text-slate-800">${item.icon} ${item.label}</span>
+                    </div>
+                    <div class="font-extrabold text-slate-900">
+                        ${formatRibuan(item.jumlah)} <span class="text-[10px] font-semibold text-slate-500">Ton (${pct}%)</span>
+                    </div>
+                </div>
+                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-500" style="width: ${pct}%; background-color: ${item.color}"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
     container.innerHTML = `
-        <div class="space-y-4">
-            <!-- Header Summary Cards -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div class="bg-emerald-50/80 p-3.5 rounded-xl border border-emerald-200/80">
-                    <span class="text-[10px] font-bold text-emerald-800 uppercase">Luas Lahan</span>
-                    <div class="text-lg font-extrabold text-slate-900">${formatRibuan(lahan)} <span class="text-xs font-normal">Ha</span></div>
-                    <span class="text-[10px] text-slate-500">Lahan Pertanian</span>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center w-full">
+            <!-- Left Column: Grafik Lingkaran (Doughnut Chart) -->
+            <div class="lg:col-span-5 flex flex-col items-center justify-center relative min-h-[240px] sm:min-h-[280px] w-full bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/80">
+                <div class="w-full flex items-center justify-between pb-2 border-b border-slate-200/60 mb-2">
+                    <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-pie text-emerald-600"></i> Produksi Komoditas Pangan
+                    </h4>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        Total ${formatRibuan(totalProduksi)} Ton
+                    </span>
                 </div>
 
-                <div class="bg-teal-50/80 p-3.5 rounded-xl border border-teal-200/80">
-                    <span class="text-[10px] font-bold text-teal-800 uppercase">Luas Panen</span>
-                    <div class="text-lg font-extrabold text-slate-900">${formatRibuan(panen)} <span class="text-xs font-normal">Ha</span></div>
-                    <span class="text-[10px] text-slate-500">Estimasi Panen</span>
-                </div>
-
-                <div class="bg-amber-50/80 p-3.5 rounded-xl border border-amber-200/80">
-                    <span class="text-[10px] font-bold text-amber-800 uppercase">Populasi Ternak</span>
-                    <div class="text-lg font-extrabold text-slate-900">${formatRibuan(ternak)} <span class="text-xs font-normal">Ekor</span></div>
-                    <span class="text-[10px] text-slate-500">Sapi, Kambing & Ayam</span>
-                </div>
-
-                <div class="bg-lime-50/80 p-3.5 rounded-xl border border-lime-200/80">
-                    <span class="text-[10px] font-bold text-lime-800 uppercase">Kelompok Tani</span>
-                    <div class="text-lg font-extrabold text-slate-900">${formatRibuan(poktan)} <span class="text-xs font-normal">Poktan</span></div>
-                    <span class="text-[10px] text-slate-500">Gabungan Poktan Desa</span>
+                <div class="w-full max-w-[210px] sm:max-w-[240px] relative my-2">
+                    <canvas id="pertanianChart"></canvas>
                 </div>
             </div>
 
-            <!-- Produksi Komoditas Grid -->
-            <div class="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/80">
-                <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                    <i class="fa-solid fa-wheat-awn text-emerald-600"></i> Produksi Komoditas Pangan Utama (Ton/Tahun)
-                </h4>
-                
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-center">
-                        <span class="text-[10px] text-slate-500 font-bold block mb-1">🌾 Padi</span>
-                        <span class="text-base font-extrabold text-emerald-600">${formatRibuan(padi)}</span>
-                        <span class="text-[10px] text-slate-400 block">Ton</span>
-                    </div>
-
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-center">
-                        <span class="text-[10px] text-slate-500 font-bold block mb-1">🌽 Jagung</span>
-                        <span class="text-base font-extrabold text-amber-600">${formatRibuan(jagung)}</span>
-                        <span class="text-[10px] text-slate-400 block">Ton</span>
-                    </div>
-
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-center">
-                        <span class="text-[10px] text-slate-500 font-bold block mb-1">🧅 Bawang Merah</span>
-                        <span class="text-base font-extrabold text-rose-600">${formatRibuan(bawang)}</span>
-                        <span class="text-[10px] text-slate-400 block">Ton</span>
-                    </div>
-
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-center">
-                        <span class="text-[10px] text-slate-500 font-bold block mb-1">🥬 Sayuran</span>
-                        <span class="text-base font-extrabold text-teal-600">${formatRibuan(sayur)}</span>
-                        <span class="text-[10px] text-slate-400 block">Ton</span>
-                    </div>
-
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-center col-span-2 sm:col-span-1">
-                        <span class="text-[10px] text-slate-500 font-bold block mb-1">🍍 Buah-buahan</span>
-                        <span class="text-base font-extrabold text-yellow-600">${formatRibuan(buah)}</span>
-                        <span class="text-[10px] text-slate-400 block">Ton (Nanas, dll)</span>
-                    </div>
+            <!-- Right Column: Legend Breakdown List & Quick Highlights -->
+            <div class="lg:col-span-7 space-y-4 w-full">
+                <div class="space-y-3 w-full">
+                    ${legendHTML}
                 </div>
 
-                <div class="mt-3 pt-2.5 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-600">
-                    <span class="font-medium"><i class="fa-solid fa-drumstick-bite text-amber-600"></i> Hasil Peternakan: <b>${hasilTernak}</b></span>
+                <!-- 3 Highlight Badges Summary -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3 border-t border-slate-100">
+                    <div class="bg-emerald-50/80 p-2.5 rounded-xl border border-emerald-200/80 flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs flex-shrink-0 font-bold">
+                            <i class="fa-solid fa-wheat-field"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] text-emerald-800 font-bold block uppercase">Luas Lahan</span>
+                            <span class="text-xs font-extrabold text-slate-900 truncate block">${formatRibuan(lahan)} Ha (${formatRibuan(panen)} Ha Panen)</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-50/80 p-2.5 rounded-xl border border-amber-200/80 flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center text-xs flex-shrink-0 font-bold">
+                            <i class="fa-solid fa-cow"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] text-amber-800 font-bold block uppercase">Peternakan</span>
+                            <span class="text-xs font-extrabold text-slate-900 truncate block">${formatRibuan(ternak)} Ekor Ternak</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-lime-50/80 p-2.5 rounded-xl border border-lime-200/80 flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-lime-600 text-white flex items-center justify-center text-xs flex-shrink-0 font-bold">
+                            <i class="fa-solid fa-people-roof"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] text-lime-800 font-bold block uppercase">Kelompok Tani</span>
+                            <span class="text-xs font-extrabold text-slate-900 truncate block">${formatRibuan(poktan)} Poktan Aktif</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     `;
+
+    // Render Chart.js Doughnut Chart
+    setTimeout(() => {
+        const ctx = document.getElementById("pertanianChart");
+        if (!ctx) return;
+
+        if (pertanianChartInstance) {
+            pertanianChartInstance.destroy();
+        }
+
+        const labels = listKomoditas.map(item => item.label);
+        const dataValues = listKomoditas.map(item => item.jumlah);
+        const backgroundColors = listKomoditas.map(item => item.color);
+
+        const centerTextPlugin = {
+            id: 'pertanianCenterText',
+            beforeDraw(chart) {
+                const { width, height } = chart;
+                const ctx = chart.ctx;
+                ctx.restore();
+
+                const fontSize = (height / 160).toFixed(2);
+                ctx.font = `bold ${fontSize}em "Plus Jakarta Sans", sans-serif`;
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = "#0f172a";
+
+                const text = formatRibuan(totalProduksi);
+                const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                const textY = height / 2 - 6;
+                ctx.fillText(text, textX, textY);
+
+                ctx.font = `500 ${fontSize * 0.45}em "Plus Jakarta Sans", sans-serif`;
+                ctx.fillStyle = "#10b981";
+                const subText = "Ton/Tahun";
+                const subTextX = Math.round((width - ctx.measureText(subText).width) / 2);
+                const subTextY = height / 2 + 10;
+                ctx.fillText(subText, subTextX, subTextY);
+
+                ctx.save();
+            }
+        };
+
+        pertanianChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: backgroundColors,
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 4
+                }]
+            },
+            plugins: [centerTextPlugin],
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const value = context.raw || 0;
+                                const percentage = totalProduksi > 0 ? ((value / totalProduksi) * 100).toFixed(1) : 0;
+                                return ` ${context.label}: ${formatRibuan(value)} Ton (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                cutout: '72%'
+            }
+        });
+    }, 50);
 }
