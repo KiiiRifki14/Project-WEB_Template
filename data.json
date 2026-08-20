@@ -205,5 +205,39 @@
       "deskripsi": "Ringkasan nilai status kemandirian Desa Sadawarna dengan kategori Desa Mandiri.",
       "urlDrive": "https://drive.google.com/file/d/1sample_idm_2025/view"
     }
-  ]
+  ],
+  "statusPenduduk": {
+    "totalPenduduk": 5420,
+    "lakiLaki": 2740,
+    "perempuan": 2680,
+    "rasioJenisKelamin": 102.24
+  },
+  "statistikSosial": {
+    "pendudukMiskin": 312,
+    "penerimaBansos": 285,
+    "pendidikanDominan": "SMA / Sederajat",
+    "fasilitasPendidikan": "3 SD, 1 SMP, 1 SMA, 2 PAUD",
+    "fasilitasKesehatan": "1 Poskesdes, 4 Posyandu, 1 Bidan Desa",
+    "penyandangDisabilitas": 18
+  },
+  "statistikEkonomi": {
+    "jumlahUmkm": 142,
+    "jenisUsahaDominan": "Perdagangan & Pengolahan Pangan",
+    "saranaPerdagangan": "1 Pasar Desa, 28 Toko/Warung, 3 Minimarket",
+    "pendapatanRataRata": "Rp 2.850.000 / bulan",
+    "hargaKomoditasUtama": "Padi: Rp 7.200/kg | Nanas: Rp 8.000/biji | Daging Ayam: Rp 35.000/kg",
+    "angkatanKerja": 3480
+  },
+  "pertanianPeternakan": {
+    "luasLahanPertanian": 680,
+    "luasPanen": 620,
+    "produksiPadi": 450,
+    "produksiJagung": 120,
+    "produksiBawangMerah": 35,
+    "produksiSayuran": 85,
+    "produksiBuah": 320,
+    "jumlahTernak": 1450,
+    "produksiTelurDaging": "45 Ton Daging & 12 Ton Telur / Tahun",
+    "jumlahKelompokTani": 12
+  }
 }

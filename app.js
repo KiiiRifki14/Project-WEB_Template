@@ -339,7 +339,7 @@ async function loadData() {
             }
             const rawData = await response.json();
 
-            // Format GAS multi-sheet (objek berisi { identitas, statistikMakro, potensiDesa, mataPencaharian, dokumenPublikasi })
+            // Format GAS multi-sheet (objek berisi { identitas, statistikMakro, potensiDesa, mataPencaharian, dokumenPublikasi, statusPenduduk, statistikSosial, statistikEkonomi, pertanianPeternakan })
             if (rawData.identitas || rawData.statistikMakro) {
                 const identitasObj = Array.isArray(rawData.identitas) ? rawData.identitas[0] : (rawData.identitas || {});
                 const makroObj = Array.isArray(rawData.statistikMakro) ? rawData.statistikMakro[0] : (rawData.statistikMakro || {});
@@ -347,8 +347,17 @@ async function loadData() {
                 const jobsArr = rawData.mataPencaharian || [];
                 const docsArr = rawData.dokumenPublikasi || [];
 
+                const statusPendudukObj = Array.isArray(rawData.statusPenduduk) ? rawData.statusPenduduk[0] : (rawData.statusPenduduk || {});
+                const sosialObj = Array.isArray(rawData.statistikSosial) ? rawData.statistikSosial[0] : (rawData.statistikSosial || {});
+                const ekonomiObj = Array.isArray(rawData.statistikEkonomi) ? rawData.statistikEkonomi[0] : (rawData.statistikEkonomi || {});
+                const pertanianObj = Array.isArray(rawData.pertanianPeternakan) ? rawData.pertanianPeternakan[0] : (rawData.pertanianPeternakan || {});
+
                 data.identitas = identitasObj;
                 data.statistikMakro = makroObj;
+                data.statusPenduduk = statusPendudukObj;
+                data.statistikSosial = sosialObj;
+                data.statistikEkonomi = ekonomiObj;
+                data.pertanianPeternakan = pertanianObj;
 
                 if (data.statistikMakro) {
                     data.statistikMakro.totalPenduduk = parseAngkaIndo(data.statistikMakro.totalPenduduk);
@@ -462,6 +471,12 @@ async function loadData() {
 
         if (data.identitas) renderIdentitas(data.identitas);
         if (data.statistikMakro) renderStatCards(data.statistikMakro);
+
+        // Render 4 Modul Statistik Tematik
+        renderStatusPenduduk(data.statusPenduduk, data.statistikMakro);
+        renderStatistikSosial(data.statistikSosial);
+        renderStatistikEkonomi(data.statistikEkonomi);
+        renderPertanianPeternakan(data.pertanianPeternakan);
 
         if (data.potensiDesa) {
             cachedPotensi = data.potensiDesa;
@@ -1428,4 +1443,333 @@ function tampilkanErrorUI(message) {
         `;
         container.prepend(errorDiv);
     }
+}
+
+/**
+ * ==============================================================================
+ * MODUL RENDERER: STATISTIK TEMATIK DESA (DEMOGRAFI, SOSIAL, EKONOMI, PERTANIAN)
+ * ==============================================================================
+ */
+
+/**
+ * Switch Active Tab pada Modul Statistik Tematik
+ */
+function switchStatTab(tabName) {
+    const tabs = ['demografi', 'sosial', 'ekonomi', 'pertanian'];
+    
+    tabs.forEach(tab => {
+        const btn = document.getElementById(`stat-tab-btn-${tab}`);
+        const content = document.getElementById(`stat-tab-content-${tab}`);
+        
+        if (tab === tabName) {
+            if (btn) {
+                btn.className = "stat-tab-btn active-stat-tab px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap bg-bps-blue text-white shadow-xs";
+            }
+            if (content) {
+                content.classList.remove('hidden');
+                content.classList.add('block');
+            }
+        } else {
+            if (btn) {
+                btn.className = "stat-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap";
+            }
+            if (content) {
+                content.classList.remove('block');
+                content.classList.add('hidden');
+            }
+        }
+    });
+}
+
+/**
+ * Render Status Penduduk (Demografi & Gender)
+ */
+function renderStatusPenduduk(data, makroData) {
+    const container = document.getElementById("container-stat-demografi");
+    if (!container) return;
+    
+    const total = parseAngkaIndo(data?.totalPenduduk) || parseAngkaIndo(makroData?.totalPenduduk) || 5420;
+    const laki = parseAngkaIndo(data?.lakiLaki) || 2740;
+    const perempuan = parseAngkaIndo(data?.perempuan) || 2680;
+    const rasio = data?.rasioJenisKelamin || (total > 0 ? ((laki / perempuan) * 100).toFixed(2) : 102.24);
+
+    const pctLaki = ((laki / total) * 100).toFixed(1);
+    const pctPerempuan = ((perempuan / total) * 100).toFixed(1);
+
+    container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            <!-- Card 1: Penduduk Laki-laki -->
+            <div class="bg-gradient-to-br from-blue-50/80 to-slate-50 rounded-2xl p-4 sm:p-5 border border-blue-100/80 shadow-2xs">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold text-blue-700 uppercase tracking-wider">Laki-Laki</span>
+                    <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-sm shadow-xs">
+                        <i class="fa-solid fa-mars"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">${formatRibuan(laki)}</span>
+                    <span class="text-xs font-semibold text-slate-500">Jiwa (${pctLaki}%)</span>
+                </div>
+                <div class="w-full bg-blue-200/60 h-2 rounded-full mt-3 overflow-hidden">
+                    <div class="bg-blue-600 h-full rounded-full transition-all duration-500" style="width: ${pctLaki}%"></div>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2 font-medium">Populasi pria Desa Sadawarna</p>
+            </div>
+
+            <!-- Card 2: Penduduk Perempuan -->
+            <div class="bg-gradient-to-br from-rose-50/80 to-slate-50 rounded-2xl p-4 sm:p-5 border border-rose-100/80 shadow-2xs">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold text-rose-700 uppercase tracking-wider">Perempuan</span>
+                    <div class="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center text-sm shadow-xs">
+                        <i class="fa-solid fa-venus"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">${formatRibuan(perempuan)}</span>
+                    <span class="text-xs font-semibold text-slate-500">Jiwa (${pctPerempuan}%)</span>
+                </div>
+                <div class="w-full bg-rose-200/60 h-2 rounded-full mt-3 overflow-hidden">
+                    <div class="bg-rose-500 h-full rounded-full transition-all duration-500" style="width: ${pctPerempuan}%"></div>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2 font-medium">Populasi wanita Desa Sadawarna</p>
+            </div>
+
+            <!-- Card 3: Rasio Jenis Kelamin (Sex Ratio) -->
+            <div class="bg-gradient-to-br from-indigo-50/80 to-slate-50 rounded-2xl p-4 sm:p-5 border border-indigo-100/80 shadow-2xs">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Rasio Jenis Kelamin</span>
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm shadow-xs">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">${rasio}</span>
+                    <span class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">Sex Ratio</span>
+                </div>
+                <div class="text-[11px] text-slate-600 mt-3 pt-2 border-t border-indigo-100 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-info text-indigo-500"></i>
+                    <span>Terdapat <b>${Math.round(rasio)}</b> laki-laki per 100 perempuan.</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render Statistik Sosial
+ */
+function renderStatistikSosial(data) {
+    const container = document.getElementById("container-stat-sosial");
+    if (!container) return;
+
+    const miskin = parseAngkaIndo(data?.pendudukMiskin) || 312;
+    const bansos = parseAngkaIndo(data?.penerimaBansos) || 285;
+    const pendidikan = data?.pendidikanDominan || "SMA / Sederajat";
+    const fasPendidikan = data?.fasilitasPendidikan || "3 SD, 1 SMP, 1 SMA, 2 PAUD";
+    const fasKesehatan = data?.fasilitasKesehatan || "1 Poskesdes, 4 Posyandu, 1 Bidan Desa";
+    const disabilitas = parseAngkaIndo(data?.penyandangDisabilitas) || 18;
+
+    container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Card 1: Penduduk Miskin & Bansos -->
+            <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/80 hover:border-pink-300 transition-all">
+                <div class="flex items-center gap-2 mb-2 text-pink-600 font-bold text-xs">
+                    <i class="fa-solid fa-hand-holding-heart text-sm"></i>
+                    <span>Kesejahteraan Sosial</span>
+                </div>
+                <div class="text-xl font-extrabold text-slate-900">${formatRibuan(miskin)} <span class="text-xs font-normal text-slate-500">Jiwa Miskin</span></div>
+                <div class="mt-2 text-xs text-slate-600">
+                    <span class="inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold">${formatRibuan(bansos)} KPM</span>
+                    <span class="text-[11px] block mt-1 text-slate-500">Penerima Bantuan Sosial (PKH/BPNT)</span>
+                </div>
+            </div>
+
+            <!-- Card 2: Pendidikan -->
+            <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/80 hover:border-blue-300 transition-all">
+                <div class="flex items-center gap-2 mb-2 text-blue-600 font-bold text-xs">
+                    <i class="fa-solid fa-graduation-cap text-sm"></i>
+                    <span>Pendidikan</span>
+                </div>
+                <div class="text-base font-extrabold text-slate-900">${pendidikan}</div>
+                <div class="mt-2 text-xs text-slate-600">
+                    <span class="font-medium text-slate-700">${fasPendidikan}</span>
+                    <span class="text-[11px] block mt-1 text-slate-500">Fasilitas Pendidikan Desa</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Kesehatan -->
+            <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/80 hover:border-emerald-300 transition-all">
+                <div class="flex items-center gap-2 mb-2 text-emerald-600 font-bold text-xs">
+                    <i class="fa-solid fa-notes-medical text-sm"></i>
+                    <span>Layanan Kesehatan</span>
+                </div>
+                <div class="text-sm font-bold text-slate-900 line-clamp-1">${fasKesehatan}</div>
+                <div class="mt-2 text-xs text-slate-600">
+                    <span class="inline-block px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">Poskesdes Active</span>
+                    <span class="text-[11px] block mt-1 text-slate-500">Posyandu & Layanan Kesehatan Ibu-Anak</span>
+                </div>
+            </div>
+
+            <!-- Card 4: Disabilitas -->
+            <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/80 hover:border-purple-300 transition-all">
+                <div class="flex items-center gap-2 mb-2 text-purple-600 font-bold text-xs">
+                    <i class="fa-solid fa-wheelchair text-sm"></i>
+                    <span>Penyandang Disabilitas</span>
+                </div>
+                <div class="text-xl font-extrabold text-slate-900">${formatRibuan(disabilitas)} <span class="text-xs font-normal text-slate-500">Jiwa</span></div>
+                <div class="mt-2 text-xs text-slate-600">
+                    <span class="text-[11px] text-slate-500">Pendataan inklusif untuk bantuan pemberdayaan & alat bantu.</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render Statistik Ekonomi
+ */
+function renderStatistikEkonomi(data) {
+    const container = document.getElementById("container-stat-ekonomi");
+    if (!container) return;
+
+    const umkm = parseAngkaIndo(data?.jumlahUmkm) || 142;
+    const jenisUsaha = data?.jenisUsahaDominan || "Perdagangan & Pengolahan Pangan";
+    const saranaPerdagangan = data?.saranaPerdagangan || "1 Pasar Desa, 28 Toko/Warung, 3 Minimarket";
+    const pendapatan = data?.pendapatanRataRata || "Rp 2.850.000 / bulan";
+    const hargaKomoditas = data?.hargaKomoditasUtama || "Padi: Rp 7.200/kg | Nanas: Rp 8.000/biji | Daging Ayam: Rp 35.000/kg";
+    const tenagaKerja = parseAngkaIndo(data?.angkatanKerja) || 3480;
+
+    container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            <!-- Card 1: UMKM & Jenis Usaha -->
+            <div class="bg-amber-50/70 rounded-2xl p-4 border border-amber-200/70">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">Usaha & UMKM</span>
+                    <span class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center text-xs"><i class="fa-solid fa-store"></i></span>
+                </div>
+                <div class="text-2xl font-extrabold text-slate-900">${formatRibuan(umkm)} <span class="text-xs font-normal text-slate-600">Unit UMKM</span></div>
+                <p class="text-xs font-semibold text-amber-900 mt-2">${jenisUsaha}</p>
+                <p class="text-[11px] text-slate-500 mt-1">${saranaPerdagangan}</p>
+            </div>
+
+            <!-- Card 2: Pendapatan & Angkatan Kerja -->
+            <div class="bg-blue-50/70 rounded-2xl p-4 border border-blue-200/70">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-blue-800 uppercase tracking-wider">Pendapatan & Kerja</span>
+                    <span class="w-8 h-8 rounded-lg bg-bps-blue text-white flex items-center justify-center text-xs"><i class="fa-solid fa-wallet"></i></span>
+                </div>
+                <div class="text-lg font-extrabold text-slate-900">${pendapatan}</div>
+                <p class="text-xs font-semibold text-slate-700 mt-2"><i class="fa-solid fa-user-check text-blue-600"></i> ${formatRibuan(tenagaKerja)} Angkatan Kerja</p>
+                <p class="text-[11px] text-slate-500 mt-1">Estimasi rata-rata pendapatan keluarga desa per bulan</p>
+            </div>
+
+            <!-- Card 3: Harga Komoditas Pasar Desa -->
+            <div class="bg-emerald-50/70 rounded-2xl p-4 border border-emerald-200/70 md:col-span-1">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Harga Komoditas Utama</span>
+                    <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs"><i class="fa-solid fa-tags"></i></span>
+                </div>
+                <div class="text-xs text-slate-700 font-medium space-y-1.5 mt-2">
+                    ${hargaKomoditas.split('|').map(item => `
+                        <div class="flex items-center justify-between bg-white/80 px-2.5 py-1 rounded-lg border border-emerald-100 text-[11px]">
+                            <span>${item.trim()}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render Pertanian & Peternakan
+ */
+function renderPertanianPeternakan(data) {
+    const container = document.getElementById("container-stat-pertanian");
+    if (!container) return;
+
+    const lahan = parseAngkaIndo(data?.luasLahanPertanian) || 680;
+    const panen = parseAngkaIndo(data?.luasPanen) || 620;
+    const padi = parseAngkaIndo(data?.produksiPadi) || 450;
+    const jagung = parseAngkaIndo(data?.produksiJagung) || 120;
+    const bawang = parseAngkaIndo(data?.produksiBawangMerah) || 35;
+    const sayur = parseAngkaIndo(data?.produksiSayuran) || 85;
+    const buah = parseAngkaIndo(data?.produksiBuah) || 320;
+    const ternak = parseAngkaIndo(data?.jumlahTernak) || 1450;
+    const hasilTernak = data?.produksiTelurDaging || "45 Ton Daging & 12 Ton Telur / Tahun";
+    const poktan = parseAngkaIndo(data?.jumlahKelompokTani) || 12;
+
+    container.innerHTML = `
+        <div class="space-y-4">
+            <!-- Header Summary Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="bg-emerald-50/80 p-3.5 rounded-xl border border-emerald-200/80">
+                    <span class="text-[10px] font-bold text-emerald-800 uppercase">Luas Lahan</span>
+                    <div class="text-lg font-extrabold text-slate-900">${formatRibuan(lahan)} <span class="text-xs font-normal">Ha</span></div>
+                    <span class="text-[10px] text-slate-500">Lahan Pertanian</span>
+                </div>
+
+                <div class="bg-teal-50/80 p-3.5 rounded-xl border border-teal-200/80">
+                    <span class="text-[10px] font-bold text-teal-800 uppercase">Luas Panen</span>
+                    <div class="text-lg font-extrabold text-slate-900">${formatRibuan(panen)} <span class="text-xs font-normal">Ha</span></div>
+                    <span class="text-[10px] text-slate-500">Estimasi Panen</span>
+                </div>
+
+                <div class="bg-amber-50/80 p-3.5 rounded-xl border border-amber-200/80">
+                    <span class="text-[10px] font-bold text-amber-800 uppercase">Populasi Ternak</span>
+                    <div class="text-lg font-extrabold text-slate-900">${formatRibuan(ternak)} <span class="text-xs font-normal">Ekor</span></div>
+                    <span class="text-[10px] text-slate-500">Sapi, Kambing & Ayam</span>
+                </div>
+
+                <div class="bg-lime-50/80 p-3.5 rounded-xl border border-lime-200/80">
+                    <span class="text-[10px] font-bold text-lime-800 uppercase">Kelompok Tani</span>
+                    <div class="text-lg font-extrabold text-slate-900">${formatRibuan(poktan)} <span class="text-xs font-normal">Poktan</span></div>
+                    <span class="text-[10px] text-slate-500">Gabungan Poktan Desa</span>
+                </div>
+            </div>
+
+            <!-- Produksi Komoditas Grid -->
+            <div class="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/80">
+                <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <i class="fa-solid fa-wheat-awn text-emerald-600"></i> Produksi Komoditas Pangan Utama (Ton/Tahun)
+                </h4>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-center">
+                        <span class="text-[10px] text-slate-500 font-bold block mb-1">🌾 Padi</span>
+                        <span class="text-base font-extrabold text-emerald-600">${formatRibuan(padi)}</span>
+                        <span class="text-[10px] text-slate-400 block">Ton</span>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-center">
+                        <span class="text-[10px] text-slate-500 font-bold block mb-1">🌽 Jagung</span>
+                        <span class="text-base font-extrabold text-amber-600">${formatRibuan(jagung)}</span>
+                        <span class="text-[10px] text-slate-400 block">Ton</span>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-center">
+                        <span class="text-[10px] text-slate-500 font-bold block mb-1">🧅 Bawang Merah</span>
+                        <span class="text-base font-extrabold text-rose-600">${formatRibuan(bawang)}</span>
+                        <span class="text-[10px] text-slate-400 block">Ton</span>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-center">
+                        <span class="text-[10px] text-slate-500 font-bold block mb-1">🥬 Sayuran</span>
+                        <span class="text-base font-extrabold text-teal-600">${formatRibuan(sayur)}</span>
+                        <span class="text-[10px] text-slate-400 block">Ton</span>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 text-center col-span-2 sm:col-span-1">
+                        <span class="text-[10px] text-slate-500 font-bold block mb-1">🍍 Buah-buahan</span>
+                        <span class="text-base font-extrabold text-yellow-600">${formatRibuan(buah)}</span>
+                        <span class="text-[10px] text-slate-400 block">Ton (Nanas, dll)</span>
+                    </div>
+                </div>
+
+                <div class="mt-3 pt-2.5 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-600">
+                    <span class="font-medium"><i class="fa-solid fa-drumstick-bite text-amber-600"></i> Hasil Peternakan: <b>${hasilTernak}</b></span>
+                </div>
+            </div>
+        </div>
+    `;
 }

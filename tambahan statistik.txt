@@ -1,0 +1,31 @@
+-status penduduk
+	-laki laki
+	-perempuan
+	-jumlah penduduk 
+	-Rasio jenis kelamin
+
+statistik sosial
+	-jumlah penduduk miskin
+	-penerima bantuan sosial
+	-pendidikan
+	-kesehatan
+	-Penyandang disabilitas
+	
+statistik ekonomi
+	-jumlah umkm
+	-jenis usaha masyarakat
+	-perdagangan 
+	-pendapatan masyarakat
+	-harga komoditas
+	-tenaga kerja
+pertanian
+	-luas lahan pertanian
+	-luas panen
+	Produksi padi
+	Produksi jagung
+	Produksi bawang merah
+	Produksi sayuran
+	Produksi buah-buahan
+	Jumlah ternak
+	Produksi telur/daging
+	Jumlah kelompok tani
