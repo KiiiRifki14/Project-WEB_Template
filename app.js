@@ -142,6 +142,11 @@ function switchView(viewName, customTitle = "") {
         if (viewPotensiDetail) {
             viewPotensiDetail.classList.remove("hidden");
             triggerViewAnimation(viewPotensiDetail);
+            if (!viewPotensiDetail.innerHTML.trim() || viewPotensiDetail.innerHTML.includes("Rendered dynamically")) {
+                if (cachedPotensi && cachedPotensi.length > 0) {
+                    bukaDetailPotensi(cachedPotensi[0].id);
+                }
+            }
         }
         triggerHeroAnimation();
 
@@ -167,7 +172,7 @@ function switchView(viewName, customTitle = "") {
         }
         if (heroBadgeSub) heroBadgeSub.textContent = "Informasi Rinci Komoditas & Wilayah";
         if (heroTitle) {
-            heroTitle.innerHTML = `${customTitle || 'Detail Potensi Wilayah'} <br class="hidden sm:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-200 to-yellow-300">${currentVillage}</span>`;
+            heroTitle.innerHTML = `Rincian Potensi & Keunggulan Wilayah <br class="hidden sm:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-200 to-yellow-300">${currentVillage}</span>`;
         }
         if (heroDesc) {
             heroDesc.textContent = "Halaman rincian informasi komprehensif potensi unggulan wilayah, pengelola, nilai ekonomi, serta daya tarik utama desa.";
@@ -372,182 +377,130 @@ function toggleMobileMenu() {
 }
 
 /**
- * Memuat Data secara Asynchronous
+ * Memuat Data secara Asynchronous dengan Robust Automatic Fallback
  */
 async function loadData() {
-    try {
-        let data = {};
+    let data = {};
+    let isLoaded = false;
 
-        if (CONFIG.DATA_URL.includes("script.google.com") || CONFIG.DATA_URL.includes("script.googleusercontent.com")) {
-            console.log("⚡ Mengambil data dinamis dari Google Apps Script Web App (100% Gratis & Unlimited)...");
+    // 1. Coba ambil dari Remote API jika CONFIG.DATA_URL diset ke URL eksternal
+    if (CONFIG.DATA_URL && CONFIG.DATA_URL !== "./data.json") {
+        try {
+            console.log("⚡ Mengambil data dinamis dari Remote API / Google Sheets...");
             const response = await fetch(CONFIG.DATA_URL);
-            if (!response.ok) {
-                throw new Error(`Gagal memuat data dari Google Apps Script Web App (Status HTTP: ${response.status})`);
-            }
-            const rawData = await response.json();
+            if (response.ok) {
+                const rawData = await response.json();
+                if (rawData && (rawData.identitas || rawData.statistikMakro || rawData.potensiDesa)) {
+                    const identitasObj = Array.isArray(rawData.identitas) ? rawData.identitas[0] : (rawData.identitas || {});
+                    const makroObj = Array.isArray(rawData.statistikMakro) ? rawData.statistikMakro[0] : (rawData.statistikMakro || {});
+                    const potensiArr = rawData.potensiDesa || [];
+                    const jobsArr = rawData.mataPencaharian || [];
+                    const docsArr = rawData.dokumenPublikasi || [];
 
-            // Format GAS multi-sheet (objek berisi { identitas, statistikMakro, potensiDesa, mataPencaharian, dokumenPublikasi, statusPenduduk, statistikSosial, statistikEkonomi, pertanianPeternakan })
-            if (rawData.identitas || rawData.statistikMakro) {
-                const identitasObj = Array.isArray(rawData.identitas) ? rawData.identitas[0] : (rawData.identitas || {});
-                const makroObj = Array.isArray(rawData.statistikMakro) ? rawData.statistikMakro[0] : (rawData.statistikMakro || {});
-                const potensiArr = rawData.potensiDesa || [];
-                const jobsArr = rawData.mataPencaharian || [];
-                const docsArr = rawData.dokumenPublikasi || [];
+                    data.identitas = identitasObj;
+                    data.statistikMakro = makroObj;
+                    data.statusPenduduk = Array.isArray(rawData.statusPenduduk) ? rawData.statusPenduduk[0] : (rawData.statusPenduduk || {});
+                    data.statistikSosial = Array.isArray(rawData.statistikSosial) ? rawData.statistikSosial[0] : (rawData.statistikSosial || {});
+                    data.statistikEkonomi = Array.isArray(rawData.statistikEkonomi) ? rawData.statistikEkonomi[0] : (rawData.statistikEkonomi || {});
+                    data.pertanianPeternakan = Array.isArray(rawData.pertanianPeternakan) ? rawData.pertanianPeternakan[0] : (rawData.pertanianPeternakan || {});
 
-                const statusPendudukObj = Array.isArray(rawData.statusPenduduk) ? rawData.statusPenduduk[0] : (rawData.statusPenduduk || {});
-                const sosialObj = Array.isArray(rawData.statistikSosial) ? rawData.statistikSosial[0] : (rawData.statistikSosial || {});
-                const ekonomiObj = Array.isArray(rawData.statistikEkonomi) ? rawData.statistikEkonomi[0] : (rawData.statistikEkonomi || {});
-                const pertanianObj = Array.isArray(rawData.pertanianPeternakan) ? rawData.pertanianPeternakan[0] : (rawData.pertanianPeternakan || {});
+                    if (data.statistikMakro) {
+                        data.statistikMakro.totalPenduduk = parseAngkaIndo(data.statistikMakro.totalPenduduk);
+                        data.statistikMakro.luasWilayah = parseAngkaIndo(data.statistikMakro.luasWilayah);
+                        data.statistikMakro.kepadatanPenduduk = parseAngkaIndo(data.statistikMakro.kepadatanPenduduk);
+                        data.statistikMakro.jumlahRt = parseAngkaIndo(data.statistikMakro.jumlahRt);
+                        data.statistikMakro.jumlahRw = parseAngkaIndo(data.statistikMakro.jumlahRw);
+                        data.statistikMakro.jumlahKk = parseAngkaIndo(data.statistikMakro.jumlahKk);
+                    }
 
-                data.identitas = identitasObj;
-                data.statistikMakro = makroObj;
-                data.statusPenduduk = statusPendudukObj;
-                data.statistikSosial = sosialObj;
-                data.statistikEkonomi = ekonomiObj;
-                data.pertanianPeternakan = pertanianObj;
+                    data.potensiDesa = Array.isArray(potensiArr) ? potensiArr.map((item, index) => ({
+                        id: parseAngkaIndo(item.id) || (index + 1),
+                        judulPotensi: item.judulPotensi || "-",
+                        kategori: item.kategori || "Potensi",
+                        deskripsi: item.deskripsi || "-",
+                        deskripsiLengkap: item.deskripsiLengkap || item.deskripsi || "-",
+                        keunggulanUtama: item.keunggulanUtama || "-",
+                        lokasi: item.lokasi || "Desa Sadawarna, Subang",
+                        nilaiEkonomi: item.nilaiEkonomi || "Potensi Lokal",
+                        pengelola: item.pengelola || "Warga & Pemdes",
+                        kontakPengelola: item.kontakPengelola || "-",
+                        urlFoto: item.urlFoto || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+                    })) : [];
 
-                if (data.statistikMakro) {
-                    data.statistikMakro.totalPenduduk = parseAngkaIndo(data.statistikMakro.totalPenduduk);
-                    data.statistikMakro.luasWilayah = parseAngkaIndo(data.statistikMakro.luasWilayah);
-                    data.statistikMakro.kepadatanPenduduk = parseAngkaIndo(data.statistikMakro.kepadatanPenduduk);
-                    data.statistikMakro.jumlahRt = parseAngkaIndo(data.statistikMakro.jumlahRt);
-                    data.statistikMakro.jumlahRw = parseAngkaIndo(data.statistikMakro.jumlahRw);
-                    data.statistikMakro.jumlahKk = parseAngkaIndo(data.statistikMakro.jumlahKk);
+                    data.mataPencaharian = Array.isArray(jobsArr) ? jobsArr.map(item => ({
+                        kategori: item.kategori,
+                        jumlah: parseAngkaIndo(item.jumlah) || 0,
+                        persentase: parseAngkaIndo(item.persentase)
+                    })) : [];
+
+                    data.dokumenPublikasi = Array.isArray(docsArr) ? docsArr.map(item => ({
+                        id: parseAngkaIndo(item.id) || 0,
+                        judul: item.judul || "-",
+                        kategori: item.kategori || "-",
+                        tahun: parseAngkaIndo(item.tahun) || 0,
+                        ukuran: item.ukuran || "-",
+                        deskripsi: item.deskripsi || "-",
+                        urlDrive: item.urlDrive || "#"
+                    })) : [];
+
+                    isLoaded = true;
                 }
-
-                data.potensiDesa = Array.isArray(potensiArr) ? potensiArr.map((item, index) => ({
-                    id: parseAngkaIndo(item.id) || (index + 1),
-                    judulPotensi: item.judulPotensi || "-",
-                    kategori: item.kategori || "Potensi",
-                    deskripsi: item.deskripsi || "-",
-                    lokasi: item.lokasi || "Desa Sadawarna, Subang",
-                    nilaiEkonomi: item.nilaiEkonomi || "Potensi Lokal",
-                    pengelola: item.pengelola || "Warga & Pemdes",
-                    urlFoto: item.urlFoto || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
-                })) : [];
-
-                data.mataPencaharian = Array.isArray(jobsArr) ? jobsArr.map(item => ({
-                    kategori: item.kategori,
-                    jumlah: parseAngkaIndo(item.jumlah) || 0,
-                    persentase: parseAngkaIndo(item.persentase)
-                })) : [];
-
-                data.dokumenPublikasi = Array.isArray(docsArr) ? docsArr.map(item => ({
-                    id: parseAngkaIndo(item.id) || 0,
-                    judul: item.judul || "-",
-                    kategori: item.kategori || "-",
-                    tahun: parseAngkaIndo(item.tahun) || 0,
-                    ukuran: item.ukuran || "-",
-                    deskripsi: item.deskripsi || "-",
-                    urlDrive: item.urlDrive || "#"
-                })) : [];
-            } else {
-                data = rawData;
             }
+        } catch (remoteErr) {
+            console.warn("⚠️ Gagal mengambil dari Remote API, mengalihkan ke ./data.json lokal:", remoteErr);
+        }
+    }
 
-        } else if (CONFIG.DATA_URL.includes("sheetdb.io")) {
-            console.log("📡 Mengambil data dinamis dari Google Sheets via SheetDB API...");
-
-            const [resIdentitas, resMakro, resPotensi, resJobs, resDocs] = await Promise.all([
-                fetch(`${CONFIG.DATA_URL}`),
-                fetch(`${CONFIG.DATA_URL}?sheet=statistikMakro`),
-                fetch(`${CONFIG.DATA_URL}?sheet=potensiDesa`),
-                fetch(`${CONFIG.DATA_URL}?sheet=mataPencaharian`),
-                fetch(`${CONFIG.DATA_URL}?sheet=dokumenPublikasi`)
-            ]);
-
-            if (!resIdentitas.ok || !resMakro.ok || !resJobs.ok || !resDocs.ok) {
-                throw new Error("Gagal mengambil satu atau lebih tab data dari Google Sheets API.");
-            }
-
-            const identitasArr = await resIdentitas.json();
-            const makroArr = await resMakro.json();
-            const potensiArr = resPotensi.ok ? await resPotensi.json() : [];
-            const jobsArr = await resJobs.json();
-            const docsArr = await resDocs.json();
-
-            data.identitas = identitasArr[0] || {};
-            data.statistikMakro = makroArr[0] || {};
-
-            if (data.statistikMakro) {
-                data.statistikMakro.totalPenduduk = parseAngkaIndo(data.statistikMakro.totalPenduduk);
-                data.statistikMakro.luasWilayah = parseAngkaIndo(data.statistikMakro.luasWilayah);
-                data.statistikMakro.kepadatanPenduduk = parseAngkaIndo(data.statistikMakro.kepadatanPenduduk);
-                data.statistikMakro.jumlahRt = parseAngkaIndo(data.statistikMakro.jumlahRt);
-                data.statistikMakro.jumlahRw = parseAngkaIndo(data.statistikMakro.jumlahRw);
-                data.statistikMakro.jumlahKk = parseAngkaIndo(data.statistikMakro.jumlahKk);
-            }
-
-            data.potensiDesa = Array.isArray(potensiArr) && potensiArr.length > 0 ? potensiArr.map((item, index) => ({
-                id: parseAngkaIndo(item.id) || (index + 1),
-                judulPotensi: item.judulPotensi || "-",
-                kategori: item.kategori || "Potensi",
-                deskripsi: item.deskripsi || "-",
-                lokasi: item.lokasi || "Desa Sadawarna, Subang",
-                nilaiEkonomi: item.nilaiEkonomi || "Potensi Lokal",
-                pengelola: item.pengelola || "Warga & Pemdes",
-                urlFoto: item.urlFoto || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
-            })) : [];
-
-            data.mataPencaharian = jobsArr.map(item => ({
-                kategori: item.kategori,
-                jumlah: parseAngkaIndo(item.jumlah) || 0,
-                persentase: parseAngkaIndo(item.persentase)
-            }));
-
-            data.dokumenPublikasi = docsArr.map(item => ({
-                id: parseAngkaIndo(item.id) || 0,
-                judul: item.judul || "-",
-                kategori: item.kategori || "-",
-                tahun: parseAngkaIndo(item.tahun) || 0,
-                ukuran: item.ukuran || "-",
-                deskripsi: item.deskripsi || "-",
-                urlDrive: item.urlDrive || "#"
-            }));
-
-        } else {
-            console.log("📂 Mengambil data dari file JSON lokal...");
-            const response = await fetch(CONFIG.DATA_URL);
+    // 2. Fallback otomatis ke data.json lokal jika data belum terisi
+    if (!isLoaded) {
+        try {
+            console.log("📂 Memuat data dari file JSON lokal (./data.json)...");
+            const response = await fetch("./data.json");
             if (!response.ok) {
                 throw new Error(`Gagal memuat file JSON lokal. Status HTTP: ${response.status}`);
             }
             data = await response.json();
+            isLoaded = true;
+        } catch (localErr) {
+            console.error("❌ Terjadi Kesalahan saat Memuat Data Lokal:", localErr);
+            tampilkanErrorUI(localErr.message);
+            return;
         }
+    }
 
-        console.log("✅ Data Berhasil Diproses:", data);
+    console.log("✅ Data Berhasil Diproses:", data);
 
-        if (data.identitas) renderIdentitas(data.identitas);
-        if (data.statistikMakro) renderStatCards(data.statistikMakro);
+    if (data.identitas) renderIdentitas(data.identitas);
+    if (data.statistikMakro) renderStatCards(data.statistikMakro);
 
-        // Render 4 Modul Statistik Tematik
-        renderStatusPenduduk(data.statusPenduduk, data.statistikMakro);
-        renderStatistikSosial(data.statistikSosial);
-        renderStatistikEkonomi(data.statistikEkonomi);
-        renderPertanianPeternakan(data.pertanianPeternakan);
+    // Render 4 Modul Statistik Tematik
+    renderStatusPenduduk(data.statusPenduduk, data.statistikMakro);
+    renderStatistikSosial(data.statistikSosial);
+    renderStatistikEkonomi(data.statistikEkonomi);
+    renderPertanianPeternakan(data.pertanianPeternakan);
 
-        if (data.potensiDesa) {
-            cachedPotensi = data.potensiDesa;
-            currentFilteredPotensiHome = cachedPotensi;
-            currentFilteredPotensiView = cachedPotensi;
+    if (data.potensiDesa && Array.isArray(data.potensiDesa)) {
+        cachedPotensi = data.potensiDesa;
+        currentFilteredPotensiHome = cachedPotensi;
+        currentFilteredPotensiView = cachedPotensi;
 
-            renderPotensiFilterBarHome(cachedPotensi);
-            renderPotensiFilterBarView(cachedPotensi);
+        renderPotensiFilterBarHome(cachedPotensi);
+        renderPotensiFilterBarView(cachedPotensi);
 
-            renderPotensiDesaHome(currentFilteredPotensiHome, 1);
-            renderPotensiDesaView(currentFilteredPotensiView, 1);
+        renderPotensiDesaHome(currentFilteredPotensiHome, 1);
+        renderPotensiDesaView(currentFilteredPotensiView, 1);
+
+        if (window.location.hash === "#potensi-detail") {
+            bukaDetailPotensi(cachedPotensi[0]?.id || 1);
         }
+    }
 
-        if (data.mataPencaharian) renderJobChart(data.mataPencaharian);
+    if (data.mataPencaharian) renderJobChart(data.mataPencaharian);
 
-        if (data.dokumenPublikasi) {
-            cachedDokumen = data.dokumenPublikasi;
-            currentFilteredDocs = cachedDokumen;
-            renderDokumenPublikasi(currentFilteredDocs, 1);
-        }
-
-    } catch (error) {
-        console.error("❌ Terjadi Kesalahan saat Memuat Data:", error);
-        tampilkanErrorUI(error.message);
+    if (data.dokumenPublikasi && Array.isArray(data.dokumenPublikasi)) {
+        cachedDokumen = data.dokumenPublikasi;
+        currentFilteredDocs = cachedDokumen;
+        renderDokumenPublikasi(currentFilteredDocs, 1);
     }
 }
 
@@ -696,7 +649,7 @@ function renderPotensiDesaHome(listPotensi, page = 1) {
                             ${item.deskripsi || '-'}
                         </p>
                         <div class="pt-1 flex items-center gap-1.5 text-xs font-bold text-amber-300">
-                            <span>Lihat Rincian & Peta Lokasi</span>
+                            <span>Lihat Rincian Lengkap</span>
                             <i class="fa-solid fa-circle-arrow-right text-xs"></i>
                         </div>
                     </div>
@@ -973,53 +926,333 @@ window.goToPotensiPageView = function (page) {
 };
 
 /**
- * 3C. Halaman Detail Khusus Potensi Wilayah (Full Page Detail View)
+ * 3C. Halaman Detail Khusus Potensi Wilayah (Full Page Detail View Super Rinci)
  */
 function bukaDetailPotensi(id) {
-    const item = cachedPotensi.find(p => p.id === id);
+    const item = cachedPotensi.find(p => p.id === id) || cachedPotensi[0];
     if (!item) return;
 
     const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80";
     const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
 
-    // Elements in #view-potensi-detail
-    const coverImg = document.getElementById("detail-cover-image");
-    const breadcrumbTitle = document.getElementById("detail-breadcrumb-title");
-    const categoryBadge = document.getElementById("detail-category-badge");
-    const title = document.getElementById("detail-title");
-    const locationText = document.getElementById("detail-location-text");
-    const fullDesc = document.getElementById("detail-full-description");
-    const advantagesText = document.getElementById("detail-advantages-text");
-    const economicValue = document.getElementById("detail-economic-value");
-    const managerName = document.getElementById("detail-manager-name");
-    const locationSpec = document.getElementById("detail-location-spec");
-    const contactInfo = document.getElementById("detail-contact-info");
+    const container = document.getElementById("view-potensi-detail");
+    if (!container) return;
 
-    if (coverImg) coverImg.src = fotoUrl;
-    if (breadcrumbTitle) breadcrumbTitle.textContent = item.judulPotensi;
-    if (categoryBadge) categoryBadge.textContent = item.kategori || "Potensi Unggulan";
-    if (title) title.textContent = item.judulPotensi;
-    
-    if (locationText) {
-        locationText.innerHTML = `<i class="fa-solid fa-location-dot text-amber-400"></i> <span>${item.lokasi || 'Desa Sadawarna, Subang'}</span>`;
-    }
+    // Generate rich narratives & fallbacks
+    const deskripsiUtama = item.deskripsiLengkap || item.deskripsi || `Potensi unggulan ${item.judulPotensi} merupakan salah satu aset strategis komoditas desa yang dikembangkan secara berkelanjutan oleh masyarakat Desa Sadawarna bersama BPS Kabupaten Subang.`;
+    const keunggulan = item.keunggulanUtama || "Produk & komoditas bermutu tinggi, ramah lingkungan, dikelola secara terpadu oleh gabungan kelompok warga desa.";
+    const pengelola = item.pengelola || "Pemdes Sadawarna & Kelompok Warga";
+    const nilaiEkonomi = item.nilaiEkonomi || "Potensi Unggulan Lokal";
+    const lokasi = item.lokasi || "Desa Sadawarna, Kec. Cibogo, Kabupaten Subang";
+    const kontak = item.kontakPengelola || "+62 812-3456-7890 (Sekretariat Desa Sadawarna)";
 
-    if (fullDesc) {
-        fullDesc.textContent = item.deskripsiLengkap || item.deskripsi || "Penjelasan rincian informasi potensi unggulan wilayah Desa Sadawarna.";
-    }
+    // Extra curated gallery photos
+    const extraPhotos = [
+        fotoUrl,
+        "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80"
+    ];
 
-    if (advantagesText) {
-        advantagesText.textContent = item.keunggulanUtama || "Produk unggulan bermutu tinggi, didukung kearifan lokal warga serta bimbingan terpadu BPS x Pemdes.";
-    }
+    container.innerHTML = `
+        <!-- Control Bar & Breadcrumbs -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs w-full box-border">
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 overflow-x-auto no-scrollbar">
+                <button onclick="switchView('home')" class="hover:text-bps-blue flex items-center gap-1 flex-shrink-0">
+                    <i class="fa-solid fa-house text-[11px]"></i> Beranda
+                </button>
+                <span>/</span>
+                <button onclick="switchView('potensi')" class="hover:text-bps-blue flex-shrink-0">Galeri Potensi Wilayah</button>
+                <span>/</span>
+                <span class="text-slate-900 font-bold truncate max-w-[200px] sm:max-w-[350px]">${item.judulPotensi}</span>
+            </div>
 
-    if (economicValue) economicValue.textContent = item.nilaiEkonomi || "Potensi Unggulan Lokal";
-    if (managerName) managerName.textContent = item.pengelola || "Warga & Pemdes Sadawarna";
-    if (locationSpec) locationSpec.textContent = item.lokasi || "Desa Sadawarna, Subang";
-    if (contactInfo) contactInfo.textContent = item.kontakPengelola || "+62 812-3456-7890 (Sekretariat Desa)";
+            <div class="flex items-center gap-2">
+                <button onclick="switchView('potensi')" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Kembali ke Galeri</span>
+                </button>
+                <button onclick="copyCurrentUrl()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-bps-blue bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all">
+                    <i class="fa-solid fa-share-nodes"></i>
+                    <span class="hidden sm:inline">Bagikan</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 4 Key Indicator Cards (Highlight Bar) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full box-border">
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 text-base font-bold">
+                    <i class="fa-solid fa-coins"></i>
+                </div>
+                <div class="min-w-0">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Nilai Ekonomi / Panen</span>
+                    <span class="font-extrabold text-slate-900 text-xs sm:text-sm truncate block mt-0.5">${nilaiEkonomi}</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-bps-blue flex items-center justify-center flex-shrink-0 text-base font-bold">
+                    <i class="fa-solid fa-users-gear"></i>
+                </div>
+                <div class="min-w-0">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Mitra Pengelola</span>
+                    <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block mt-0.5">${pengelola}</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 text-base font-bold">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div class="min-w-0">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Lokasi Presisi</span>
+                    <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block mt-0.5">${lokasi}</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center flex-shrink-0 text-base font-bold">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="min-w-0">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Status Pembinaan</span>
+                    <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block mt-0.5">Desa Cantik BPS 2026</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Banner & Content Container -->
+        <div class="bg-white rounded-3xl p-4 sm:p-8 shadow-sm border border-slate-200/90 space-y-6 sm:space-y-8 w-full box-border">
+            
+            <!-- Large Cover Photo Header (Fixed height h-64 sm:h-80 lg:h-96) -->
+            <div class="relative rounded-2xl overflow-hidden h-64 sm:h-80 lg:h-96 w-full bg-slate-950">
+                <img src="${fotoUrl}" alt="${item.judulPotensi}" class="absolute inset-0 w-full h-full object-cover opacity-85">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-transparent"></div>
+                
+                <div class="absolute bottom-0 inset-x-0 p-4 sm:p-8 text-white space-y-2.5">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="px-3 py-1 rounded-lg text-xs font-extrabold bg-amber-400 text-slate-950 shadow-xs uppercase tracking-wider">
+                            ${item.kategori}
+                        </span>
+                        <span class="px-3 py-1 rounded-lg text-xs font-semibold bg-white/20 backdrop-blur-md text-white border border-white/30">
+                            ⭐ Potensi Unggulan Wilayah
+                        </span>
+                        <span class="px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-500/80 backdrop-blur-md text-white border border-emerald-300/40">
+                            📍 Terverifikasi BPS Subang
+                        </span>
+                    </div>
+                    <h1 class="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+                        ${item.judulPotensi}
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-200 flex items-center gap-2 font-medium">
+                        <i class="fa-solid fa-location-dot text-amber-400"></i>
+                        <span>${lokasi}</span>
+                        <span class="text-slate-400">|</span>
+                        <span class="text-slate-300">Kode Wilayah: 3213110001</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Golden Ratio Content Layout (61.8% Main Narrative : 38.2% Sidebar) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+                
+                <!-- Left Main Content Column (7 / 12 Cols ~ 61.8%) -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- Section 1: Gambaran & Deskripsi Lengkap -->
+                    <div class="space-y-3">
+                        <h3 class="text-base sm:text-xl font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
+                            <i class="fa-solid fa-book-open text-bps-blue"></i>
+                            <span>Gambaran Umum & Profil Rinci</span>
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line font-normal">
+                            ${deskripsiUtama}
+                        </p>
+                    </div>
+
+                    <!-- Section 2: Keunggulan Utama & Fitur Differentiator (4 Cards) -->
+                    <div class="space-y-3">
+                        <h3 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
+                            <i class="fa-solid fa-star text-amber-500"></i>
+                            <span>Daya Tarik & Keunggulan Utama</span>
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 space-y-1">
+                                <div class="flex items-center gap-2 font-bold text-amber-900 text-xs">
+                                    <i class="fa-solid fa-circle-check text-amber-500"></i>
+                                    <span>Mutu & Kualitas Super</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600 leading-normal">
+                                    ${keunggulan}
+                                </p>
+                            </div>
+
+                            <div class="p-3.5 rounded-2xl bg-blue-50/80 border border-blue-200/80 space-y-1">
+                                <div class="flex items-center gap-2 font-bold text-blue-900 text-xs">
+                                    <i class="fa-solid fa-seedling text-bps-blue"></i>
+                                    <span>Ramah Lingkungan</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600 leading-normal">
+                                    Pengembangan potensi dengan memperhatikan prinsip keberlanjutan dan kelestarian ekosistem lokal.
+                                </p>
+                            </div>
+
+                            <div class="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 space-y-1">
+                                <div class="flex items-center gap-2 font-bold text-emerald-900 text-xs">
+                                    <i class="fa-solid fa-users text-emerald-600"></i>
+                                    <span>Pemberdayaan Warga</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600 leading-normal">
+                                    Membuka lapangan kerja lokal dan melibatkan puluhan keluarga dalam kelompok usaha bersama desa.
+                                </p>
+                            </div>
+
+                            <div class="p-3.5 rounded-2xl bg-purple-50/80 border border-purple-200/80 space-y-1">
+                                <div class="flex items-center gap-2 font-bold text-purple-900 text-xs">
+                                    <i class="fa-solid fa-chart-line text-purple-600"></i>
+                                    <span>Dampak Ekonomi Nyata</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600 leading-normal">
+                                    Menjadi salah satu pilar penopang pendapatan desa dan mendukung kemandirian ekonomi Sadawarna.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Dokumentasi Lapangan (Mini Photo Grid) -->
+                    <div class="space-y-3">
+                        <h3 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
+                            <i class="fa-solid fa-images text-indigo-600"></i>
+                            <span>Galeri Dokumentasi Lapangan</span>
+                        </h3>
+                        <div class="grid grid-cols-3 gap-2.5">
+                            <img src="${extraPhotos[0]}" alt="Foto 1" class="w-full h-24 sm:h-32 object-cover rounded-xl border border-slate-200 shadow-2xs">
+                            <img src="${extraPhotos[1]}" alt="Foto 2" class="w-full h-24 sm:h-32 object-cover rounded-xl border border-slate-200 shadow-2xs">
+                            <img src="${extraPhotos[2]}" alt="Foto 3" class="w-full h-24 sm:h-32 object-cover rounded-xl border border-slate-200 shadow-2xs">
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Tabel Spesifikasi Data Teknis -->
+                    <div class="space-y-3">
+                        <h3 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
+                            <i class="fa-solid fa-table-list text-slate-700"></i>
+                            <span>Rincian Spesifikasi Data Teknis</span>
+                        </h3>
+                        <div class="overflow-x-auto rounded-2xl border border-slate-200/90 text-xs">
+                            <table class="w-full text-left border-collapse">
+                                <tbody>
+                                    <tr class="border-b border-slate-100 bg-slate-50/60">
+                                        <td class="p-3 font-semibold text-slate-500 w-1/3">Kategori Potensi</td>
+                                        <td class="p-3 font-bold text-slate-900">${item.kategori}</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-100">
+                                        <td class="p-3 font-semibold text-slate-500">Estimasi Kapasitas / Nilai</td>
+                                        <td class="p-3 font-bold text-amber-700">${nilaiEkonomi}</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-100 bg-slate-50/60">
+                                        <td class="p-3 font-semibold text-slate-500">Lembaga Pengelola</td>
+                                        <td class="p-3 font-bold text-slate-900">${pengelola}</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-100">
+                                        <td class="p-3 font-semibold text-slate-500">Lokasi / Alamat Wilayah</td>
+                                        <td class="p-3 font-bold text-slate-900">${lokasi}</td>
+                                    </tr>
+                                    <tr class="bg-slate-50/60">
+                                        <td class="p-3 font-semibold text-slate-500">Status Pembinaan</td>
+                                        <td class="p-3 font-bold text-emerald-700">Terdaftar dalam Program Desa Cantik BPS Subang 2026</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar Column (5 / 12 Cols ~ 38.2%) -->
+                <div class="lg:col-span-5 space-y-5">
+                    
+                    <!-- Card 1: Profil Pengelola & Kontak Direct -->
+                    <div class="bg-slate-50/90 rounded-2xl p-5 border border-slate-200/90 shadow-2xs space-y-4">
+                        <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2 pb-2 border-b border-slate-200">
+                            <i class="fa-solid fa-address-card text-bps-blue"></i>
+                            <span>Pengelola & Penanggung Jawab</span>
+                        </h3>
+
+                        <div class="space-y-3.5 text-xs">
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-blue-100 text-bps-blue flex items-center justify-center text-sm flex-shrink-0 font-bold">
+                                    <i class="fa-solid fa-user-gear"></i>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-500 font-bold uppercase block">Mitra Pengelola</span>
+                                    <span class="font-extrabold text-slate-900 text-sm block mt-0.5">${pengelola}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm flex-shrink-0 font-bold">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-500 font-bold uppercase block">Kontak Layanan</span>
+                                    <span class="font-bold text-slate-800 block mt-0.5">${kontak}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-sm flex-shrink-0 font-bold">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-500 font-bold uppercase block">Alamat Sekretariat</span>
+                                    <span class="font-semibold text-slate-700 block mt-0.5">${lokasi}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Direct WhatsApp Action Button -->
+                        <div class="pt-2 border-t border-slate-200 space-y-2">
+                            <a href="https://wa.me/6281234567890?text=Halo%20Pengelola%20${encodeURIComponent(item.judulPotensi)},%20saya%20ingin%20bertanya%20informasi%20lebih%20lanjut." 
+                               target="_blank" 
+                               rel="noopener noreferrer" 
+                               class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>Hubungi Pengelola via WhatsApp</span>
+                            </a>
+
+                            <button onclick="switchView('potensi')" class="w-full py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-arrow-left"></i>
+                                <span>Kembali ke Galeri Potensi</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Stamp Verifikasi BPS Subang -->
+                    <div class="bg-gradient-to-br from-blue-900 via-bps-navy to-slate-900 text-white rounded-2xl p-5 shadow-sm border border-blue-800 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-black text-[10px]">BPS SUBANG</span>
+                            <span class="text-xs font-bold text-blue-200">Desa Cinta Statistik</span>
+                        </div>
+                        <h4 class="text-sm font-extrabold leading-snug">Terdaftar dalam Portal Resmi Desa Cantik</h4>
+                        <p class="text-[11px] text-blue-100/90 leading-relaxed">
+                            Potensi ini telah didata, diverifikasi, dan dibina secara sistematis sebagai bagian dari penguatan basis data statistik desa di Kabupaten Subang.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    `;
 
     // Switch view to potensi-detail page
     switchView("potensi-detail", item.judulPotensi);
 }
+
+// Global helper copy link
+window.copyCurrentUrl = function () {
+    navigator.clipboard.writeText(window.location.href);
+    alert("🔗 Tautan detail potensi berhasil disalin!");
+};
 
 // Alias untuk kompatibilitas
 function openPotensiModal(id) {
