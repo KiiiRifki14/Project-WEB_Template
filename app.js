@@ -88,6 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
         switchView("dokumen");
     } else if (window.location.hash === "#potensi") {
         switchView("potensi");
+    } else if (window.location.hash === "#potensi-detail") {
+        switchView("potensi");
     }
 
     // Auto-recalculate pagination items on screen resize with debounce
@@ -109,10 +111,11 @@ document.addEventListener("DOMContentLoaded", () => {
 /**
  * SPA View Switcher: Membedakan Tema & Konten Banner Antara 3 View (Beranda, Potensi, Dokumen)
  */
-function switchView(viewName) {
+function switchView(viewName, customTitle = "") {
     const viewHome = document.getElementById("view-home");
     const viewPotensi = document.getElementById("view-potensi");
     const viewDokumen = document.getElementById("view-dokumen");
+    const viewPotensiDetail = document.getElementById("view-potensi-detail");
 
     const tabHome = document.getElementById("nav-tab-home");
     const tabPotensi = document.getElementById("nav-tab-potensi");
@@ -132,7 +135,49 @@ function switchView(viewName) {
 
     if (!viewHome || !viewPotensi || !viewDokumen) return;
 
-    if (viewName === "dokumen") {
+    if (viewName === "potensi-detail") {
+        viewHome.classList.add("hidden");
+        viewPotensi.classList.add("hidden");
+        viewDokumen.classList.add("hidden");
+        if (viewPotensiDetail) {
+            viewPotensiDetail.classList.remove("hidden");
+            triggerViewAnimation(viewPotensiDetail);
+        }
+        triggerHeroAnimation();
+
+        // Desktop Nav Styling
+        if (tabHome) tabHome.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
+        if (tabPotensi) tabPotensi.className = "px-3.5 py-1.5 rounded-xl text-amber-700 bg-amber-50 font-bold border border-amber-200 transition-all flex items-center gap-1.5 shadow-xs";
+        if (tabDokumen) tabDokumen.className = "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-bps-blue hover:bg-slate-100 transition-all flex items-center gap-1.5";
+
+        // Mobile Drawer Button Styling
+        setMobileButtonState(mobileBtnHome, "home", false);
+        setMobileButtonState(mobileBtnPotensi, "potensi", true);
+        setMobileButtonState(mobileBtnDokumen, "dokumen", false);
+
+        if (menuBadge) {
+            menuBadge.textContent = "Detail Potensi";
+            menuBadge.className = "px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80 text-[10px] font-extrabold";
+        }
+
+        // Banner Update
+        if (heroBadgeTag) {
+            heroBadgeTag.textContent = "RINCIAN POTENSI";
+            heroBadgeTag.className = "inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-amber-500 text-slate-950 font-extrabold text-[10px] sm:text-xs leading-none flex-shrink-0 shadow-xs";
+        }
+        if (heroBadgeSub) heroBadgeSub.textContent = "Informasi Rinci Komoditas & Wilayah";
+        if (heroTitle) {
+            heroTitle.innerHTML = `${customTitle || 'Detail Potensi Wilayah'} <br class="hidden sm:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-200 to-yellow-300">${currentVillage}</span>`;
+        }
+        if (heroDesc) {
+            heroDesc.textContent = "Halaman rincian informasi komprehensif potensi unggulan wilayah, pengelola, nilai ekonomi, serta daya tarik utama desa.";
+        }
+
+        window.location.hash = "potensi-detail";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } else if (viewName === "dokumen") {
+        if (viewPotensiDetail) viewPotensiDetail.classList.add("hidden");
         viewHome.classList.add("hidden");
         viewPotensi.classList.add("hidden");
         viewDokumen.classList.remove("hidden");
@@ -171,6 +216,7 @@ function switchView(viewName) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } else if (viewName === "potensi") {
+        if (viewPotensiDetail) viewPotensiDetail.classList.add("hidden");
         viewHome.classList.add("hidden");
         viewDokumen.classList.add("hidden");
         viewPotensi.classList.remove("hidden");
@@ -194,21 +240,22 @@ function switchView(viewName) {
 
         // Banner Update
         if (heroBadgeTag) {
-            heroBadgeTag.textContent = "DIREKTORI SPASIAL";
+            heroBadgeTag.textContent = "DIREKTORI POTENSI";
             heroBadgeTag.className = "inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-amber-500 text-slate-950 font-extrabold text-[10px] sm:text-xs leading-none flex-shrink-0 shadow-xs";
         }
-        if (heroBadgeSub) heroBadgeSub.textContent = "Peta Lokasi & Komoditas Unggulan";
+        if (heroBadgeSub) heroBadgeSub.textContent = "Komoditas & Wisata Unggulan";
         if (heroTitle) {
             heroTitle.innerHTML = `Potensi & Keunggulan Wilayah <br class="hidden sm:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-200 to-yellow-300">${currentVillage}</span>`;
         }
         if (heroDesc) {
-            heroDesc.textContent = "Katalog rinci keunggulan wilayah Desa Sadawarna: destinasi wisata air Bendungan Sadawarna, sentra pertanian nanas simadu super, produk UMKM kerajinan bambu, dan peta spasial terintegrasi.";
+            heroDesc.textContent = "Katalog rinci keunggulan wilayah Desa Sadawarna: destinasi wisata air Bendungan Sadawarna, sentra pertanian nanas simadu super, produk UMKM kerajinan bambu, dan potensi perikanan.";
         }
 
         window.location.hash = "potensi";
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } else {
+        if (viewPotensiDetail) viewPotensiDetail.classList.add("hidden");
         viewDokumen.classList.add("hidden");
         viewPotensi.classList.add("hidden");
         viewHome.classList.remove("hidden");
@@ -926,91 +973,61 @@ window.goToPotensiPageView = function (page) {
 };
 
 /**
- * 3C. Function Open & Close Modal Detail Potensi (Super Rinci)
+ * 3C. Halaman Detail Khusus Potensi Wilayah (Full Page Detail View)
  */
-function openPotensiModal(id) {
+function bukaDetailPotensi(id) {
     const item = cachedPotensi.find(p => p.id === id);
     if (!item) return;
 
-    const modal = document.getElementById("potensi-modal");
-    const modalContent = document.getElementById("potensi-modal-content");
-    if (!modal || !modalContent) return;
-
-    const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
+    const placeholderImg = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80";
     const fotoUrl = item.urlFoto && item.urlFoto.trim() !== "" ? item.urlFoto : placeholderImg;
 
-    modalContent.innerHTML = `
-        <div class="relative">
-            <img src="${fotoUrl}" alt="${item.judulPotensi}" class="w-full h-52 sm:h-64 object-cover">
-            <button onclick="closePotensiModal()" 
-                    class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-950/70 text-white flex items-center justify-center hover:bg-slate-950 transition-colors shadow-md">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-            <span class="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-bps-blue text-white shadow-md border border-white/20">
-                ${item.kategori}
-            </span>
-        </div>
-        <div class="p-5 sm:p-6 space-y-4">
-            <div>
-                <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
-                    ${item.judulPotensi}
-                </h3>
-                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-2">
-                    ${item.deskripsi || 'Penjelasan detail mengenai potensi unggulan wilayah.'}
-                </p>
-            </div>
+    // Elements in #view-potensi-detail
+    const coverImg = document.getElementById("detail-cover-image");
+    const breadcrumbTitle = document.getElementById("detail-breadcrumb-title");
+    const categoryBadge = document.getElementById("detail-category-badge");
+    const title = document.getElementById("detail-title");
+    const locationText = document.getElementById("detail-location-text");
+    const fullDesc = document.getElementById("detail-full-description");
+    const advantagesText = document.getElementById("detail-advantages-text");
+    const economicValue = document.getElementById("detail-economic-value");
+    const managerName = document.getElementById("detail-manager-name");
+    const locationSpec = document.getElementById("detail-location-spec");
+    const contactInfo = document.getElementById("detail-contact-info");
 
-            <!-- Grid Info Rinci Potensi -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-slate-100 text-xs">
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-0.5">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Lokasi & Alamat</span>
-                    <span class="font-bold text-slate-800 block truncate">${item.lokasi || 'Desa Sadawarna, Subang'}</span>
-                </div>
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-0.5">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Estimasi Nilai Ekonomi</span>
-                    <span class="font-bold text-amber-700 block truncate">${item.nilaiEkonomi || 'Potensi Unggulan'}</span>
-                </div>
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-0.5 sm:col-span-2">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Mitra Pengelola</span>
-                    <span class="font-bold text-slate-800 block">${item.pengelola || 'Pemdes Sadawarna & Kelompok Warga'}</span>
-                </div>
-            </div>
+    if (coverImg) coverImg.src = fotoUrl;
+    if (breadcrumbTitle) breadcrumbTitle.textContent = item.judulPotensi;
+    if (categoryBadge) categoryBadge.textContent = item.kategori || "Potensi Unggulan";
+    if (title) title.textContent = item.judulPotensi;
+    
+    if (locationText) {
+        locationText.innerHTML = `<i class="fa-solid fa-location-dot text-amber-400"></i> <span>${item.lokasi || 'Desa Sadawarna, Subang'}</span>`;
+    }
 
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                <a href="https://maps.google.com/?q=${encodeURIComponent(item.judulPotensi + ' Desa Sadawarna Subang')}" 
-                   target="_blank" 
-                   rel="noopener noreferrer" 
-                   class="px-4 py-2 rounded-xl text-xs font-bold text-bps-blue bg-blue-50 hover:bg-bps-blue hover:text-white border border-blue-200 transition-all inline-flex items-center gap-1.5">
-                    <i class="fa-solid fa-map-location-dot"></i>
-                    <span>Buka Peta GPS</span>
-                </a>
-                <button onclick="closePotensiModal()" 
-                        class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors">
-                    Tutup
-                </button>
-            </div>
-        </div>
-    `;
+    if (fullDesc) {
+        fullDesc.textContent = item.deskripsiLengkap || item.deskripsi || "Penjelasan rincian informasi potensi unggulan wilayah Desa Sadawarna.";
+    }
 
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-    setTimeout(() => {
-        modalContent.classList.remove("scale-95", "opacity-0");
-        modalContent.classList.add("scale-100", "opacity-100");
-    }, 10);
+    if (advantagesText) {
+        advantagesText.textContent = item.keunggulanUtama || "Produk unggulan bermutu tinggi, didukung kearifan lokal warga serta bimbingan terpadu BPS x Pemdes.";
+    }
+
+    if (economicValue) economicValue.textContent = item.nilaiEkonomi || "Potensi Unggulan Lokal";
+    if (managerName) managerName.textContent = item.pengelola || "Warga & Pemdes Sadawarna";
+    if (locationSpec) locationSpec.textContent = item.lokasi || "Desa Sadawarna, Subang";
+    if (contactInfo) contactInfo.textContent = item.kontakPengelola || "+62 812-3456-7890 (Sekretariat Desa)";
+
+    // Switch view to potensi-detail page
+    switchView("potensi-detail", item.judulPotensi);
+}
+
+// Alias untuk kompatibilitas
+function openPotensiModal(id) {
+    bukaDetailPotensi(id);
 }
 
 function closePotensiModal() {
-    const modal = document.getElementById("potensi-modal");
-    const modalContent = document.getElementById("potensi-modal-content");
-    if (!modal || !modalContent) return;
-
-    modalContent.classList.remove("scale-100", "opacity-100");
-    modalContent.classList.add("scale-95", "opacity-0");
-    setTimeout(() => {
-        modal.classList.remove("flex");
-        modal.classList.add("hidden");
-    }, 200);
+    switchView("potensi");
 }
 
 /**

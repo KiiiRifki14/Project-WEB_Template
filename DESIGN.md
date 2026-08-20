@@ -6,47 +6,61 @@ description: >
   Desa Cantik (Desa Cinta Statistik) BPS Kabupaten Subang.
   Mengintegrasikan Identitas Visual BPS (Navy Blue, Amber Orange, Emerald Green),
   Golden Ratio (Phi = 1.618) untuk tipografi, spacing, layout split (61.8% : 38.2%),
-  serta Aturan Keseimbangan Warna 60-30-10 untuk antarmuka publikasi data statistik desa yang presisi, 
+  serta Aturan Keseimbangan Warna 60-30-10 untuk antarmuka publikasi data statistik desa yang presisi,
   estetis, dan responsif.
 
 # ─────────────────────────────────────────────────────────────────
+
 # CHANGELOG
+
 # ─────────────────────────────────────────────────────────────────
+
 changelog:
-  - version: "3.0.0"
+
+- version: "3.0.0"
     date: "2026-08-20"
     author: "BPS Kabupaten Subang x Design System Team"
     changes:
-      - "Pembaruan total spesifikasi sistem desain sesuai karakteristik Micro-Portal Web Desa Cantik (Single Page Application)."
-      - "Penerapan Prinsip Golden Ratio (φ = 1.618) pada Skala Tipografi, Spacing Grid Fibonacci, dan Layout Split (61.8% : 38.2%)."
-      - "Penerapan Aturan Keseimbangan Warna Golden Ratio 60-30-10 (60% Surface Netral, 30% BPS Navy Structure, 10% Amber Accent)."
-      - "Spesifikasi Komponen Baru: Glassmorphic Header, Hero Banner, Stat Cards Makro, Modul Statistik Tematik (4 Tab: Demografi, Sosial, Ekonomi, Pertanian), Galeri Potensi Wilayah (Filter & Pagination), Chart.js Donut Chart, dan Pusat Dokumen Publikasi."
-      - "Integrasi Arsitektur Data Google Sheets 9-Tab (Google Apps Script Web App 100% Gratis & Unlimited)."
+  - "Pembaruan total spesifikasi sistem desain sesuai karakteristik Micro-Portal Web Desa Cantik (Single Page Application)."
+  - "Penerapan Prinsip Golden Ratio (φ = 1.618) pada Skala Tipografi, Spacing Grid Fibonacci, dan Layout Split (61.8% : 38.2%)."
+  - "Penerapan Aturan Keseimbangan Warna Golden Ratio 60-30-10 (60% Surface Netral, 30% BPS Navy Structure, 10% Amber Accent)."
+  - "Spesifikasi Komponen Baru: Glassmorphic Header, Hero Banner, Stat Cards Makro, Modul Statistik Tematik (4 Tab: Demografi, Sosial, Ekonomi, Pertanian), Galeri Potensi Wilayah (Filter & Pagination), Chart.js Donut Chart, dan Pusat Dokumen Publikasi."
+  - "Integrasi Arsitektur Data Google Sheets 9-Tab (Google Apps Script Web App 100% Gratis & Unlimited)."
 
-  - version: "2.0.0"
+- version: "2.0.0"
     date: "2026-08-20"
     author: "Design System Team"
     changes:
-      - "Inisialisasi dasar sistem token warna BPS dan tipografi."
+  - "Inisialisasi dasar sistem token warna BPS dan tipografi."
 
 # ─────────────────────────────────────────────────────────────────
+
 # 1. COLOR SYSTEM — Golden Ratio 60-30-10 Rule
+
 # ─────────────────────────────────────────────────────────────────
-# Aturan 60-30-10:
+
+# Aturan 60-30-10
+
 # - 60% Dominant Surface (White / Light Slate #F8FAFC) -> Latar Belakang & Kartu
+
 # - 30% Secondary Structure (BPS Navy Blue #005BAA / #0F2B48) -> Header, Title & Teks Utama
+
 # - 10% Accent Focus (BPS Amber Orange #F59E0B / #E8601C) -> Badge, Highlight & Button CTA
+
 # ─────────────────────────────────────────────────────────────────
+
 colors:
 
-  # ── Brand Utama BPS (Badan Pusat Statistik) ───────────────────
+# ── Brand Utama BPS (Badan Pusat Statistik) ───────────────────
+
   bps-navy:       "#005BAA"   # Warna Utama BPS (Biru Statistik & Kepercayaan)
   bps-dark:       "#0A192F"   # Navy Gelap untuk Hero Background & Glass Header
   bps-blue-light: "#F0F6FF"   # Soft Blue untuk Surface Highlight
   bps-amber:      "#F59E0B"   # Warna Aksesibilitas (Aksi & Showcase)
   bps-emerald:    "#10B981"   # Warna Pertanian & Status Positif
 
-  # ── Proportion Breakdown (60-30-10) ───────────────────────────
+# ── Proportion Breakdown (60-30-10) ───────────────────────────
+
   dominant-60:
     bg-page:      "#F8FAFC"   # 60% Dominan: Latar Belakang Halaman
     bg-card:      "#FFFFFF"   # Surface Kartu & Panel Utama
@@ -63,14 +77,16 @@ colors:
     cta-hover:    "#D97706"   # Hover State Tombol Utama
     highlight-badge: "#FEF3C7"# Background Badge Highlight (Amber 100)
 
-  # ── Semantic & Status Colors ──────────────────────────────────
+# ── Semantic & Status Colors ──────────────────────────────────
+
   status:
     success:      "#10B981"   # Emerald Green: Data Terupdate, Status Mandiri
     warning:      "#F59E0B"   # Amber: Peringatan, Indikator Perhatian
     error:        "#EF4444"   # Rose Red: Error Fetching Data / Validasi Gagal
     info:         "#0284C7"   # Sky Blue: Informasi Tambahan
 
-  # ── Neutral Scale (Slate Palette) ─────────────────────────────
+# ── Neutral Scale (Slate Palette) ─────────────────────────────
+
   neutral-900:    "#0F172A"   # Heading Gelap
   neutral-800:    "#1E293B"   # Subheading & Icon Text
   neutral-700:    "#334155"   # Body Text
@@ -82,12 +98,19 @@ colors:
   white:          "#FFFFFF"
 
 # ─────────────────────────────────────────────────────────────────
+
 # 2. TYPOGRAPHY — Golden Ratio Scale (Multiplier φ = 1.618)
+
 # ─────────────────────────────────────────────────────────────────
-# Skala Tipografi Emas berbasis Golden Ratio (1.618):
+
+# Skala Tipografi Emas berbasis Golden Ratio (1.618)
+
 # Base: 16px (1rem)
+
 # 10px (0.618rem) -> 12.5px (0.786rem) -> 16px (1rem) -> 20.3px (1.272rem) -> 26px (1.618rem) -> 42px (2.618rem) -> 68px (4.236rem)
+
 # ─────────────────────────────────────────────────────────────────
+
 typography:
   fontFamily:
     display:  "Plus Jakarta Sans"   # Display & Headings (Modern, Ramah, Tegas)
@@ -122,11 +145,17 @@ typography:
     wide:     "0.05em"    # Badge & Overline Uppercase
 
 # ─────────────────────────────────────────────────────────────────
+
 # 3. SPACING — Golden Ratio & Fibonacci Grid (Base 4px)
+
 # ─────────────────────────────────────────────────────────────────
-# Urutan Fibonacci (Golden Ratio Approximation):
+
+# Urutan Fibonacci (Golden Ratio Approximation)
+
 # 4px -> 8px -> 13px -> 21px -> 34px -> 55px -> 89px -> 144px
+
 # ─────────────────────────────────────────────────────────────────
+
 spacing:
   0:   "0px"
   1:   "4px"     # Gap Mikro (Ikon ke Teks)
@@ -139,8 +168,11 @@ spacing:
   8:   "144px"   # Hero Banner Maximum Vertical Spacing (Fibonacci Level 8)
 
 # ─────────────────────────────────────────────────────────────────
+
 # 4. BORDER RADIUS & ELEVATION
+
 # ─────────────────────────────────────────────────────────────────
+
 radius:
   none:  "0px"
   sm:    "8px"     # Badge & Small Tags
@@ -158,12 +190,19 @@ elevation:
   hover: "0 12px 28px -4px rgba(15, 23, 42, 0.12)"
 
 # ─────────────────────────────────────────────────────────────────
+
 # 5. LAYOUT & GOLDEN RATIO SPLIT (61.8% : 38.2%)
+
 # ─────────────────────────────────────────────────────────────────
-# Distribusi Tata Letak Dua Kolom mengikuti Proporsi Emas (Golden Ratio):
+
+# Distribusi Tata Letak Dua Kolom mengikuti Proporsi Emas (Golden Ratio)
+
 # Main Content Area : 61.8% (~ 7 s/d 8 Kolom Grid)
+
 # Sidebar / Widget  : 38.2% (~ 4 s/d 5 Kolom Grid)
+
 # ─────────────────────────────────────────────────────────────────
+
 layout:
   grid:       12
   goldenSplit:
@@ -181,11 +220,15 @@ layout:
     xl:       "1280px"    # Desktop Wide
 
 # ─────────────────────────────────────────────────────────────────
+
 # 6. SPESIFIKASI KOMPONEN UTAMA PORTAL
+
 # ─────────────────────────────────────────────────────────────────
+
 components:
 
-  # ── Glassmorphic Top Navbar ──────────────────────────────────
+# ── Glassmorphic Top Navbar ──────────────────────────────────
+
   navbar:
     height:        "64px"
     background:    "rgba(255, 255, 255, 0.96)"
@@ -196,7 +239,8 @@ components:
       bpsLogo:     "Lambang BPS Indonesia (Height 24px)"
       title:       "DESA CANTIK SUBANG (Plus Jakarta Sans 800 Uppercase)"
 
-  # ── Hero Section (BPS Dark Navy Theme) ───────────────────────
+# ── Hero Section (BPS Dark Navy Theme) ───────────────────────
+
   hero:
     background:    "linear-gradient(to bottom right, #0A192F, #005BAA, #0F172A)"
     textColor:     "#FFFFFF"
@@ -207,7 +251,8 @@ components:
       color:       "#F59E0B"
       border:      "1px solid rgba(245, 158, 11, 0.3)"
 
-  # ── Stat Cards Makro (4 Card Layout) ──────────────────────────
+# ── Stat Cards Makro (4 Card Layout) ──────────────────────────
+
   statCard:
     bg:            "#FFFFFF"
     borderRadius:  "24px"
@@ -233,7 +278,8 @@ components:
         icon:  "fa-building-flag"
         theme: "Indigo (Purple)"
 
-  # ── Modul Statistik Tematik (4 Tabbed Dashboard) ─────────────
+# ── Modul Statistik Tematik (4 Tabbed Dashboard) ─────────────
+
   statTematik:
     containerBg:   "#FFFFFF"
     borderRadius:  "32px"
@@ -252,7 +298,8 @@ components:
         label: "Pertanian & Peternakan"
         icon: "fa-wheat-awn"
 
-  # ── Galeri Potensi Wilayah ────────────────────────────────────
+# ── Galeri Potensi Wilayah ────────────────────────────────────
+
   potensiGallery:
     gridColumns:   "3 Kolom (Desktop), 1 Kolom (Mobile)"
     cardStyle:
@@ -260,23 +307,30 @@ components:
       borderRadius: "24px"
       overflow:    "hidden"
       hoverEffect: "Transform translateY(-4px) + Shadow Hover"
+    detailView:    "Full Page Detail Screen (#view-potensi-detail) dengan Golden Ratio (61.8% Narasi Deskripsi : 38.2% Spesifikasi Pengelola & Nilai Ekonomi)"
     filterBar:
       activeTabBg: "#005BAA"
       activeColor: "#FFFFFF"
       inactiveBg:  "#F1F5F9"
       inactiveColor: "#475569"
 
-  # ── Chart Visualisasi (Distribusi Pekerjaan) ─────────────────
+# ── Chart Visualisasi (Distribusi Pekerjaan) ─────────────────
+
   jobChart:
     chartType:     "Doughnut / Pie Chart (Chart.js)"
     colors:        ["#005BAA", "#0284C7", "#06B6D4", "#F59E0B", "#10B981", "#64748B"]
     legendStyle:   "Progress Bar Horizontal dengan Nilai & Persentase"
 
 # ─────────────────────────────────────────────────────────────────
+
 # 7. ARSITEKTUR DATA & GOOGLE SHEETS 9-TAB SCHEMA
+
 # ─────────────────────────────────────────────────────────────────
+
 # Mendukung Google Apps Script Web App (100% Gratis Unlimited), SheetDB, dan JSON Lokal
+
 # ─────────────────────────────────────────────────────────────────
+
 dataArchitecture:
   endpointType: "Google Apps Script Web App (JSON Multi-Sheet Response)"
   sheetsSchema:
@@ -291,8 +345,11 @@ dataArchitecture:
     9: "pertanianPeternakan (luasLahanPertanian, luasPanen, produksiPadi, produksiJagung, produksiBawangMerah, produksiSayuran, produksiBuah, jumlahTernak, produksiTelurDaging, jumlahKelompokTani)"
 
 # ─────────────────────────────────────────────────────────────────
+
 # 8. PEDOMAN GOLDEN RATIO & ATURAN PENGEMBANGAN (DO'S & DON'TS)
+
 # ─────────────────────────────────────────────────────────────────
+
 guidelines:
   dos:
     - "Gunakan proporsi Golden Ratio (60-30-10) untuk pemilihan warna antarmuka."

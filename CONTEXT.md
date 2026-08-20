@@ -33,9 +33,9 @@ Tampilan halaman tunggal mencakup modul-modul berikut secara berurutan:
    - Tab 2: **Sosial & Kesejahteraan** (Penduduk Miskin, Penerima Bansos, Pendidikan, Kesehatan, Disabilitas)
    - Tab 3: **Ekonomi & Monografi** (Jumlah UMKM, Jenis Usaha, Sarana Perdagangan, Rata-rata Pendapatan, Harga Komoditas Utama)
    - Tab 4: **Pertanian & Peternakan** (Luas Lahan, Luas Panen, Produksi Padi/Jagung/Bawang/Sayur/Buah, Jumlah Ternak, Kelompok Tani)
-4. **Galeri Potensi & Keunggulan Desa (Fitur Visual Foto)**
+4. **Galeri Potensi & Keunggulan Desa (Fitur Visual Foto & Halaman Detail Khusus)**
    - Grid Card responsif untuk menampilkan foto-foto produk UMKM, destinasi wisata, komoditas unggulan pertanian, atau infrastruktur desa.
-   - Komponen Kartu: Foto Sampul, Badge Kategori (UMKM / Wisata / Pertanian / Seni), Judul Potensi, Deskripsi, dan Pagination Interaktif.
+   - Komponen Kartu: Foto Sampul, Badge Kategori (UMKM / Wisata / Pertanian / Seni), Judul Potensi, Deskripsi, Pagination, dan **Halaman Rincian Detail Khusus (`#view-potensi-detail`)** dengan Golden Ratio (61.8% Narasi Deskripsi : 38.2% Spesifikasi Pengelola & Nilai Ekonomi).
 5. **Chart & Visualisasi Data (Mata Pencaharian)**
    - Grafik Interaktif (Chart.js via CDN) untuk memvisualisasikan data mata pencaharian utama penduduk.
 6. **Pusat Dokumen Publikasi & Banner Pintas**
